@@ -91,13 +91,12 @@ extension Meal {
     /// Fetches all meals from the core data database.
     class func fetchAllMeals(managedObjectContext context: NSManagedObjectContext) -> [Meal]? {
         
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Meal")
+        let request: NSFetchRequest<Meal> = Meal.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "dateOfCreation", ascending: false)]
 
         do {
-            if let meals = try context.fetch(request) as? [Meal] {
-                return meals
-            }
+            let meals = try context.fetch(request)
+            return meals
         } catch {
             print("Error fetching all meals: \(error)")
         }
@@ -108,13 +107,12 @@ extension Meal {
     /// Fetches the newest meal from the core data database.
     class func fetchNewestMeal(managedObjectContext context: NSManagedObjectContext) -> Meal? {
 
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Meal")
+        let request: NSFetchRequest<Meal> = Meal.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "dateOfCreation", ascending: false)]
         
         do {
-            if let meals = try context.fetch(request) as? [Meal] {
-                return meals.first
-            }
+            let meals = try context.fetch(request)
+            return meals.first
         } catch {
             print("Error fetching newest meal: \(error)")
         }

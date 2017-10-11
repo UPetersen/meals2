@@ -29,11 +29,10 @@ extension Recipe {
     
     class func fetchAllRecipes(managedObjectContext context: NSManagedObjectContext) -> [Recipe]? {
 
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Recipe")
+        let request: NSFetchRequest<Recipe> = Recipe.fetchRequest()
         do {
-            if let recipes = try context.fetch(request) as? [Recipe] {
-                return recipes
-            }
+            let recipes = try context.fetch(request)
+            return recipes
         } catch {
             print("Error fetching recipes: \(error)")
         }

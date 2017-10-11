@@ -27,8 +27,8 @@ extension Nutrient {
         return self.hkDispUnit.description.replacingOccurrences(of: "mc", with: "µ", options: [], range: nil)
     }
     
+    
     public class func fetchAllNutrients(managedObjectContext context: NSManagedObjectContext) -> [Nutrient]? {
-        
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Nutrient")
         do {
             if let nutrients = try context.fetch(request) as? [Nutrient] {
@@ -43,16 +43,15 @@ extension Nutrient {
     
     class func nutrientForKey(_ key:String, inManagedObjectContext managedObjectContext: NSManagedObjectContext) -> Nutrient? {
         
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Nutrient")
+        let request: NSFetchRequest<Nutrient> = Nutrient.fetchRequest()
         request.predicate = NSPredicate(format:"key = %@", key)
         
         do {
-            if let nutrients = try managedObjectContext.fetch(request) as? [Nutrient] {
-                if nutrients.count > 1 {
-                    print("\(#file): more than one nutrient found for key " + key)
-                }
-                return nutrients.first
+            let nutrients = try managedObjectContext.fetch(request)
+            if nutrients.count > 1 {
+                print("\(#file): more than one nutrient found for key " + key)
             }
+            return nutrients.first
         } catch {
             print("Error fetching nutrients: \(error)")
         }

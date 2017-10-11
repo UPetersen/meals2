@@ -430,6 +430,7 @@ enum Item {
     func fetchMealIngredientsForPredicate(_ predicate: NSPredicate?) {
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient")
+//        let request = MealIngredient.fetchRequest()
         if predicate != nil {
             request.predicate = predicate
         }

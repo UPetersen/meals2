@@ -17,25 +17,6 @@ extension MealIngredient {
             return foodValue * (self.amount?.doubleValue)! / 100.0 // per 100 g
         }
         return nil
-    }
-    
-//    override func willSave() {
-//        super.willSave()
-//        println("Meal ingredient will be saved")
-//        if self.deleted {
-//            println("Meal ingredient will be deleted")
-//        }
-//        if self.updated {
-//            println("Meal ingredient will be updated")
-//        }
-//        if self.inserted {
-//            println("Meal ingredient will be inserted")
-//        }
-//    }
-//    
-//    override func didChangeValueForKey(key: String) {
-//        super.didChangeValueForKey(key)
-//        println("Meal  ingredient did change value for key '\(key)'")
-//    }
+    }    
 }
 

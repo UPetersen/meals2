@@ -110,34 +110,27 @@ extension Food {
     
     class func fetchAllFoods(managedObjectContext context: NSManagedObjectContext) -> [Food]? {
 
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Food")
+        let request: NSFetchRequest<Food> = Food.fetchRequest()
 
         do {
-            if let foods = try context.fetch(request) as? [Food] {
-                return foods
-            }
+            let foods = try context.fetch(request)
+            return foods
         } catch {
             print("Error fetching foods: \(error)")
         }
-        
-//        var error: NSError? = nil
-//        if let foods = context.executeFetchRequest(request) as? [Food] {
-//            return foods
-//        }
         return nil
     }
     
     class func foodForNameContainingString(_ string: String, inMangedObjectContext context: NSManagedObjectContext) -> Food? {
 
         // Returns the very first of the foods with a name that contains the given input string
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Food")
+        let request: NSFetchRequest<Food> = Food.fetchRequest()
         request.predicate = NSPredicate(format: "name CONTAINS[c] %@", string)
         
         // Return first object in the list of foods, or nil, if no food ist there with this string
         do {
-            if let foods = try context.fetch(request) as? [Food] {
-                return foods.first
-            }
+            let foods = try context.fetch(request)
+            return foods.first
         } catch {
             print("Error fetching foods: \(error)")
         }

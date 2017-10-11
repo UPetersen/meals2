@@ -16,15 +16,13 @@ extension Preparation {
     /// of BLS string and group key must match a group in the long string groupsKeystring).
     class func fetchPreparationForBLSPreparationKey(_ key: String, andGroupKey groupKey: String, inManagedObjectContext context: NSManagedObjectContext) -> Preparation? {
         
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Preparation")
+        let request: NSFetchRequest<Preparation> = Preparation.fetchRequest()
         request.predicate = NSPredicate(format: "key = '\(key)' AND groupKeysString CONTAINS[c] '\(groupKey)'")
 
         do {
-            if let preparations = try context.fetch(request) as? [Preparation] {
-                assert(preparations.count <= 1, "Error fetching preparation from csv-File for key '\(key)' and subGroup key '\(groupKey)':\n There is more than one preparation returned for this food. Preparations are: \(preparations)")
-                return preparations.first
-            }
-            return nil
+            let preparations = try context.fetch(request)
+            assert(preparations.count <= 1, "Error fetching preparation from csv-File for key '\(key)' and subGroup key '\(groupKey)':\n There is more than one preparation returned for this food. Preparations are: \(preparations)")
+            return preparations.first
         } catch {
             print("Error fetching preparation from csv-file for key '\(key)' and group key '\(groupKey)': Corresponding preparation not found.'")
             return nil

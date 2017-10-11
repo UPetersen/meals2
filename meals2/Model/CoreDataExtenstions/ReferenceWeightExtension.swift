@@ -18,15 +18,13 @@ extension ReferenceWeight {
     /// be returned for the food with key "B105100" where the seventh character (i.e. number) denotes the referenceWeight and is a "0".
     class func fetchReferenceWeightForBLSReferenceWeightKey(_ key: String, inManagedObjectContext context: NSManagedObjectContext) -> ReferenceWeight? {
         
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "ReferenceWeight")
+        let request: NSFetchRequest<ReferenceWeight> = ReferenceWeight.fetchRequest()
         request.predicate = NSPredicate(format: "key = '\(key)'")
 
         do {
-            if let referenceWeights = try context.fetch(request) as? [ReferenceWeight] {
-                assert(referenceWeights.count <= 1, "Error fetching referenceWeights from csv-File for key '\(key)':\n There is more than one referenceWeights returned for this food. ReferenceWeights are: \(referenceWeights)")
-                return referenceWeights.first
-            }
-            return nil
+            let referenceWeights = try context.fetch(request)
+            assert(referenceWeights.count <= 1, "Error fetching referenceWeights from csv-File for key '\(key)':\n There is more than one referenceWeights returned for this food. ReferenceWeights are: \(referenceWeights)")
+            return referenceWeights.first
         } catch {
             print("Error fetching referenceWeights from csv-file for key '\(key)': Corresponding referenceWeights not found.'")
             return nil
