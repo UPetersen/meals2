@@ -21,10 +21,10 @@ enum Item {
 @objc (MealsCDTVC) final class MealsCDTVC : BaseCDTVC {
     
     enum SegueIdentifier: String {
-        case ShowFoodDetailTVC      = "Segue MealsCDTVC to FoodDetailTVC"
-        case ShowAddFoodTVC         = "Segue MealsCDTVC to AddFoodTVC"
-        case ShowMealFormTVC        = "Segue MealsCDTVC to MealFormTVC"
-        case ShowMealDetails        = "Segue MealsCDTVC to MealDetailTVC"
+        case ShowFoodDetailTVC       = "Segue MealsCDTVC to FoodDetailTVC"
+        case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
+        case ShowMealFormTVC         = "Segue MealsCDTVC to MealFormTVC"
+        case ShowMealDetails         = "Segue MealsCDTVC to MealDetailTVC"
         case ShowFoodListListsCDTVC  = "Segue MealsCDTVC to FoodListListsCDTVC"
     }
     
@@ -42,11 +42,10 @@ enum Item {
     let healthManager: HealthManager = HealthManager()
     
     // Search controller to help us with filtering.
-//    var searchController: UISearchController!
-    
-    // Secondary search results table view.
-//    var resultsTableController: MealsCDTVCResultController!
-    
+    var searchController = UISearchController(searchResultsController: nil) // Searchresults are displayed in this tableview
+    var searchFilter = SearchFilter.BeginsWith
+
+    // Formatters
     lazy var calsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = NumberFormatter.Style.none
@@ -55,7 +54,6 @@ enum Item {
     }()
     
     lazy var zeroMaxDigitsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
-//        print("I am in the zero...NumberFormatter")
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = NumberFormatter.Style.none
         numberFormatter.zeroSymbol = "0"
@@ -78,22 +76,39 @@ enum Item {
     }()
     
 
-    // Mark: - View Controller
+    // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Initializes the fetched results controller. The tableView will display a list of mealIngredients.
         managedObjectContext = persistentContainer.viewContext
-        fetchAllMealIngredients()
+        fetchMealIngredients()
         
-        // Code for adding searchBar
-//        configureNewSearchController()
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = NSLocalizedString("Lebensmittel suchen", comment: "")
+        searchController.searchBar.showsScopeBar = true
+        searchController.searchBar.scopeButtonTitles = [SearchFilter.BeginsWith.rawValue, SearchFilter.Contains.rawValue]
+        definesPresentationContext = true
+        navigationItem.searchController = searchController // iOS 11: searchController tied to navigationItem
+//        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any more
         
-        // tapRecognizer, to display a menu for the meal seleted by a long press
+        // long pressure recognizer, to display a menu for the meal seleted by a long press
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MealsCDTVC.longPress(_:)))
         self.view.addGestureRecognizer(longPressRecognizer)
         
+        // tap recognizer, to withdraw the keyboard when user taps somewhere outside
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(MealsCDTVC.tap(_:)))
+        tapRecognizer.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tapRecognizer)
+        
+        // dismiss keyboard on drag
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        
+        // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
         NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
     }
     
@@ -104,86 +119,11 @@ enum Item {
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
         
-        toolbarItems = self.theToolbarItems()
-        //        navigationController?.toolbarItems = self.theToolbarItems()
-        self.navigationController?.isToolbarHidden = false
-        
-        //        navigationController?.hidesBarsOnSwipe = true
-        
-        //        tableView.reloadData()
-        fetchAllMealIngredients()
+        fetchMealIngredients()
         setFirstMealAsCurrentMeal()
-        
-//        searchController.searchBar.showsScopeBar = true // 2017-09-25 test
     }
     
-    
-    // MARK: - UISearchController
-    
-//    func configureNewSearchController() {
-//
-//        // Create the search results view controller and use it for the `UISearchController`.
-//        struct StoryboardConstants {
-//            // The identifier string that corresponds to the `SearchResultsViewController`'s view controller defined in the main storyboard.
-//            static let identifier = "SearchResultsViewControllerStoryboardIdentifier"
-//        }
-//        let searchResultsController = storyboard!.instantiateViewController(withIdentifier: StoryboardConstants.identifier) as! FoodListListsSearchCDTVC
-//        //        let searchResultsController = navigationController?.storyboard?.instantiateViewControllerWithIdentifier(StoryboardConstants.identifier) as! SearchResultsViewController
-//
-//        // Create the search controller and make it perform the results updating.
-//        searchController = UISearchController(searchResultsController: searchResultsController)
-//        searchResultsController.managedObjectContext = managedObjectContext
-//
-//        searchController.searchResultsUpdater = searchResultsController
-//        searchController.hidesNavigationBarDuringPresentation = false  // 2017-09-23: set from true to false to work on iOS 11
-//
-//        /*
-//         Configure the search controller's search bar. For more information on
-//         how to configure search bars, see the "Search Bar" group under "Search".
-//         */
-//        //        searchController.searchBar.searchBarStyle = .Minimal
-//        searchController.searchBar.delegate = searchResultsController // needed to be notified when scope buttons changed
-//        searchController.searchBar.sizeToFit()
-//        searchController.searchBar.placeholder = NSLocalizedString("Lebensmittel suchen", comment: "")
-//        searchController.searchBar.showsScopeBar = true  // 2017-09-25 test
-//        searchController.searchBar.scopeButtonTitles = [SearchFilter.BeginsWith.rawValue, SearchFilter.Contains.rawValue]
-//
-//
-//        // Include the search bar within the navigation bar.
-//        //        navigationItem.titleView = searchController.searchBar
-//        tableView.tableHeaderView = searchController.searchBar
-//
-//        // Search is now just presenting a view controller. As such, normal view controller
-//        // presentation semantics apply. Namely that presentation will walk up the view controller
-//        // hierarchy until it finds the root view controller or one that defines a presentation context.
-//        definesPresentationContext = true // Sonst leere weiße Fläche unter searchBar
-//    }
-    
 
-    
-    // Uwi, 2015-09-11: these methods seem not to be needed
-    //    func segmentedControlInSearchBar(searchBar: UISearchBar) -> UISegmentedControl? {
-    //        return segmentedControlInViewHierarchy(view: searchBar)
-    //    }
-    //
-    //    func segmentedControlInViewHierarchy(view view: UIView) -> UISegmentedControl? {
-    //        if view is UISegmentedControl {
-    //            return view as? UISegmentedControl
-    //        }
-    //        for subview in view.subviews {
-    //            if let segmentedControl = self.segmentedControlInViewHierarchy(view: subview as UIView) { // recursion
-    //                return segmentedControl
-    //            }
-    //        }
-    //        return nil
-    //    }
-    //
-    //    func setSegmentWidthsForSegmentedControl(segmentedControl: UISegmentedControl, width: Double) {
-    //        for var index = 0; index < segmentedControl.numberOfSegments; ++index {
-    //            segmentedControl.setWidth(CGFloat(width), forSegmentAtIndex: index)
-    //        }
-    //    }
-    //
     
     // MARK: - Helper stuff: Notifications
     
@@ -368,7 +308,7 @@ enum Item {
         // If last cell of tableView is selected and there are more cells, refetch table with all the data
         if isLastCellInTableView(tableView, forIndexPath: indexPath) && defaultFetchLimit != 0 {
             defaultFetchLimit = 0
-            fetchAllMealIngredients()
+            fetchMealIngredients()
             return
         } else {
             
@@ -387,8 +327,9 @@ enum Item {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let identifier = segue.identifier, let segueIdentifier = SegueIdentifier(rawValue: identifier) {
-//            switch segueIdentifier {
-//            case .ShowFoodDetailTVC:
+            switch segueIdentifier {
+            case .ShowFoodDetailTVC:
+                break
 //                if let viewController = segue.destination  as? FoodDetailCDTVC {
 //                    let myFood:Food
 //                    if sender is FoodListListsSearchCDTVC {
@@ -398,94 +339,41 @@ enum Item {
 //                    }
 //                    viewController.item = .isFood(myFood, currentMeal)
 //                }
-//            case .ShowAddFoodTVC:
+            case .ShowAddFoodTVC:
+                break
 //                if let viewController = segue.destination  as? AmountSettingTVC { // Change amount of meal ingredient
 //                    viewController.item = .isMealIngredient(currentMealIngredient)
 //                }
-//            case .ShowFoodListListsCDTVC:
-//                if let viewController = segue.destination as? FoodListListsCDTVC {
-//                    viewController.foodList = FoodListType.Favorites
+            case .ShowFoodListListsCDTVC:
+                if let viewController = segue.destination as? FoodListListsCDTVC {
+                    viewController.foodListType = FoodListType.Favorites
+                    viewController.meal = currentMeal
+                    viewController.managedObjectContext = managedObjectContext
+                }
+//                if let vc = segue.destination as? UINavigationController, let viewController = vc.topViewController as? FoodListListsCDTVC {
+//                    viewController.foodListType = FoodListType.Favorites
 //                    viewController.meal = currentMeal
 //                    viewController.managedObjectContext = managedObjectContext
 //                }
-//            case .ShowMealFormTVC:
-//                break
-//            case .ShowMealDetails:
+            case .ShowMealFormTVC:
+                break
+            case .ShowMealDetails:
+                break
 //                if let viewController = segue.destination as? MealDetailTVC {
 //                    viewController.meal = currentMeal
 //                    viewController.managedObjectContext = managedObjectContext
 //                }
-//            }
-        } else {
-            fatalError("Invalid segue identifier: \(String(describing: segue.identifier))")
-        }
-    }
-    
-    //MARK: - Fetchted results controller
-    
-    func fetchAllMealIngredients() {
-        fetchMealIngredientsForPredicate(nil)
-    }
-    
-    func fetchMealIngredientsForPredicate(_ predicate: NSPredicate?) {
-        
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient")
-//        let request = MealIngredient.fetchRequest()
-        if predicate != nil {
-            request.predicate = predicate
-        }
-        request.fetchBatchSize = 100
-        request.includesPropertyValues = false
-        request.returnsObjectsAsFaults = true
-//        request.returnsObjectsAsFaults = false  // Speeds up a little bit in our case
-        request.fetchLimit = defaultFetchLimit                 // Speeds up a lot, especially inital loading of this view controller, but needs care
-        request.sortDescriptors = [
-            NSSortDescriptor(key: "meal.dateOfCreation", ascending: false),
-            NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
-        ]
-        
-        
-        self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
-        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: nil)
-
-        // Make the newest meal the currentMeal (the one and only, to which foods are added)
-        if let mealIngredient = self.fetchedResultsController.fetchedObjects?.first as? MealIngredient {
-            currentMeal = mealIngredient.meal
-            print("Did set current meal.")
-        } else {
-            currentMeal = nil
-            print("Fetched zero objects and result is zero or nil.")
-            print("Did set current meal to nil.")
+            }
         }
     }
     
     //MARK: - toolbar
     
-    func theToolbarItems() -> [UIBarButtonItem] {
-        //        self.navigationController?.toolbarHidden = false
-        self.hidesBottomBarWhenPushed = false
-        let favoriteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.bookmarks, target: self, action: #selector(MealsCDTVC.toolbarFavoriteButtonSelected))
-        let flexibleSpace  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
-        let fixedSpace     = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: self, action: nil)
-        fixedSpace.width = 30
-        //        let listButton     = UIBarButtonItem(title: "Listen", style: UIBarButtonItemStyle.Plain, target: self, action: "toolbarListButtonSelected")
-        let addButton      = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: #selector(MealsCDTVC.toolbarAddButtonSelected))
-        
-        return [fixedSpace, favoriteButton, flexibleSpace, addButton, fixedSpace]
+    
+    @IBAction func searchButtonSelected(_ sender: UIBarButtonItem) {
     }
     
-    @objc func toolbarFavoriteButtonSelected() {
-        print("Favorite Button selected")
-        performSegue(withIdentifier: SegueIdentifier.ShowFoodListListsCDTVC.rawValue, sender: self)
-    }
-    
-    //    func toolbarListButtonSelected() {
-    //        print("List button selected")
-    //        performSegueWithIdentifier(SegueIdentifier.ShowFoodListListsCDTVC.rawValue, sender: self)
-    //    }
-    
-    @objc func toolbarAddButtonSelected() {
-        print("Add Button selected")
+    @IBAction func addButtonSelected(_ sender: UIBarButtonItem) {
         // Create a new Meal
         let meal = Meal(context: managedObjectContext)
         
@@ -499,22 +387,22 @@ enum Item {
             mealIngredient.meal = meal
         }
         currentMeal = meal
-        fetchAllMealIngredients()
+        fetchMealIngredients()
         saveContext()
     }
     
     
-    
-    //MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
-    
+    // MARK: - gesture recognizers
+
+    @objc func tap(_ tapGestureRecognizer: UITapGestureRecognizer) {
+        self.searchController.searchBar.resignFirstResponder()
+    }
+
     @objc func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
         
         if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
-            
             if let meal = mealSelectedByLongPressGestureRecognizer(longPressGestureRecognizer) {
-                
                 print("Selected meal is \(meal)")
-                
                 let alertController = UIAlertController(title: "Mahlzeit", message: "Diese Mahlzeit bearbeiten", preferredStyle: .actionSheet)
                 
                 alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
@@ -537,6 +425,9 @@ enum Item {
             }
         }
     }
+
+    
+    //MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
     
     func mealSelectedByLongPressGestureRecognizer(_ longPressGestureRecognizer: UIGestureRecognizer) -> Meal? {
         let touchPoint = longPressGestureRecognizer.location(in: self.view)
@@ -552,14 +443,10 @@ enum Item {
     
     func createRecipe(_ meal: Meal) {
         //        print("All recipes so far:")
-        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext)
-        //            .map{print("A recipe: \($0)")}
-        
+        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext).map{print("A recipe: \($0)")}
         _ = Recipe.fromMeal(meal, inManagedObjectContext: managedObjectContext)
-        
         //        print("All recipes after having created a new one:")
-        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext)
-        //            .map{print("A recipe: \($0)")}
+        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext).map{print("A recipe: \($0)")}
     }
     
     
@@ -626,8 +513,6 @@ enum Item {
     
     func syncMealFromHealthKit(_ meal: Meal) {
         
-        //        healthManager.syncMealFromHealthKit(meal)
-        
         var dictionary = [String: Double?]()
         var energyConsumed: Double?
         var carbohydrates: Double?
@@ -675,6 +560,37 @@ enum Item {
             });
         });
         print("The dictionary in meals: \(String(describing: dictionary))")
+    }
+    
+
+    //MARK: - fetched results controller
+    
+    func fetchMealIngredients() {
+
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient") // old style needes for fetched results controller
+        request.predicate = searchFilter.predicateForMealOrRecipeIngredientsWithSearchText(self.searchController.searchBar.text)
+        request.fetchBatchSize = 100
+        request.includesPropertyValues = false
+        request.returnsObjectsAsFaults = true
+        //        request.returnsObjectsAsFaults = false  // Speeds up a little bit in our case
+        request.fetchLimit = defaultFetchLimit                 // Speeds up a lot, especially inital loading of this view controller, but needs care
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "meal.dateOfCreation", ascending: false),
+            NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
+        ]
+        
+        self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
+        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: nil)
+        
+        // Make the newest meal the currentMeal (the one and only, to which foods are added)
+        if let mealIngredient = self.fetchedResultsController.fetchedObjects?.first as? MealIngredient {
+            currentMeal = mealIngredient.meal
+            print("Did set current meal.")
+        } else {
+            currentMeal = nil
+            print("Fetched zero objects and result is zero or nil.")
+            print("Did set current meal to nil.")
+        }
     }
     
     

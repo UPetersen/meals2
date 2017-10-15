@@ -26,7 +26,6 @@ import CoreData
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-
         return self.fetchedResultsController.sections?[section].name 
     }
     
