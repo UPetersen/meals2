@@ -21,7 +21,6 @@ extension Group {
         // returns the group matching the group character in the bls-key-string for the current food. E.g. the group with name "Brot und Kleingebäck" (which has the key "B") will be returned for the food with key "B105100" where the first character denotes the group and is a "B"
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Group")
         request.predicate = NSPredicate(format: "key = %@", argumentArray: [key])
-        //        request.predicate = NSPredicate(format: "key = '\(key)'")
         
         do {
             if let groups = try context.fetch(request) as? [Group] {

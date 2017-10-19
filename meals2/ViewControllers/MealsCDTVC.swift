@@ -25,7 +25,8 @@ enum Item {
         case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
         case ShowMealFormTVC         = "Segue MealsCDTVC to MealFormTVC"
         case ShowMealDetails         = "Segue MealsCDTVC to MealDetailTVC"
-        case ShowFoodListListsCDTVC  = "Segue MealsCDTVC to FoodListListsCDTVC"
+        case ShowFavoriteSearchCDTVC = "Segue MealsCDTVC to FavoriteSearchCDTVC"
+        case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
     }
     
     var persistentContainer: NSPersistentContainer!
@@ -35,8 +36,8 @@ enum Item {
     var defaultFetchLimit = 200                      // the number of objects normally fetched
     let loadMoreDataText = "Alle Daten laden ..."   // text displayed in the last cell instead of meal ingredient data
     
-    var currentMeal: Meal!
-    var currentMealIngredient: MealIngredient!
+    weak var currentMeal: Meal!
+    weak var currentMealIngredient: MealIngredient!
     
     // HealthKit
     let healthManager: HealthManager = HealthManager()
@@ -119,7 +120,7 @@ enum Item {
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
         
-        fetchMealIngredients()
+//        fetchMealIngredients()
         setFirstMealAsCurrentMeal()
     }
     
@@ -155,26 +156,25 @@ enum Item {
     }
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        
         // Headerview color and font
         view.tintColor = UIColor.gray
-        let headerView = view as! UITableViewHeaderFooterView
-        headerView.textLabel?.textColor = UIColor.white
-        headerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(14))
-        headerView.textLabel?.textAlignment = NSTextAlignment.center
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = UIColor.white
+            headerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(14))
+            headerView.textLabel?.textAlignment = NSTextAlignment.center
+        }
     }
     
     override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        
         // Footerview color and font
         view.tintColor = UIColor.gray
-        let footerView = view as! UITableViewHeaderFooterView
-        footerView.textLabel?.textColor = UIColor.white
-        footerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(17))
+        if let footerView = view as? UITableViewHeaderFooterView {
+            footerView.textLabel?.textColor = UIColor.white
+            footerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(17))
+        }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
         if let sectionInfo: NSFetchedResultsSectionInfo = self.fetchedResultsController.sections?[section] {
             if let mealIngredient: MealIngredient = sectionInfo.objects?.first as? MealIngredient,
                 let date = mealIngredient.meal?.dateOfCreation as Date? {
@@ -270,8 +270,8 @@ enum Item {
         
         // Falls letzte Zelle in letzter section: Display "Weitere Daten laden ..."
         if isLastCellInTableView(tableView, forIndexPath: indexPath) {
-            cell.textLabel!.text = loadMoreDataText
-            cell.detailTextLabel!.text = " "
+            cell.textLabel?.text = loadMoreDataText
+            cell.detailTextLabel?.text = " "
             //            cell.accessoryType = UITableViewCellAccessoryType.None
             
         } else if let mealIngredient: MealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
@@ -344,8 +344,14 @@ enum Item {
 //                if let viewController = segue.destination  as? AmountSettingTVC { // Change amount of meal ingredient
 //                    viewController.item = .isMealIngredient(currentMealIngredient)
 //                }
-            case .ShowFoodListListsCDTVC:
-                if let viewController = segue.destination as? FoodListListsCDTVC {
+            case .ShowFavoriteSearchCDTVC:
+                if let viewController = segue.destination as? FavoriteSearchCDTVC {
+                    viewController.foodListType = FoodListType.Favorites
+                    viewController.meal = currentMeal
+                    viewController.managedObjectContext = managedObjectContext
+                }
+            case .ShowGeneralSearchCDTVC:
+                if let viewController = segue.destination as? GeneralSearchCDTVC {
                     viewController.foodListType = FoodListType.Favorites
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext

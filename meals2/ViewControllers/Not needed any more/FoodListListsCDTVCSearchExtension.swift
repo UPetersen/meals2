@@ -5,11 +5,11 @@
 //  Created by Uwe Petersen on 15.10.17.
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
-
+/*
 import Foundation
 import UIKit
 
-extension FoodListBaseCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
+extension FavoriteSearchCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
     
     // MARK: - Search results updating protocol
     
@@ -32,3 +32,4 @@ extension FoodListBaseCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
     }
     
 }
+*/

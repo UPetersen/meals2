@@ -71,13 +71,14 @@
                         <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="4Fi-N4-4ny"/>
                         <barButtonItem systemItem="bookmarks" id="Yg2-j1-NQP">
                             <connections>
-                                <segue destination="som-hD-iFe" kind="show" identifier="Segue MealsCDTVC to FoodListListsCDTVC" id="Jd3-bG-Cfc"/>
+                                <segue destination="som-hD-iFe" kind="show" identifier="Segue MealsCDTVC to FavoriteSearchCDTVC" id="Jd3-bG-Cfc"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="H3x-ai-igp"/>
                         <barButtonItem systemItem="search" id="IJl-YP-oe0">
                             <connections>
                                 <action selector="searchButtonSelected:" destination="gLi-Et-HTD" id="5yf-ey-lAx"/>
+                                <segue destination="V9N-M6-VOa" kind="show" identifier="Segue MealsCDTVC to GeneralSearchCDTVC" id="sSa-wD-Gzb"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="k3B-4s-Pos"/>
@@ -98,13 +99,13 @@
         <!--Favoriten-->
         <scene sceneID="vcA-A8-gAr">
             <objects>
-                <tableViewController id="som-hD-iFe" customClass="FoodListListsCDTVC" sceneMemberID="viewController">
+                <tableViewController id="som-hD-iFe" customClass="FavoriteSearchCDTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hNy-pi-eCj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Favorite Cell" textLabel="yR9-jz-ZY8" style="IBUITableViewCellStyleDefault" id="rTq-HD-6vg">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FavoriteSearchCell" textLabel="yR9-jz-ZY8" style="IBUITableViewCellStyleDefault" id="rTq-HD-6vg">
                                 <rect key="frame" x="0.0" y="22" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rTq-HD-6vg" id="wb6-Dw-RzF">
@@ -152,7 +153,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u9Y-wG-by3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1567" y="-1084"/>
+            <point key="canvasLocation" x="1566" y="-1407"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="sxc-rJ-7gd">
@@ -176,51 +177,34 @@
             </objects>
             <point key="canvasLocation" x="-161" y="-1084"/>
         </scene>
-        <!--Food List Lists SearchCDTVC-->
-        <scene sceneID="wMl-7O-FLQ">
+        <!--Alle-->
+        <scene sceneID="PPv-gA-4aA">
             <objects>
-                <tableViewController storyboardIdentifier="SearchResultsViewControllerStoryboardIdentifier" id="S3m-bv-wCs" customClass="FoodListListsSearchCDTVC" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="CUH-Al-rOb">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                <tableViewController id="V9N-M6-VOa" customClass="GeneralSearchCDTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="p95-gd-nSn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <stackView key="tableHeaderView" opaque="NO" contentMode="scaleToFill" distribution="fillEqually" id="xR6-gB-IPU">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EHA-2j-Ebf">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                    <items>
-                                        <barButtonItem style="plain" systemItem="flexibleSpace" id="glO-oQ-1Bh"/>
-                                        <barButtonItem title="foodList" id="Rxc-ZD-I3O">
-                                            <connections>
-                                                <action selector="foodListButtonSelected:" destination="S3m-bv-wCs" id="Kz1-MM-069"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Kfm-GQ-KBM"/>
-                                        <barButtonItem title="sortList" id="lJ6-aL-16a">
-                                            <connections>
-                                                <action selector="sortListButtonSelected:" destination="S3m-bv-wCs" id="7L5-Qu-N4e"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Lsh-ms-J6f"/>
-                                    </items>
-                                </toolbar>
-                            </subviews>
-                        </stackView>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="List Cell" textLabel="0pH-b2-N41" style="IBUITableViewCellStyleDefault" id="fBa-wi-Ywh">
-                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="GeneralSearchCell" textLabel="CXn-dm-n7L" detailTextLabel="ail-uc-Zkq" style="IBUITableViewCellStyleSubtitle" id="iTV-f2-JGo">
+                                <rect key="frame" x="0.0" y="22" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fBa-wi-Ywh" id="azo-dr-aUa">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iTV-f2-JGo" id="zdd-Jz-tzb" customClass="I">
                                     <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0pH-b2-N41">
-                                            <rect key="frame" x="16" y="0.0" width="324" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CXn-dm-n7L">
+                                            <rect key="frame" x="16" y="5" width="33.5" height="20.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ail-uc-Zkq">
+                                            <rect key="frame" x="16" y="25.5" width="44" height="14.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -228,19 +212,36 @@
                             </tableViewCell>
                         </prototypes>
                         <connections>
-                            <outlet property="dataSource" destination="S3m-bv-wCs" id="umF-y6-qtL"/>
-                            <outlet property="delegate" destination="S3m-bv-wCs" id="WOT-eh-JdP"/>
+                            <outlet property="dataSource" destination="V9N-M6-VOa" id="sSs-VB-cAx"/>
+                            <outlet property="delegate" destination="V9N-M6-VOa" id="VFn-iF-Ex7"/>
                         </connections>
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="neQ-FT-C2H"/>
+                        <barButtonItem title="FoodListType" id="kHj-qH-goa">
+                            <connections>
+                                <action selector="foodListTypeButtonSelected:" destination="V9N-M6-VOa" id="Bzz-LJ-sw2"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="As2-xG-mvZ"/>
+                        <barButtonItem title="FoodListSortRule" id="n6k-aF-E4d">
+                            <connections>
+                                <action selector="foodListSortRuleButtonSelected:" destination="V9N-M6-VOa" id="dGx-7W-xTk"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="y5f-3G-W6O"/>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Alle" id="roy-9A-A8v"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="foodListButton" destination="Rxc-ZD-I3O" id="26B-7h-0lX"/>
-                        <outlet property="sortListButton" destination="lJ6-aL-16a" id="qte-Pw-97L"/>
+                        <outlet property="foodListSortRuleButton" destination="n6k-aF-E4d" id="6Ok-cN-iXj"/>
+                        <outlet property="foodListTypeButton" destination="kHj-qH-goa" id="PcJ-CJ-GoU"/>
                     </connections>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zAD-xF-UDJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b8e-gg-UHd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="657" y="-324"/>
+            <point key="canvasLocation" x="1566" y="-718"/>
         </scene>
     </scenes>
 </document>

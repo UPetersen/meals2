@@ -166,11 +166,8 @@ extension Food {
     /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
     /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
     func dispStringForNutrientWithKey(_ key: String, formatter: NumberFormatter, showUnit: Bool = true) -> String? {
-        if self.managedObjectContext != nil  {
-            if let nutrient = Nutrient.nutrientForKey(key, inManagedObjectContext: self.managedObjectContext!) {
-                return nutrient.dispStringForValue(self.doubleForKey(nutrient.key!), formatter: formatter, showUnit: showUnit) ?? nil
-            }
-            return nil
+        if let managedObjectContext = self.managedObjectContext, let nutrient = Nutrient.nutrientForKey(key, inManagedObjectContext: managedObjectContext) {
+            return nutrient.dispStringForValue(self.doubleForKey(nutrient.key!), formatter: formatter, showUnit: showUnit) ?? nil
         }
         return nil
     }

@@ -12,7 +12,6 @@ import CoreData
 extension Event {
     
     override public func awakeFromInsert() {
-        
         // Set date automatically when object ist created
         super.awakeFromInsert()
         self.timeStamp = NSDate()

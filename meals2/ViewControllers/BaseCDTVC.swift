@@ -10,9 +10,9 @@ import Foundation
 import UIKit
 import CoreData
 
-@objc (BaseCDTVC) class BaseCDTVC: UITableViewController, NSFetchedResultsControllerDelegate {
+@objc class BaseCDTVC: UITableViewController, NSFetchedResultsControllerDelegate {
     
-    let TableViewCellStyle = UITableViewCellStyle.subtitle // Needed, if a new cell has to be created
+//    let TableViewCellStyle = UITableViewCellStyle.subtitle // Needed, if a new cell has to be created
 
     // MARK: - Table View
     
@@ -28,26 +28,6 @@ import CoreData
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return self.fetchedResultsController.sections?[section].name 
     }
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    
-//    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-//        if editingStyle == .Delete {
-//            let context = self.fetchedResultsController.managedObjectContext
-//            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as NSManagedObject)
-//            
-//            var error: NSError? = nil
-//            if !context.save(&error) {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                //println("Unresolved error \(error), \(error.userInfo)")
-//                abort()
-//            }
-//        }
-//    }
     
     
     // MARK: - Fetched results controller

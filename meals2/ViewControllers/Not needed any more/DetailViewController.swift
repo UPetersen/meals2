@@ -5,7 +5,7 @@
 //  Created by Uwe Petersen on 01.10.17.
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
-
+/*
 import UIKit
 
 class DetailViewController: UIViewController {
@@ -42,4 +42,5 @@ class DetailViewController: UIViewController {
 
 
 }
-
+ 
+*/
