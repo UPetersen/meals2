@@ -121,8 +121,12 @@ import CoreData
         self.fetchFoods()
     }
     
+
+    //MARK: - toolbar items and alert controller for foodListType and foodListSortRule
     
-    //MARK: - toolbar and alert controller for foodListType and foodListSortRule
+    @IBAction func doneButtonSelected(_ sender: UIBarButtonItem) {
+        self.navigationController?.popViewController(animated: true)
+    }
     
     @IBAction func foodListTypeButtonSelected(_ sender: UIBarButtonItem) {
         let handler: ((UIAlertAction) -> Void)? = {[unowned self] action in
@@ -180,7 +184,14 @@ import CoreData
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
         request.sortDescriptors = foodListSortRule.sortDescriptors
+
+        // Performance optimation for reading and saving of data
         request.fetchBatchSize = 10
+        request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
+        request.includesPropertyValues = true   // usefull only, when only relevant properties are read
+        let propertiesToFetch = ["name", "group", "totalEnergyCals", "totalCarb", "totalProtein", "totalFat", "carbFructose", "carbGlucose"]   // read only certain properties (others are fetched automatically on demand)
+        request.propertiesToFetch = propertiesToFetch
+
         
         // TODO: avoid the need of the following lines and fix the error with the "Ä" in the name
         sectionNameKeyPath = foodListSortRule.sectionNameKeyPath

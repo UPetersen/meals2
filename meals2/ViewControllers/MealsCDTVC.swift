@@ -12,19 +12,14 @@ import CoreData
 import HealthKit
 
 
-enum Item {
-    case isFood(Food, Meal?)
-    case isMealIngredient(MealIngredient)
-    case isHasNutrients(HasNutrients)
-}
 
 @objc (MealsCDTVC) final class MealsCDTVC : BaseCDTVC {
     
     enum SegueIdentifier: String {
-        case ShowFoodDetailTVC       = "Segue MealsCDTVC to FoodDetailTVC"
+        case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
         case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
-        case ShowMealFormTVC         = "Segue MealsCDTVC to MealFormTVC"
-        case ShowMealDetails         = "Segue MealsCDTVC to MealDetailTVC"
+        case ShowMealDetailTVC       = "Segue MealsCDTVC to MealDetailTVC"
+        case ShowMealEditTVC         = "Segue MealsCDTVC to MealEditTVC"
         case ShowFavoriteSearchCDTVC = "Segue MealsCDTVC to FavoriteSearchCDTVC"
         case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
     }
@@ -32,12 +27,13 @@ enum Item {
     var persistentContainer: NSPersistentContainer!
     var managedObjectContext: NSManagedObjectContext!
     
-    // For speed reasons, only defaultFetchLimit meal ingredient objects are fetched and the last cell displays the loadMoreDataText text
-    var defaultFetchLimit = 200                      // the number of objects normally fetched
+    // For speed reasons, only defaultFetchLimit meal ingredient objects are fetched
+    // More data will be fetched automatically each time when the user scrolls to the end of the table view
+    var defaultFetchLimit = 50                     // the number of objects normally fetched
+    var defaultFetchLimitIncrement = 50            // the number of objects additionally fetched when more data is requested
     let loadMoreDataText = "Alle Daten laden ..."   // text displayed in the last cell instead of meal ingredient data
     
     weak var currentMeal: Meal!
-    weak var currentMealIngredient: MealIngredient!
     
     // HealthKit
     let healthManager: HealthManager = HealthManager()
@@ -86,6 +82,10 @@ enum Item {
         managedObjectContext = persistentContainer.viewContext
         fetchMealIngredients()
         
+        // set automatic row heights (could also be handled via tableView delegate
+        tableView.estimatedRowHeight = CGFloat(44)
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
@@ -114,16 +114,13 @@ enum Item {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
         super.viewWillAppear(animated)
         
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
         
-//        fetchMealIngredients()
         setFirstMealAsCurrentMeal()
     }
-    
 
     
     // MARK: - Helper stuff: Notifications
@@ -133,20 +130,9 @@ enum Item {
     }
     
     
-    // MARK: - UITableViewDelegate methods for automatic row heights
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-    }
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        //        return UITableViewAutomaticDimension
-        return CGFloat(44)
-    }
-    
     // MARK: - UITableView colors for headers, footers and cells
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
         // backgrond color for current meal (that is the first section)
         if indexPath.section == 0 {
             cell.backgroundColor = UIColor.clear
@@ -207,6 +193,7 @@ enum Item {
         return (formatter.string(from: NSNumber(value: number.doubleValue / divisor)) ?? "nan")
     }
     
+    
     // MARK: - UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -215,7 +202,6 @@ enum Item {
     
     /// Move a mealIngredient from one meal (i.e. section) to another meal (section)
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        
         if let mealIngredient = self.fetchedResultsController.object(at: sourceIndexPath) as? MealIngredient, let oldMeal = mealIngredient.meal {
 
             if let destinationSectionInfo = self.fetchedResultsController.sections?[destinationIndexPath.section], let newMeal = (destinationSectionInfo.objects?.first as? MealIngredient)?.meal {
@@ -241,7 +227,6 @@ enum Item {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        
         if editingStyle == UITableViewCellEditingStyle.delete {
             
             if let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient, let meal = mealIngredient.meal {
@@ -260,21 +245,29 @@ enum Item {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if needToFetchMoreData(for: tableView, withIndexPath: indexPath) {
+            defaultFetchLimit += defaultFetchLimitIncrement
+            fetchMealIngredients() 
+        }
         return mealIngredientCellForTableView(tableView, atIndexPath: indexPath)
+    }
+    
+    // Check if last cell in table view is displayed on screen and if number of fetched objects exceeds the fetch limit. If so, fetch more data
+    func needToFetchMoreData(for tableView: UITableView, withIndexPath indexPath: IndexPath) -> Bool {
+        if indexPath.section == tableView.numberOfSections-1 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1 {
+            if self.fetchedResultsController.fetchedObjects!.count >= defaultFetchLimit {
+                return true
+            }
+//            return true
+        }
+        return false
     }
     
     
     func mealIngredientCellForTableView(_ tableView: UITableView, atIndexPath indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "MealIngredient Cell", for: indexPath)
         
-        // Falls letzte Zelle in letzter section: Display "Weitere Daten laden ..."
-        if isLastCellInTableView(tableView, forIndexPath: indexPath) {
-            cell.textLabel?.text = loadMoreDataText
-            cell.detailTextLabel?.text = " "
-            //            cell.accessoryType = UITableViewCellAccessoryType.None
-            
-        } else if let mealIngredient: MealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
+        if let mealIngredient: MealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
             cell.textLabel?.text = mealIngredient.food?.name
             
             let amountString:  String = stringForNumber(mealIngredient.amount!, formatter: oneMaxDigitsNumberFormatter, divisor: 1.0)
@@ -297,53 +290,25 @@ enum Item {
     
     // MARK: - Navigation
     
-    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        
-        currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as! MealIngredient
-        performSegue(withIdentifier: SegueIdentifier.ShowAddFoodTVC.rawValue, sender: self)
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        // If last cell of tableView is selected and there are more cells, refetch table with all the data
-        if isLastCellInTableView(tableView, forIndexPath: indexPath) && defaultFetchLimit != 0 {
-            defaultFetchLimit = 0
-            fetchMealIngredients()
-            return
-        } else {
-            
-            currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as! MealIngredient
-            performSegue(withIdentifier: SegueIdentifier.ShowFoodDetailTVC.rawValue, sender: self)
-        }
-    }
-    
-    func isLastCellInTableView(_ tableView: UITableView, forIndexPath indexPath: IndexPath) -> Bool {
-        if indexPath.section == tableView.numberOfSections-1 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1 {
-            return true
-        }
-        return false
-    }
-    
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let identifier = segue.identifier, let segueIdentifier = SegueIdentifier(rawValue: identifier) {
             switch segueIdentifier {
-            case .ShowFoodDetailTVC:
-                break
-//                if let viewController = segue.destination  as? FoodDetailCDTVC {
-//                    let myFood:Food
-//                    if sender is FoodListListsSearchCDTVC {
-//                        myFood = (sender as! FoodListListsSearchCDTVC).currentFood  // food selected in list of search results
-//                    } else {
-//                        myFood = currentMealIngredient.food  // food selectet in list of mealIngredients
-//                    }
-//                    viewController.item = .isFood(myFood, currentMeal)
-//                }
-            case .ShowAddFoodTVC:
-                break
-//                if let viewController = segue.destination  as? AmountSettingTVC { // Change amount of meal ingredient
-//                    viewController.item = .isMealIngredient(currentMealIngredient)
-//                }
+            case .ShowFoodDetailCDTVC: // Cell selected, i.e. a meal ingredient: show details of the corresponding food
+                debugPrint(segue.destination)
+                if let viewController = segue.destination as? FoodDetailCDTVC,
+                    let cell = sender as? UITableViewCell,
+                    let indexPath = self.tableView.indexPath(for: cell),
+                    let currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
+                    let food = currentMealIngredient.food {
+                        viewController.item = .isFood(food, currentMeal)
+                }
+            case .ShowAddFoodTVC: // Accessory button selected, i. e. a Meal ingredient: change amount of the meal ingredient
+                if let viewController = segue.destination  as? AddFoodTVC,
+                    let cell = sender as? UITableViewCell,
+                    let indexPath = self.tableView.indexPath(for: cell),
+                    let currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
+                    viewController.item = .isMealIngredient(currentMealIngredient)
+                }
             case .ShowFavoriteSearchCDTVC:
                 if let viewController = segue.destination as? FavoriteSearchCDTVC {
                     viewController.foodListType = FoodListType.Favorites
@@ -356,28 +321,20 @@ enum Item {
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
                 }
-//                if let vc = segue.destination as? UINavigationController, let viewController = vc.topViewController as? FoodListListsCDTVC {
-//                    viewController.foodListType = FoodListType.Favorites
-//                    viewController.meal = currentMeal
-//                    viewController.managedObjectContext = managedObjectContext
-//                }
-            case .ShowMealFormTVC:
+            case .ShowMealEditTVC:
+                if let viewController = segue.destination as? MealEditTVC {
+                    viewController.meal = currentMeal
+                    viewController.managedObjectContext = managedObjectContext
+                }
                 break
-            case .ShowMealDetails:
+            case .ShowMealDetailTVC:
                 break
-//                if let viewController = segue.destination as? MealDetailTVC {
-//                    viewController.meal = currentMeal
-//                    viewController.managedObjectContext = managedObjectContext
-//                }
             }
         }
     }
     
-    //MARK: - toolbar
+    //MARK: - toolbar (items not handled by direct segues)
     
-    
-    @IBAction func searchButtonSelected(_ sender: UIBarButtonItem) {
-    }
     
     @IBAction func addButtonSelected(_ sender: UIBarButtonItem) {
         // Create a new Meal
@@ -409,23 +366,23 @@ enum Item {
         if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
             if let meal = mealSelectedByLongPressGestureRecognizer(longPressGestureRecognizer) {
                 print("Selected meal is \(meal)")
-                let alertController = UIAlertController(title: "Mahlzeit", message: "Diese Mahlzeit bearbeiten", preferredStyle: .actionSheet)
+                let alertController = UIAlertController(title: "Mahlzeit", message: "Optionen für die ausgewhälte Mahlzeit.", preferredStyle: .actionSheet)
                 
                 alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
-                alertController.addAction( UIAlertAction(title: "Nährwerte", style: .default) {[unowned self] action in self.mealDetail(meal) })
+                alertController.addAction( UIAlertAction(title: "Nährwerte anzeigen", style: .default) {[unowned self] action in self.mealDetail(meal) })
                 alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyMeal(meal)} )
-                alertController.addAction( UIAlertAction(title: "Ändern", style: .default) {[unowned self] (action) in self.editMeal(meal) })
-                alertController.addAction( UIAlertAction(title: "HealthKit autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
+                alertController.addAction( UIAlertAction(title: "Ändern (Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
+                alertController.addAction( UIAlertAction(title: "Health autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
                 alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.syncToHealth(meal) })
-                alertController.addAction( UIAlertAction(title: "Alle Mahlzeiten zu Health übertragen", style: .default) {[unowned self] (action) in self.syncAllmealsToHealthKit() })
-                alertController.addAction( UIAlertAction(title: "Mahlzeit nach Datum lesen", style: .default) {[unowned self] (action) in self.syncMealFromHealthKit(meal) })
-                alertController.addAction( UIAlertAction(title: "Rezept hieraus", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
+//                alertController.addAction( UIAlertAction(title: "Alle Mahlzeiten zu Health übertragen", style: .default) {[unowned self] (action) in self.syncAllmealsToHealthKit() })
+//                alertController.addAction( UIAlertAction(title: "Mahlzeit nach Datum lesen", style: .default) {[unowned self] (action) in self.syncMealFromHealthKit(meal) })
+                alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
                 alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
                 
-                // For iPad only: must be popover and have a presentation controller
-                alertController.modalPresentationStyle = UIModalPresentationStyle.overFullScreen  // for iPad only
-                alertController.popoverPresentationController?.sourceView = self.view
-                alertController.popoverPresentationController?.sourceRect = CGRect(origin: longPressGestureRecognizer.location(in: longPressGestureRecognizer.view), size: CGSize(width: 1, height: 1))
+//                // For iPad only: must be popover and have a presentation controller
+//                alertController.modalPresentationStyle = UIModalPresentationStyle.overFullScreen  // for iPad only
+//                alertController.popoverPresentationController?.sourceView = self.view
+//                alertController.popoverPresentationController?.sourceRect = CGRect(origin: longPressGestureRecognizer.location(in: longPressGestureRecognizer.view), size: CGSize(width: 1, height: 1))
                 
                 present(alertController, animated: true) {print("Presented Alert View Controller in \(#file)")}
             }
@@ -464,23 +421,27 @@ enum Item {
             print("Will delete the meal \(meal)")
             self.managedObjectContext.delete(meal)})
         present(alert, animated: true, completion: nil)
+        healthManager.deleteMeal(meal)
     }
     
     func mealDetail(_ meal: Meal) {
         currentMeal = meal
-        performSegue(withIdentifier: SegueIdentifier.ShowMealDetails.rawValue, sender: self)
+        performSegue(withIdentifier: SegueIdentifier.ShowMealDetailTVC.rawValue, sender: self)
     }
     
     func copyMeal(_ meal: Meal) {
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             currentMeal = newMeal
+            self.tableView.reloadData() // scrolls to top
+//            tableView.setContentOffset(CGPoint.zero, animated: true)
+//            self.tableView.scrollToRow(at:  IndexPath(row: 0, section: 0), at: .top, animated: true);
         }
     }
     
     func editMeal(_ meal: Meal) {
         currentMeal = meal
-        performSegue(withIdentifier: SegueIdentifier.ShowMealFormTVC.rawValue, sender: self)
+        performSegue(withIdentifier: SegueIdentifier.ShowMealEditTVC.rawValue, sender: self)
     }
     
     
@@ -575,11 +536,16 @@ enum Item {
 
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient") // old style needes for fetched results controller
         request.predicate = searchFilter.predicateForMealOrRecipeIngredientsWithSearchText(self.searchController.searchBar.text)
-        request.fetchBatchSize = 100
-        request.includesPropertyValues = false
-        request.returnsObjectsAsFaults = true
-        //        request.returnsObjectsAsFaults = false  // Speeds up a little bit in our case
-        request.fetchLimit = defaultFetchLimit                 // Speeds up a lot, especially inital loading of this view controller, but needs care
+
+        // Performance optimation for reading and saving of data
+        request.fetchBatchSize = 20
+        request.fetchLimit = defaultFetchLimit  // Speeds up a lot, especially inital loading of this view controller, but needs care
+        request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
+//        request.includesPropertyValues = false  // Load property values only when used/needed -> faster but more frequent disk reads
+//        request.includesPropertyValues = true   // usefull only, when only relevant properties are read
+//        let thePropertiesToFetch = ["amount"]   // read only certain properties (others are fetched automatically on demand)
+//        request.propertiesToFetch = thePropertiesToFetch
+        
         request.sortDescriptors = [
             NSSortDescriptor(key: "meal.dateOfCreation", ascending: false),
             NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))

@@ -14,37 +14,7 @@ class HealthManager {
     
     let healthKitStore:HKHealthStore = HKHealthStore()
     
-    func authorizeHealthKit(_ completion: ((_ success: Bool, _ error: NSError?) -> Void)!)
-    {
-//        // 1. Set the types you want to read from HK Store
-//        let healthKitTypesToRead = [
-//            HKObjectType.characteristicTypeForIdentifier(HKCharacteristicTypeIdentifierDateOfBirth),
-//            HKObjectType.characteristicTypeForIdentifier(HKCharacteristicTypeIdentifierBloodType),
-//            HKObjectType.characteristicTypeForIdentifier(HKCharacteristicTypeIdentifierBiologicalSex),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMass),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeight),
-//            HKObjectType.workoutType(),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodGlucose),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryEnergyConsumed),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryCarbohydrates),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryProtein),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryFatTotal)
-//            ]
-//        
-//        // 2. Set the types you want to write to HK Store
-//        let healthKitTypesToWrite: [HKObjectType!] = [
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBodyMassIndex),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierActiveEnergyBurned),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDistanceWalkingRunning),
-//            HKQuantityType.workoutType(),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierStepCount),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierBloodGlucose),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryEnergyConsumed),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryCarbohydrates),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryProtein),
-//            HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierDietaryFatTotal)
-//        ]
+    func authorizeHealthKit(_ completion: ((_ success: Bool, _ error: NSError?) -> Void)!) {
         
         // 1. and 2. Set the types you want to share and read from HK Store
         let healthKitSampleTypesToShare = [

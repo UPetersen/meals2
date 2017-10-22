@@ -31,20 +31,17 @@ import CoreData
         return cell
     }
     
+    
     // MARK: - Navigation
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "Segue NewFavoriteCDTVC to FoodDetailTVC", sender: self)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        //        if segue.identifier == "Segue NewFavoriteCDTVC to FoodDetailTVC" {
-        //            let viewController = segue.destination as! FoodDetailCDTVC
-        //            let food = self.fetchedResultsController.object(at: self.tableView.indexPathForSelectedRow!) as! Food
-        //
-        //            viewController.item = .isFood(food, meal)
-        //        }
+        if segue.identifier == "Segue FavoriteSearchCDTVC to FoodDetailCDTVC" {
+            if let viewController = segue.destination as? FoodDetailCDTVC,
+                let indexPath = self.tableView.indexPathForSelectedRow,
+                let food = self.fetchedResultsController.object(at: indexPath) as? Food {
+                viewController.item = .isFood(food, meal)
+            }
+        }
     }
     
 }

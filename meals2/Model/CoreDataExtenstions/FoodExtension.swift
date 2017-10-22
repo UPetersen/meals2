@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import HealthKit
 
-extension Food {
+extension Food: HasNutrients {
     
     override public func awakeFromInsert() {
         
@@ -20,11 +20,14 @@ extension Food {
         self.dateOfLastModification = Date() as NSDate
     }
     
-    /// Amount of a Food is 100 g, cause this is everything in this database refers to
-    var amount: Double {
-        return 100.0
+    // To comply with HasNutriens protocol. Amount of a Food is 100 g, cause this is everything in this database refers to
+//    var amount: Double {
+//        return 100.0
+//    }
+    var amount: NSNumber? {
+        return NSNumber(value: 100.0) // Changed type to NSNumber? with iOS 11
     }
-    
+
     class func newFood(inManagedObjectContext context: NSManagedObjectContext) -> Food {
         let newFood = Food(context: context)
         newFood.name = "Neues Lebensmittel"

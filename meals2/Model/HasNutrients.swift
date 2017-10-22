@@ -8,73 +8,23 @@
 
 import Foundation
 
-//@objc protocol HasNutrients {
-//
-//}
+// Some notes:
+//   @objc needed for
+//      a) optional requirements (i.e. a property that may be implemented but not needs to be implemented) and
+//      b) the ability to check for type conformity via "is", but
+//      c) then the protocol can be adopted by classes only
 
-/// Some notes:
-///   @objc needed for
-///      a) optional requirements (i.e. a property that may be implemented but not needs to be implemented) and
-///      b) the ability to check for type conformity via "is", but
-///      c) then the protocol can be adopted by classes only
-
-/// HasNutrients should be used for meals, meal ingredients, foods, and recipes
+/// Data type that provides the nutrients and their respecive amount contained
+/// in a food, meal or recipe. Amount means relative amount (per 100 grams) for food
+/// and absolute amount in the meal or recipe for meals an recipes.
 protocol HasNutrients {
     
-    var dateOfCreation: Date { get }
-    var amount: Double { get }
-    
+//    var dateOfCreation: Date { get }
+//    var amount: Double { get }
+    var dateOfCreation: NSDate? { get } // changed to NSDdate? as of iOS 11
+    var amount: NSNumber? { get }       // changed to NSNumber? as of iOS 11
+
     /// returns the double value for the nutrient with the key key as stored.
     /// Since all nutrients have a unit property this is with respect to this unit.
     func doubleForKey(_ key: String) -> Double?
-    
-}
-    
-protocol SomeOtherProtocolNotYetInUse {
-    /// overall amount (i.e. mass) of the item
-    var amount: Double { get } /// BUMMER: Food has no amount yet. Maybe this is the key to add it as property
-    
-    var dateOfCreation: Date { get }
-    
-    /// returns the double value for the nutrient in the stored unit (according to HKQuantity)
-    func doubleForNutrient(_ nutrient: Nutrient) -> Double?
-    
-    
-    /// MARK - these are just in Food yet:
-    
-    /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
-    /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
-    func dispStringForNutrient(_ nutrient: Nutrient, formatter: NumberFormatter, showUnit: Bool) -> String?     // Umbenennen in stringWithValueAndUnit oder so ähnlich?
-    
-    
-    
-    /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
-    /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
-    func dispStringForNutrientWithKey(_ key: String, formatter: NumberFormatter, showUnit: Bool) -> String?     // Umbenennen in stringWithValueAndUnit oder so ähnlich?
-    
-    
-    // These are in Nutrient and it should be checked, if the are placed there well:
-    
-    /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
-    /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
-    func valueForDisp(_ dispString: String, formatter: NumberFormatter) -> Double?
-    
-    /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
-    /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
-    func dispStringForValue(_ value: Double?, formatter: NumberFormatter, showUnit: Bool) -> String?
-    
-    /// Return the value as a String in the unit specified by hkDispUnit in nutrients, e.g. "12.3 µg"
-    /// If something fails, either nil or an empty unit string (e.g. "g") is returned, depending on showUnit
-    /// Example:
-    ///
-//    static func dispStringForNutrientWithKey(key: String, value: Double?, formatter: NSNumberFormatter, showUnit: Bool, inManagedObjectContext managedObjectContext: NSManagedObjectContext) -> String?
-    
-    
-    
-    
-    
-    /// Notes to remember:
-    /// Recipe not yet implemented at all, but probably pretty much the same as Meal
-    
-    
 }
