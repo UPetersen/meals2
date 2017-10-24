@@ -24,7 +24,8 @@ import CoreData
     override func viewDidLoad() {
         super.viewDidLoad()
         foodListType = FoodListType.All // start with all foods as list to search in
-        foodListTypeButton.title = foodListType.rawValue
+        foodListTypeButton.title = foodListType.rawValue + " ▾"
+
         title = foodListType.rawValue
         
         // FIXME: fetchFoods called twice by doing this here.

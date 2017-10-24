@@ -15,10 +15,10 @@ import CoreData
     var viewModel: FoodDetails! // the view model vor this view controller
     
     enum SegueIdentifier: String {
-        case ShowAdddFoodTVC = "Segue FoodDetailTVC to AddFoodTVC"
-        case ShowNewOrChangeFoodTVC = "SegueFootDetailToNewOrChangeFood"
-        case ShowRecipeFormTVC = "SegueFoodDetailToRecipeFormTVC"
-        case ShowRecipeDetail = "SegueFoodDetailToRecipeDetail"
+        case ShowAdddFoodTVC   = "Segue FoodDetailTVC to AddFoodTVC"
+        case ShowFoodEditTVC   = "Segue FoodDetailTVC to FoodEditTVC"
+        case ShowRecipeEditTVC = "Segue FoodDetailTVC to RecipeEditTVC"
+        case ShowRecipeDetail  = "SegueFoodDetailToRecipeDetail"
     }
     
     var managedObjectContext: NSManagedObjectContext!
@@ -110,22 +110,28 @@ import CoreData
                 } else {
                     fatalError("target view controller is not of desired class")
                 }
-//            case .ShowNewOrChangeFoodTVC:
-//                //                if let viewController = segue.destinationViewController.contentViewController as? NewOrChangeFood { // uses CS195P extension by Paul Hegarty
-//                if let viewController = segue.destination.contentViewController as? NewOrChangeFood { // uses CS195P extension by Paul Hegarty
-//                    managedObjectContext.undoManager = UndoManager()
-//                    managedObjectContext.undoManager?.beginUndoGrouping()
-//                    //                    viewController.item = .IsFood(food, meal)
-//                    viewController.item = .isFood(newFood, meal)
-//                } else {
-//                    fatalError("target view controller is not of desired class")
-//                }
+            case .ShowFoodEditTVC:
+                //                if let viewController = segue.destinationViewController.contentViewController as? NewOrChangeFood { // uses CS195P extension by Paul Hegarty
+                if let viewController = segue.destination as? FoodEditTVC { // uses CS195P extension by Paul Hegarty
+                    managedObjectContext.undoManager = UndoManager()
+                    managedObjectContext.undoManager?.beginUndoGrouping()
+                    //                    viewController.item = .IsFood(food, meal)
+                    viewController.item = .isFood(newFood, meal)
+                } else {
+                    fatalError("target view controller is not of desired class")
+                }
+            case .ShowRecipeEditTVC:
+                if let viewController = segue.destination as? RecipeEditTVC {
+                    print("Prepare for segue for RecipeFormTVC with recipe \(String(describing: food.recipe))")
+                    viewController.recipe = food.recipe
+                    viewController.managedObjectContext = managedObjectContext
+                }
 //            case .ShowRecipeFormTVC:
 //                break
-//                //                if let viewController = segue.destination as? RecipeFormTVC {
-//                //                    print("Prepare for segue for RecipeFormTVC with recipe \(String(describing: food.recipe))")
-//                //                    viewController.recipe = food.recipe
-//                //                    viewController.managedObjectContext = managedObjectContext
+//                                if let viewController = segue.destination as? RecipeFormTVC {
+//                                    print("Prepare for segue for RecipeFormTVC with recipe \(String(describing: food.recipe))")
+//                                    viewController.recipe = food.recipe
+//                                    viewController.managedObjectContext = managedObjectContext
 //            //                }
 //            case .ShowRecipeDetail:
 //                if let viewController = segue.destination.contentViewController as? RecipeDetail {
@@ -143,28 +149,27 @@ import CoreData
         }
     }
     
-    @IBAction func saveAndUnwindFromNewOrChangeFood(_ sender: UIStoryboardSegue)
+    @IBAction func saveAndUnwindFromFoodEditTVC(_ sender: UIStoryboardSegue)
     {
-//        if let sourceViewController = sender.source as? NewOrChangeFood {
-//            managedObjectContext.undoManager?.endUndoGrouping()
-//            managedObjectContext.undoManager?.removeAllActions()
-//            food = sourceViewController.food
-//            print("Unwinded with save for source \(sourceViewController)")
+        if let sourceViewController = sender.source as? FoodEditTVC {
+            managedObjectContext.undoManager?.endUndoGrouping()
+            managedObjectContext.undoManager?.removeAllActions()
+            food = sourceViewController.food
+            print("Unwinded with save for source \(sourceViewController)")
 //        } else {
 //            fatalError("Unwind action to \(#file) failed")
-//        }
-//        // Pull any data from the view controller which initiated the unwind segue.
+        }
     }
     
-    @IBAction func undoAndUnwindFromNewOrChangeFood(_ sender: UIStoryboardSegue)
+    @IBAction func undoAndUnwindFromFoodEditTVC(_ sender: UIStoryboardSegue)
     {
-//        if let sourceViewController = sender.source as? NewOrChangeFood {
-//            managedObjectContext.undoManager?.endUndoGrouping()
-//            managedObjectContext.undo()
-//            print("Unwinded with undo for source \(sourceViewController)")
+        if let sourceViewController = sender.source as? FoodEditTVC {
+            managedObjectContext.undoManager?.endUndoGrouping()
+            managedObjectContext.undo()
+            print("Unwinded with undo for source \(sourceViewController)")
 //        } else {
 //            fatalError("Unwind action to \(#file) failed")
-//        }
+        }
     }
     
     
@@ -216,7 +221,7 @@ import CoreData
     
     func changeFoodAction() {
         newFood = food
-        performSegue(withIdentifier: SegueIdentifier.ShowNewOrChangeFoodTVC.rawValue, sender: self)
+        performSegue(withIdentifier: SegueIdentifier.ShowFoodEditTVC.rawValue, sender: self)
     }
     
     func newFoodAction() {
@@ -224,19 +229,19 @@ import CoreData
         newFood = Food.newFood(inManagedObjectContext: managedObjectContext)
         loadData()
         saveContext()
-        performSegue(withIdentifier: SegueIdentifier.ShowNewOrChangeFoodTVC.rawValue, sender: self)
+        performSegue(withIdentifier: SegueIdentifier.ShowFoodEditTVC.rawValue, sender: self)
     }
     
     func copyFoodAction() {
         //        food  = Food.fromFood(food, inManagedObjectContext: managedObjectContext)
         newFood  = Food.fromFood(food, inManagedObjectContext: managedObjectContext)
         loadData()
-        performSegue(withIdentifier: SegueIdentifier.ShowNewOrChangeFoodTVC.rawValue, sender: self)
+        performSegue(withIdentifier: SegueIdentifier.ShowFoodEditTVC.rawValue, sender: self)
     }
     
     func recipeDetail() {
         if food.recipe != nil {
-            performSegue(withIdentifier: SegueIdentifier.ShowRecipeFormTVC.rawValue, sender: self)
+            performSegue(withIdentifier: SegueIdentifier.ShowRecipeEditTVC.rawValue, sender: self)
         } else {
             let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))

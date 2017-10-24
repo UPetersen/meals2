@@ -19,8 +19,8 @@ import UIKit
     @IBOutlet weak var stepper: UIStepper!
     
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+//    required init?(coder aDecoder: NSCoder) {
+//        super.init(coder: aDecoder)
+//    }
 
 }
