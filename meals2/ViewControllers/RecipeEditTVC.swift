@@ -16,6 +16,7 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
     var managedObjectContext: NSManagedObjectContext!
     var recipe: Recipe!
 
+    @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var commentTextView: UITextView!
     @IBOutlet weak var weightTextField: UITextField!
     
@@ -31,7 +32,7 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = recipe.food?.name
+        nameTextField.text = recipe.food?.name
         commentTextView.text = recipe.comment
         weightTextField.text = textForRecipe(amount: recipe.amount)
         
@@ -62,8 +63,11 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
         recipe.comment = textView.text
     }
     
+    @IBAction func nameTextFieldEditingChanged(_ sender: UITextField) {
+        recipe.food?.name = sender.text
+    }
     
-    @IBAction func textFieldEditingChanged(_ sender: UITextField) {
+    @IBAction func amountTextFieldEditingChanged(_ sender: UITextField) {
         print("\(String(describing: sender.text))")
         if let text = sender.text {
             recipe.amount = numberFormatter.number(from: text)

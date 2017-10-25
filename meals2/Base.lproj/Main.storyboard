@@ -660,10 +660,35 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
+                            <tableViewSection headerTitle="Name" footerTitle="   " id="e4N-xp-jzi">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="54" id="U77-iA-YKw">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="54"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="U77-iA-YKw" id="whx-Nh-PRt">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="53.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Name des Rezepts" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3aD-gR-f0g">
+                                                    <rect key="frame" x="8" y="11" width="359" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="nameTextFieldEditingChanged:" destination="KFM-aA-87T" eventType="editingChanged" id="XM8-Wp-zy8"/>
+                                                        <outlet property="delegate" destination="KFM-aA-87T" id="31R-9t-5Sl"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                             <tableViewSection headerTitle="Kommentar" footerTitle=" " id="PdV-go-LBR">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="183" id="R6n-7G-EZ3">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="183"/>
+                                        <rect key="frame" x="0.0" y="138" width="375" height="183"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R6n-7G-EZ3" id="eE4-7B-mV0">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="182.5"/>
@@ -687,7 +712,7 @@
                             <tableViewSection headerTitle="Gewicht" footerTitle="Das Gewicht aller Rohzutaten beträgt xxxg." id="DVm-JV-vIa">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="54" id="LAW-jJ-AlY">
-                                        <rect key="frame" x="0.0" y="267" width="375" height="54"/>
+                                        <rect key="frame" x="0.0" y="377" width="375" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="LAW-jJ-AlY" id="WYY-Uf-Dye">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="53.5"/>
@@ -707,7 +732,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
                                                     <connections>
-                                                        <action selector="textFieldEditingChanged:" destination="KFM-aA-87T" eventType="editingChanged" id="Xuo-7c-GAF"/>
+                                                        <action selector="amountTextFieldEditingChanged:" destination="KFM-aA-87T" eventType="editingChanged" id="Nxt-hB-NLw"/>
                                                         <outlet property="delegate" destination="KFM-aA-87T" id="miM-aO-t8F"/>
                                                     </connections>
                                                 </textField>
@@ -724,12 +749,13 @@
                     </tableView>
                     <connections>
                         <outlet property="commentTextView" destination="JM0-pt-wzU" id="7NQ-40-RDZ"/>
+                        <outlet property="nameTextField" destination="3aD-gR-f0g" id="9aW-bT-LtE"/>
                         <outlet property="weightTextField" destination="0M1-hE-Uxf" id="8lZ-8Z-82b"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="edD-Ln-nef" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3798" y="-1974"/>
+            <point key="canvasLocation" x="3797.5999999999999" y="-1974.0629685157423"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
