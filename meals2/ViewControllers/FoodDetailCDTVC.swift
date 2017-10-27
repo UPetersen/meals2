@@ -18,7 +18,6 @@ import CoreData
         case ShowAdddFoodTVC   = "Segue FoodDetailTVC to AddFoodTVC"
         case ShowFoodEditTVC   = "Segue FoodDetailTVC to FoodEditTVC"
         case ShowRecipeEditTVC = "Segue FoodDetailTVC to RecipeEditTVC"
-        case ShowRecipeDetail  = "SegueFoodDetailToRecipeDetail"
     }
     
     var managedObjectContext: NSManagedObjectContext!
@@ -126,23 +125,6 @@ import CoreData
                     viewController.recipe = food.recipe
                     viewController.managedObjectContext = managedObjectContext
                 }
-//            case .ShowRecipeFormTVC:
-//                break
-//                                if let viewController = segue.destination as? RecipeFormTVC {
-//                                    print("Prepare for segue for RecipeFormTVC with recipe \(String(describing: food.recipe))")
-//                                    viewController.recipe = food.recipe
-//                                    viewController.managedObjectContext = managedObjectContext
-//            //                }
-//            case .ShowRecipeDetail:
-//                if let viewController = segue.destination.contentViewController as? RecipeDetail {
-//                    managedObjectContext.undoManager = UndoManager()
-//                    managedObjectContext.undoManager?.beginUndoGrouping()
-//                    viewController.date = food.recipe?.dateOfCreation
-//                    viewController.commentText = food.recipe?.comment
-//                }
-//            }
-                default:
-                    break
             }
         } else {
             fatalError("Segue \(String(describing: segue.identifier))" + " not yet handled")
@@ -156,8 +138,6 @@ import CoreData
             managedObjectContext.undoManager?.removeAllActions()
             food = sourceViewController.food
             print("Unwinded with save for source \(sourceViewController)")
-//        } else {
-//            fatalError("Unwind action to \(#file) failed")
         }
     }
     
@@ -167,36 +147,7 @@ import CoreData
             managedObjectContext.undoManager?.endUndoGrouping()
             managedObjectContext.undo()
             print("Unwinded with undo for source \(sourceViewController)")
-//        } else {
-//            fatalError("Unwind action to \(#file) failed")
         }
-    }
-    
-    
-    //    When you create the unwind segue in your storyboard, you specify the name of an unwind action in the view controller you want the segue to unwind to. This unwind action is invoked just before the unwind segue is performed. You can access the sourceViewController of the UIStoryboardSegue parameter to retrieve any data from the view controller that initiated the unwind segue.
-    
-    @IBAction func undoAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue) {
-//        if let sourceViewController = sender.source as? RecipeDetail {
-//            managedObjectContext.undoManager?.endUndoGrouping()
-//            managedObjectContext.undo()
-//            print("Unwinded with undo for source \(sourceViewController)")
-//        } else {
-//            fatalError("Unwind action to \(#file) failed")
-//        }
-    }
-    
-    @IBAction func saveAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue) {
-//        if let sourceViewController = sender.source as? RecipeDetail {
-//            managedObjectContext.undoManager?.endUndoGrouping()
-//            managedObjectContext.undoManager?.removeAllActions()
-//            food.recipe?.dateOfCreation = sourceViewController.date
-//            food.recipe?.comment = sourceViewController.comment.text
-//            
-//            print("Unwinded with save for source \(sourceViewController)")
-//        } else {
-//            fatalError("Unwind action to \(#file) failed")
-//        }
-//        // Pull any data from the view controller which initiated the unwind segue.
     }
     
     

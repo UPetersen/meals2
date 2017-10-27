@@ -57,21 +57,22 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
         return ""
     }
         
-    
     // TextView delegate (delegate itself set in storyboards)
     func textViewDidChange(_ textView: UITextView) {
         recipe.comment = textView.text
+        recipe.dateOfLastModification = NSDate()
     }
     
     @IBAction func nameTextFieldEditingChanged(_ sender: UITextField) {
         recipe.food?.name = sender.text
+        recipe.dateOfLastModification = NSDate()
     }
     
     @IBAction func amountTextFieldEditingChanged(_ sender: UITextField) {
-        print("\(String(describing: sender.text))")
         if let text = sender.text {
             recipe.amount = numberFormatter.number(from: text)
         }
+        recipe.dateOfLastModification = NSDate()
     }
     
 }

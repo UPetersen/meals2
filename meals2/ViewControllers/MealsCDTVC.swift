@@ -328,6 +328,7 @@ import HealthKit
                 if let viewController = segue.destination as? MealEditTVC {
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
+                    viewController.healthManager = healthManager
                 }
             case .ShowMealDetailTVC:
                 if let viewController = segue.destination as? MealDetailTVC {
@@ -357,6 +358,7 @@ import HealthKit
         currentMeal = meal
         fetchMealIngredients()
         saveContext()
+        healthManager.saveMeal(meal)
     }
     
     
@@ -378,9 +380,7 @@ import HealthKit
                 alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyMeal(meal)} )
                 alertController.addAction( UIAlertAction(title: "Ändern (Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
                 alertController.addAction( UIAlertAction(title: "Health autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
-                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.syncToHealth(meal) })
-//                alertController.addAction( UIAlertAction(title: "Alle Mahlzeiten zu Health übertragen", style: .default) {[unowned self] (action) in self.syncAllmealsToHealthKit() })
-//                alertController.addAction( UIAlertAction(title: "Mahlzeit nach Datum lesen", style: .default) {[unowned self] (action) in self.syncMealFromHealthKit(meal) })
+                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
                 alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
                 alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
                 
@@ -406,11 +406,7 @@ import HealthKit
     }
     
     func createRecipe(_ meal: Meal) {
-        //        print("All recipes so far:")
-        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext).map{print("A recipe: \($0)")}
         _ = Recipe.fromMeal(meal, inManagedObjectContext: managedObjectContext)
-        //        print("All recipes after having created a new one:")
-        //        Recipe.fetchAllRecipes(managedObjectContext: managedObjectContext).map{print("A recipe: \($0)")}
     }
     
     
@@ -420,9 +416,10 @@ import HealthKit
         alert.addAction(UIAlertAction(title: "Zurück", style: UIAlertActionStyle.cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in
             print("Will delete the meal \(meal)")
-            self.managedObjectContext.delete(meal)})
+            self.managedObjectContext.delete(meal)
+            self.healthManager.deleteMeal(meal)
+        })
         present(alert, animated: true, completion: nil)
-        healthManager.deleteMeal(meal)
     }
     
     func mealDetail(_ meal: Meal) {
@@ -434,6 +431,7 @@ import HealthKit
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             currentMeal = newMeal
+            healthManager.syncMealToHealth(newMeal)
             self.tableView.reloadData() // scrolls to top
 //            tableView.setContentOffset(CGPoint.zero, animated: true)
 //            self.tableView.scrollToRow(at:  IndexPath(row: 0, section: 0), at: .top, animated: true);
@@ -447,15 +445,6 @@ import HealthKit
     
     
     /// MARK: - HealthKit
-    
-    func syncToHealth(_ meal: Meal) {
-        debugPrint("Deleting any old meal entries from health store")
-        healthManager.deleteMeal(meal)
-        debugPrint("Saving meal to health store ...")
-        healthManager.saveMeal(meal)
-        debugPrint("... finished saving meal to core data")
-    }
-    
     
     func authorizeHealthKit() {
         healthManager.authorizeHealthKit { (authorized,  error) -> Void in
@@ -471,64 +460,6 @@ import HealthKit
         }
     }
     
-    func syncAllmealsToHealthKit() {
-        if let meals = Meal.fetchAllMeals(managedObjectContext: managedObjectContext) {
-            for meal in meals {
-                self.syncToHealth(meal)
-            }
-        }
-    }
-    
-    func syncMealFromHealthKit(_ meal: Meal) {
-        
-        var dictionary = [String: Double?]()
-        var energyConsumed: Double?
-        var carbohydrates: Double?
-        var protein: Double?
-        var fatTotal: Double?
-        
-        // completion handler needed to get results back to main thread
-        healthManager.readNutrientData(meal.dateOfCreation! as Date, completion: { (foodCorrelation , error) -> Void in
-            
-            if( error != nil ) {
-                print("Error reading a meal from HealthKit Store: \(String(describing: error?.localizedDescription))")
-                return;
-            }
-            
-            // 3. Format the weight to display it on the screen
-            if let foodCorrelation = foodCorrelation {
-                for object in foodCorrelation.objects {
-                    if let quantitySample = object as? HKQuantitySample {
-                        switch quantitySample.quantityType {
-                        case HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryEnergyConsumed)!:
-                            energyConsumed = quantitySample.quantity.doubleValue(for: HKUnit.kilocalorie())
-                            print("Energy: \(String(describing: energyConsumed)) in kcal")
-                        case HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryCarbohydrates)!:
-                            carbohydrates = quantitySample.quantity.doubleValue(for: HKUnit.gram())
-                        case HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryProtein)!:
-                            protein = quantitySample.quantity.doubleValue(for: HKUnit.gram())
-                        case HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryFatTotal)!:
-                            fatTotal = quantitySample.quantity.doubleValue(for: HKUnit.gram())
-                        default:
-                            break
-                        }
-                        
-                        print("Quantity Sample start data is \(quantitySample.startDate) and end date ist \(quantitySample.endDate)")
-                    }
-                }
-            }
-            
-            print("The food correlation has the following metadata: \(String(describing: foodCorrelation?.metadata))")
-            
-            // 4. Update UI in the main thread (Nothing to update here)
-            DispatchQueue.main.async(execute: { () -> Void in
-                print("In the main queue")
-                dictionary = ["energyConsumed": energyConsumed, "carbohydrates": carbohydrates, "protein": protein, "fatTotal": fatTotal]
-                print("The dictionary in meals: \(String(describing: dictionary))")
-            });
-        });
-        print("The dictionary in meals: \(String(describing: dictionary))")
-    }
     
 
     //MARK: - fetched results controller

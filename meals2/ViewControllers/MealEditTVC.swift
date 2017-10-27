@@ -15,6 +15,7 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
 
     var managedObjectContext: NSManagedObjectContext!
     var meal: Meal!
+    var healthManager: HealthManager!
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
@@ -30,6 +31,7 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
         // Update the MealsCDTVC, i.e. reload the data
+        healthManager.syncMealToHealth(meal)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
 //        if let viewController = self.navigationController?.viewControllers.first as? MealsCDTVC {
 //            viewController.tableView.reloadData()
