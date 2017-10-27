@@ -79,6 +79,7 @@
 		C6BEC5151F83FC5D00C3B95B /* MealExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BEC4DF1F83C0F700C3B95B /* MealExtension.swift */; };
 		C6BEC5161F83FC6100C3B95B /* GroupExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BEC4DD1F83C0F700C3B95B /* GroupExtension.swift */; };
 		C6CC65A11F9B6BC200BB384A /* AmountSettingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6ECCAF31F9B682F00C1BF41 /* AmountSettingTableViewCell.swift */; };
+		C6CFE4E51FA129D700B2FAE4 /* MealDetailTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CFE4E41FA129D700B2FAE4 /* MealDetailTVC.swift */; };
 		C6E7A84C1F84059F009816F1 /* DetailExtentsion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BEC4E81F83C0F800C3B95B /* DetailExtentsion.swift */; };
 		C6E7A84D1F8405B4009816F1 /* EventExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BEC4EB1F83C17500C3B95B /* EventExtension.swift */; };
 		C6E7A84E1F8405BE009816F1 /* MealIngredientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BEC4EA1F83C0F800C3B95B /* MealIngredientExtension.swift */; };
@@ -203,6 +204,7 @@
 		C6BEC4EB1F83C17500C3B95B /* EventExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExtension.swift; sourceTree = "<group>"; };
 		C6BEC4FA1F83EDE500C3B95B /* meals2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meals2.entitlements; sourceTree = "<group>"; };
 		C6BEC4FC1F83EDE500C3B95B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		C6CFE4E41FA129D700B2FAE4 /* MealDetailTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealDetailTVC.swift; sourceTree = "<group>"; };
 		C6ECCAEF1F9B653F00C1BF41 /* AmountSettingTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountSettingTVC.swift; sourceTree = "<group>"; };
 		C6ECCAF11F9B672200C1BF41 /* AddFoodTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodTVC.swift; sourceTree = "<group>"; };
 		C6ECCAF31F9B682F00C1BF41 /* AmountSettingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountSettingTableViewCell.swift; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 				C6B5DF3C1F9D005C007447B3 /* MealEditTVC.swift */,
 				C64121C11F929DFA0035D3DE /* MealsCDTVCSearchExtension.swift */,
 				C63D39561F9E7400002C7DB6 /* RecipeEditTVC.swift */,
+				C6CFE4E41FA129D700B2FAE4 /* MealDetailTVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -631,6 +634,7 @@
 				C64121B41F92083E0035D3DE /* BaseCDTVCWithTableIndex.swift in Sources */,
 				C6BEC4C71F806D3800C3B95B /* Favorite+CoreDataClass.swift in Sources */,
 				C6BEC5161F83FC6100C3B95B /* GroupExtension.swift in Sources */,
+				C6CFE4E51FA129D700B2FAE4 /* MealDetailTVC.swift in Sources */,
 				C64121C61F936C350035D3DE /* FoodListListsCDTVC.swift in Sources */,
 				C6BEC4C51F806D3800C3B95B /* GeoLocation+CoreDataClass.swift in Sources */,
 				C6BEC4D41F806D3800C3B95B /* ReferenceWeight+CoreDataProperties.swift in Sources */,

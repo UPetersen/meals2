@@ -99,6 +99,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="1Cn-1g-dka" kind="show" identifier="Segue MealsCDTVC to MealEditTVC" id="dLk-cT-tk4"/>
+                        <segue destination="ylA-Iz-vDS" kind="show" identifier="Segue MealsCDTVC to MealDetailTVC" id="4m8-p9-41r"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cZs-0T-NvN" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -411,7 +412,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yfq-L6-03m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2881" y="-1084"/>
+            <point key="canvasLocation" x="2881" y="-1057"/>
         </scene>
         <!--Lebensmittel hinzufügen-->
         <scene sceneID="QU4-dQ-sSD">
@@ -757,9 +758,54 @@
             </objects>
             <point key="canvasLocation" x="3797.5999999999999" y="-1974.0629685157423"/>
         </scene>
+        <!--Meal DetailTVC-->
+        <scene sceneID="uhf-5z-aZJ">
+            <objects>
+                <tableViewController hidesBottomBarWhenPushed="YES" id="ylA-Iz-vDS" customClass="MealDetailTVC" customModule="meals2" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LbV-cZ-YyA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="Meal Detail Cell" textLabel="MRO-GE-FXJ" detailTextLabel="k71-Cv-ZyG" style="IBUITableViewCellStyleValue1" id="TyX-Zi-ofO">
+                                <rect key="frame" x="0.0" y="22" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TyX-Zi-ofO" id="XFj-kl-TkT">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MRO-GE-FXJ">
+                                            <rect key="frame" x="16" y="12" width="31.5" height="19.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="k71-Cv-ZyG">
+                                            <rect key="frame" x="318.5" y="12" width="41.5" height="19.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="ylA-Iz-vDS" id="QeB-5z-leb"/>
+                            <outlet property="delegate" destination="ylA-Iz-vDS" id="DaQ-Me-dYT"/>
+                        </connections>
+                    </tableView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fs9-5w-1EN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1644" y="-2847"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="NSX-n7-UP4"/>
+        <segue reference="iu5-bJ-d3j"/>
         <segue reference="Xdh-4v-I9O"/>
     </inferredMetricsTieBreakers>
 </document>

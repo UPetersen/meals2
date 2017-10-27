@@ -181,9 +181,12 @@ import HealthKit
             let totalFat     = Nutrient.dispStringForNutrientWithKey("totalFat",     value: meal.doubleForKey("totalFat"),     formatter: zeroMaxDigitsNumberFormatter, inManagedObjectContext: managedObjectContext) ?? ""
             let carbFructose = Nutrient.dispStringForNutrientWithKey("carbFructose", value: meal.doubleForKey("carbFructose"), formatter: zeroMaxDigitsNumberFormatter, inManagedObjectContext: managedObjectContext) ?? ""
             let carbGlucose   = Nutrient.dispStringForNutrientWithKey("carbGlucose", value: meal.doubleForKey("carbGlucose"),  formatter: zeroMaxDigitsNumberFormatter, inManagedObjectContext: managedObjectContext) ?? ""
-            
-            let totalAmount = zeroMaxDigitsNumberFormatter.string(from: NSNumber(value: meal.amount as Double)) ?? ""
-            
+            var totalAmount = ""
+            if let amount = meal.amount {
+                totalAmount = zeroMaxDigitsNumberFormatter.string(from: amount) ?? ""
+            }
+//            let totalAmount = zeroMaxDigitsNumberFormatter.string(from: NSNumber(value: meal.amount as Double)) ?? ""
+
             return totalEnergyCals + ", " + totalCarb + " KH, " + totalProtein + " Prot., " + totalFat + " Fett, " + carbFructose + " F, " + carbGlucose + " G, " + totalAmount + " g insg."
         }
         return nil
@@ -326,10 +329,12 @@ import HealthKit
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
                 }
-                break
             case .ShowMealDetailTVC:
-                break
-            }
+                if let viewController = segue.destination as? MealDetailTVC {
+                    viewController.meal = currentMeal
+                    viewController.managedObjectContext = managedObjectContext
+                }
+           }
         }
     }
     
@@ -366,7 +371,7 @@ import HealthKit
         if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
             if let meal = mealSelectedByLongPressGestureRecognizer(longPressGestureRecognizer) {
                 print("Selected meal is \(meal)")
-                let alertController = UIAlertController(title: "Mahlzeit", message: "Optionen für die ausgewhälte Mahlzeit.", preferredStyle: .actionSheet)
+                let alertController = UIAlertController(title: "Mahlzeit", message: "Optionen für die ausgewählte Mahlzeit.", preferredStyle: .actionSheet)
                 
                 alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
                 alertController.addAction( UIAlertAction(title: "Nährwerte anzeigen", style: .default) {[unowned self] action in self.mealDetail(meal) })

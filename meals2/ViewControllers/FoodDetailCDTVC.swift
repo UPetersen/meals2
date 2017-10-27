@@ -212,7 +212,7 @@ import CoreData
         alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyFoodAction()} )
         alertController.addAction( UIAlertAction(title: "Ändern", style: .default) {[unowned self] (action) in self.changeFoodAction() })
         alertController.addAction( UIAlertAction(title: "Rezept: ändern", style: .default) {[unowned self] (action) in self.recipeDetail()})
-        alertController.addAction( UIAlertAction(title: "Rezept: ändern test", style: .default) {[unowned self] (action) in self.recipeDetailTest()})
+//        alertController.addAction( UIAlertAction(title: "Rezept: ändern test", style: .default) {[unowned self] (action) in self.recipeDetailTest()})
         alertController.addAction( UIAlertAction(title: "Zu Favoriten hinzufügen", style: .default) {[unowned self] (action) in self.addFoodToFavoritesAction() })
         alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {(action) in print("Cancel Action")})
         
@@ -249,15 +249,15 @@ import CoreData
         }
     }
     
-    func recipeDetailTest() {
-        if food.recipe != nil {
-            performSegue(withIdentifier: SegueIdentifier.ShowRecipeDetail.rawValue, sender: self)
-        } else {
-            let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-            present(alert, animated: true, completion: nil)
-        }
-    }
+//    func recipeDetailTest() {
+//        if food.recipe != nil {
+//            performSegue(withIdentifier: SegueIdentifier.ShowRecipeDetail.rawValue, sender: self)
+//        } else {
+//            let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertControllerStyle.alert)
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+//            present(alert, animated: true, completion: nil)
+//        }
+//    }
     
     
     // Delete Food Action

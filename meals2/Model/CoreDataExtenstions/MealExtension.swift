@@ -13,7 +13,7 @@ import HealthKit
 var dateOfCreationAsString_: String? = nil
 
 
-extension Meal {
+extension Meal: HasNutrients {
     
     public override func awakeFromInsert() {
         
@@ -119,14 +119,22 @@ extension Meal {
     }
     
     /// Overall amount of all meal ingredients in gram
-    var amount: Double {
-        return ingredients?.allObjects
+    var amount: NSNumber? {
+        let aDouble:Double = ingredients?.allObjects
             .filter{$0 is MealIngredient}
             .map {$0 as! MealIngredient}
             .map {$0.amount!.doubleValue}
             .reduce(0.0, +) ?? 0
+        return NSNumber(value: aDouble)
     }
-    
+//    var amount: Double {
+//        return ingredients?.allObjects
+//            .filter{$0 is MealIngredient}
+//            .map {$0 as! MealIngredient}
+//            .map {$0.amount!.doubleValue}
+//            .reduce(0.0, +) ?? 0
+//    }
+
     /// Creates a new meal by from the given meal.The new meal will have the same meal ingredients and that is it.
     /// Everything else will be as with a new meal. Since meal ingredients are unique to a meal, the have to be
     /// created newly from the ones of the given meal.

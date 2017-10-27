@@ -11,11 +11,6 @@ import CoreData
 import HealthKit
 
 
-
-
-
-
-
 /// View model for table view controllers that display nutrient data and metadata for
 /// an item that has nutrients (connforms to the HasNutrient protocol). 
 /// This can be a food, a meal or a recipe.
@@ -31,8 +26,19 @@ final class FoodDetails {
         numberFormatter.maximumFractionDigits = 1
         numberFormatter.roundingMode = NumberFormatter.RoundingMode.halfUp
         numberFormatter.zeroSymbol = "0"
+        numberFormatter.nilSymbol = ""
         return numberFormatter
-        }()
+    }()
+    
+    lazy var zeroDigigNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = NumberFormatter.Style.decimal
+        numberFormatter.maximumFractionDigits = 0
+        numberFormatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        numberFormatter.zeroSymbol = "0"
+        numberFormatter.nilSymbol = "nan"
+        return numberFormatter
+    }()
     
     // Lazy getter for the sections, the property we actually desire and do this whole thing for
     // Definition of the sections. They will later be displayed in the same order
@@ -43,32 +49,32 @@ final class FoodDetails {
         theSections.append(
             sectionForKeys(
                 ["totalEnergyCals", "totalCarb", "totalProtein", "totalFat", "totalAlcohol", "totalDietaryFiber", "totalMineralsInRawAsh","totalOrganicAcids","totalWater", "totalSalt"],
-                title: "Grund-Nährwerte je 100 g",
-                footer: "")
+                title: "GRUNDNäHRWERTE JE 100 g",
+                footer: " ")
         )
         
         // Section mit allgemeinen Daten
         let rows = configureMetadataRows(item)
         if let rows = rows {
-            theSections.append(Section(title: "Allgemeine Informationen", footer: "", rows: rows))
+            theSections.append(Section(title: "Allgemeine Informationen", footer: " ", rows: rows))
         }
         
-        print("amount string \(amountString)")
+//        print("amount string \(amountString)")
         
         // Section mit Ein- und Zweifachzuckern
         theSections.append(
             sectionForKeys(
                 ["carbGlucose",  "carbFructose", "carbGalactose", "carbMonosaccharide", "carbSucrose", "carbMaltose", "carbLactose", "carbDisaccharide", "carbSugar"],
-                title: "Ein-/Zweifachzucker je 100 g",
-                footer: "")
+                title: "EIN-/ZWEIFACHZUCKER JE 100 g",
+                footer: " ")
         )
         
         //Section mit Zuckeralkoholen
         theSections.append(
             sectionForKeys(
                 ["carbMannitol", "carbSorbitol", "carbXylitol", "carbSugarAlcohol"],
-                title: "Zuckeralkohole je 100 g",
-                footer: "")
+                title: "ZUCKERALKOHOLE JE 100 g",
+                footer: " ")
         )
         
         //Section mit höherwertigen KH
@@ -76,7 +82,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["carbOligosaccharideResorbable", "carbOligosaccharideNonResorbable", "carbGlycogen", "carbStarch", "carbPolysaccharide", "carbPolyPentose", "carbPolyHexose", "carbPolyUronicAcid", "carbCellulose", "carbLignin", "carbWaterSolubleDietaryFiber", "carbWaterInsolubleDietaryFiber"],
                 title: "HÖHERWERTIGE KH JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Fetten
@@ -84,7 +90,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["fattyAcidPolyunsaturatedFattyAcids", "fattyAcidShortChainFattyAcids", "fattyAcidMediumChainFattyAcids", "fattyAcidLongChainFattyAcids", "fattyAcidOmega3FattyAcids", "fattyAcidOmega6FattyAcids", "fattyAcidGlycerin", "fattyAcidCholesterol"],
                 title: "FETTE JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Mineralien
@@ -92,7 +98,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["mineralSodium", "mineralPotassium", "mineralCalcium", "mineralMagnesium", "mineralPhosphorus", "mineralSulphur", "mineralChlorine"],
                 title: "MINERALIEN JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Spurenelementen
@@ -100,7 +106,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["elementIron", "elementZinc", "elementCopper", "elementManganese", "elementFluorine", "elementIodine"],
                 title: "SPURENELEMENTE JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Vitaminen
@@ -108,7 +114,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["vitaminA", "vitaminARetinol", "vitaminABetaCarotene", "vitaminD", "vitaminE", "vitaminETocopherol", "vitaminK", "vitaminB1", "vitaminB2", "vitaminB3Niacin", "vitaminB3", "vitaminB5", "vitaminB6", "vitaminB7", "vitaminB9", "vitaminB12", "vitaminC"],
                 title: "VITAMINE JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Aminosäuren
@@ -116,7 +122,7 @@ final class FoodDetails {
             sectionForKeys(
                 ["aminoAcidIsoleucine", "aminoAcidLeucine", "aminoAcidLysine", "aminoAcidMethionine", "aminoAcidCysteine", "aminoAcidPhenylalanine", "aminoAcidTyrosine", "aminoAcidThreonine", "aminoAcidTryptophan", "aminoAcidValine", "aminoAcidArginine", "aminoAcidHistidine", "aminoAcidEssentialAminoAcids", "aminoAcidAlanine", "aminoAcidAsparticAcid", "aminoAcidGlutamicAcid", "aminoAcidGlycine", "aminoAcidProline", "aminoAcidSerine", "aminoAcidNonEssentialAminoAcids", "aminoAcidUricAcid", "aminoAcidPurine"],
                 title: "AMINOSÄUREN JE 100 g",
-                footer: "")
+                footer: " ")
         )
         
         //Section mit Fettsäuren
@@ -191,13 +197,17 @@ final class FoodDetails {
     
     
     func configureMetadataRowsForMeal(_ meal: Meal) -> [InformationDataRecord] {
-        amountString = "je " + String(stringInterpolationSegment: meal.amount) + " g"
+        
+        if let number = meal.amount {
+            amountString =  String(zeroDigigNumberFormatter.string(from: number) ?? "") + " g"
+        }
+//        amountString =  String(stringInterpolationSegment: meal.amount) + " g"
 
         let dateOfCreation = DateFormatter.localizedString(from: meal.dateOfCreation! as Date, dateStyle: .short, timeStyle: .short)
         let dateOfLastModification = DateFormatter.localizedString(from: meal.dateOfLastModification! as Date, dateStyle: .short, timeStyle: .short)
 
         var rows = [InformationDataRecord]()
-        rows.append( InformationDataRecord(information: "Gesamtmenge", detail: amountString) )
+        rows.append( InformationDataRecord(information: "Gesamtgewicht", detail: amountString) )
         rows.append( InformationDataRecord(information: "Datum",       detail: dateOfCreation) )
         rows.append( InformationDataRecord(information: "Letzte Änd.", detail: dateOfLastModification) )
         return rows
