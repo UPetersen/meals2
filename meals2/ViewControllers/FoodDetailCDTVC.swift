@@ -175,8 +175,7 @@ import CoreData
     
     //    When you create the unwind segue in your storyboard, you specify the name of an unwind action in the view controller you want the segue to unwind to. This unwind action is invoked just before the unwind segue is performed. You can access the sourceViewController of the UIStoryboardSegue parameter to retrieve any data from the view controller that initiated the unwind segue.
     
-    @IBAction func undoAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue)
-    {
+    @IBAction func undoAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue) {
 //        if let sourceViewController = sender.source as? RecipeDetail {
 //            managedObjectContext.undoManager?.endUndoGrouping()
 //            managedObjectContext.undo()
@@ -186,8 +185,7 @@ import CoreData
 //        }
     }
     
-    @IBAction func saveAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue)
-    {
+    @IBAction func saveAndUnwindFromRecipeDetail(_ sender: UIStoryboardSegue) {
 //        if let sourceViewController = sender.source as? RecipeDetail {
 //            managedObjectContext.undoManager?.endUndoGrouping()
 //            managedObjectContext.undoManager?.removeAllActions()
@@ -211,8 +209,9 @@ import CoreData
         alertController.addAction( UIAlertAction(title: "Neu", style: .default) {[unowned self] action in self.newFoodAction()} )
         alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyFoodAction()} )
         alertController.addAction( UIAlertAction(title: "Ändern", style: .default) {[unowned self] (action) in self.changeFoodAction() })
-        alertController.addAction( UIAlertAction(title: "Rezept: ändern", style: .default) {[unowned self] (action) in self.recipeDetail()})
-//        alertController.addAction( UIAlertAction(title: "Rezept: ändern test", style: .default) {[unowned self] (action) in self.recipeDetailTest()})
+        if food.recipe != nil { // recipe actions only for recipes
+            alertController.addAction( UIAlertAction(title: "Rezept: ändern", style: .default) {[unowned self] (action) in self.recipeDetail()})
+        }
         alertController.addAction( UIAlertAction(title: "Zu Favoriten hinzufügen", style: .default) {[unowned self] (action) in self.addFoodToFavoritesAction() })
         alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {(action) in print("Cancel Action")})
         
@@ -249,19 +248,7 @@ import CoreData
         }
     }
     
-//    func recipeDetailTest() {
-//        if food.recipe != nil {
-//            performSegue(withIdentifier: SegueIdentifier.ShowRecipeDetail.rawValue, sender: self)
-//        } else {
-//            let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertControllerStyle.alert)
-//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-//            present(alert, animated: true, completion: nil)
-//        }
-//    }
-    
-    
     // Delete Food Action
-    
     func deleteFoodAction() {
         if food.mealIngredients != nil && food.mealIngredients!.count > 0 {
             askUserToDeleteFood() // ask user, since the food is part of at least one meal

@@ -338,10 +338,10 @@
 				C6AD712E1F9E55D500BB527C /* FoodEditTVC.swift */,
 				C6FBAB211F97B932009B4D4E /* GeneralSearchCDTVC.swift */,
 				C64121A71F8A88600035D3DE /* MealsCDTVC.swift */,
-				C6B5DF3C1F9D005C007447B3 /* MealEditTVC.swift */,
 				C64121C11F929DFA0035D3DE /* MealsCDTVCSearchExtension.swift */,
-				C63D39561F9E7400002C7DB6 /* RecipeEditTVC.swift */,
 				C6CFE4E41FA129D700B2FAE4 /* MealDetailTVC.swift */,
+				C6B5DF3C1F9D005C007447B3 /* MealEditTVC.swift */,
+				C63D39561F9E7400002C7DB6 /* RecipeEditTVC.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";

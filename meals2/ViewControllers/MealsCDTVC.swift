@@ -384,10 +384,6 @@ import HealthKit
                 alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
                 alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
                 
-//                // For iPad only: must be popover and have a presentation controller
-//                alertController.modalPresentationStyle = UIModalPresentationStyle.overFullScreen  // for iPad only
-//                alertController.popoverPresentationController?.sourceView = self.view
-//                alertController.popoverPresentationController?.sourceRect = CGRect(origin: longPressGestureRecognizer.location(in: longPressGestureRecognizer.view), size: CGSize(width: 1, height: 1))
                 
                 present(alertController, animated: true) {print("Presented Alert View Controller in \(#file)")}
             }
