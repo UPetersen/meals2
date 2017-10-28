@@ -31,7 +31,9 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
         // Update the MealsCDTVC, i.e. reload the data
+        meal.dateOfLastModification = NSDate()
         healthManager.syncMealToHealth(meal)
+        saveContext(managedObjectContext: managedObjectContext)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
 //        if let viewController = self.navigationController?.viewControllers.first as? MealsCDTVC {
 //            viewController.tableView.reloadData()
@@ -46,5 +48,26 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
     @IBAction func datePickerValueChanged(_ sender: UIDatePicker) {
         meal.dateOfCreation = sender.date as NSDate
     }
+    
+    
+    // MARK: - Core data support
+    
+    func saveContext (managedObjectContext context: NSManagedObjectContext) {
+        let moc = context
+        var error: NSError? = nil
+        if moc.hasChanges {
+            do {
+                try moc.save()
+            } catch let error1 as NSError {
+                error = error1
+                // Replace this implementation with code to handle the error appropriately.
+                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                NSLog("Unresolved error \(String(describing: error)), \(error!.userInfo)")
+                abort()
+            }
+        }
+    }
+    
+
 }
 

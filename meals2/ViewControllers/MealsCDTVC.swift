@@ -12,8 +12,7 @@ import CoreData
 import HealthKit
 
 
-
-@objc (MealsCDTVC) final class MealsCDTVC : BaseCDTVC {
+@objc final class MealsCDTVC : BaseCDTVC {
     
     enum SegueIdentifier: String {
         case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
@@ -111,6 +110,8 @@ import HealthKit
         
         // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
         NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.contextUpdated(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,10 +124,16 @@ import HealthKit
     }
 
     
-    // MARK: - Helper stuff: Notifications
+    // MARK: - Notifications
+    
+    // Trial to handle updates in relevant meals via observing changes in the context that are related to meals or mealingredients or just the very meal or meal ingredient. If so, one would refetch the data and reload the table view. But this can also be handled more simply without observing the context, but with the updatedThisTableView-Notificaton
+    @objc func contextUpdated(_ notification: Notification) {
+        print(notification)
+    }
     
     @objc func updateThisTableView(_ notification: Notification) {
-        tableView.reloadData()
+//        tableView.reloadData()
+        fetchMealIngredients()
     }
     
     
@@ -378,9 +385,9 @@ import HealthKit
                 alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
                 alertController.addAction( UIAlertAction(title: "Nährwerte anzeigen", style: .default) {[unowned self] action in self.mealDetail(meal) })
                 alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyMeal(meal)} )
-                alertController.addAction( UIAlertAction(title: "Ändern (Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
+                alertController.addAction( UIAlertAction(title: "Ändern (Datum/Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
                 alertController.addAction( UIAlertAction(title: "Health autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
-                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
+//                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
                 alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
                 alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
                 
@@ -432,9 +439,8 @@ import HealthKit
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             currentMeal = newMeal
             healthManager.syncMealToHealth(newMeal)
-            self.tableView.reloadData() // scrolls to top
-//            tableView.setContentOffset(CGPoint.zero, animated: true)
-//            self.tableView.scrollToRow(at:  IndexPath(row: 0, section: 0), at: .top, animated: true);
+            self.tableView.reloadData()
+            self.tableView.scrollToRow(at:  IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }
     
