@@ -56,14 +56,12 @@ class HealthManager {
         }
     }
     
-    
     func syncMealToHealth(_ meal: Meal) {
         deleteMeal(meal)
         saveMeal(meal)
     }
     
     func saveMeal(_ meal: Meal) {
-        
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKit is not available in this Device")
 //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
@@ -125,15 +123,12 @@ class HealthManager {
         
         print("About to delete the meal with object ID: \(meal.objectID)")
         
-        
         let predicate = HKQuery.predicateForObjects(withMetadataKey: "CoreDataObjectIDAsURIString", allowedValues: [meal.objectID.uriRepresentation().absoluteString])
         
         if let sampleType = HKSampleType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food) {
             let sampleQuery = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: 0, sortDescriptors: nil, resultsHandler:
                 { (sampleQuery, results, error ) -> Void in
-                    
                     if let results = results {
-                        
                         let foodCorrelations = results
                             .flatMap{$0 as? HKCorrelation}
                             .filter {$0.correlationType == HKCorrelationType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food)! as HKCorrelationType}

@@ -121,17 +121,17 @@
 		C6AD712E1F9E55D500BB527C /* FoodEditTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEditTVC.swift; sourceTree = "<group>"; };
 		C6AD71301F9E568100BB527C /* FoodEditTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEditTableViewCell.swift; sourceTree = "<group>"; };
 		C6B5DF3C1F9D005C007447B3 /* MealEditTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealEditTVC.swift; sourceTree = "<group>"; };
-		C6BEC44E1F80575200C3B95B /* meals2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meals2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6BEC44E1F80575200C3B95B /* meals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6BEC4511F80575200C3B95B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6BEC4541F80575200C3B95B /* meals2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = meals2.xcdatamodel; sourceTree = "<group>"; };
 		C6BEC45B1F80575200C3B95B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C6BEC45D1F80575200C3B95B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C6BEC4601F80575200C3B95B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6BEC4621F80575200C3B95B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C6BEC4671F80575200C3B95B /* meals2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = meals2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6BEC4671F80575200C3B95B /* mealsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mealsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6BEC46B1F80575200C3B95B /* meals2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = meals2Tests.swift; sourceTree = "<group>"; };
 		C6BEC46D1F80575200C3B95B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C6BEC4721F80575200C3B95B /* meals2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = meals2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6BEC4721F80575200C3B95B /* mealsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mealsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6BEC4761F80575200C3B95B /* meals2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = meals2UITests.swift; sourceTree = "<group>"; };
 		C6BEC4781F80575200C3B95B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6BEC48C1F8064F900C3B95B /* Event+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Event+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -237,9 +237,9 @@
 		C6BEC44F1F80575200C3B95B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C6BEC44E1F80575200C3B95B /* meals2.app */,
-				C6BEC4671F80575200C3B95B /* meals2Tests.xctest */,
-				C6BEC4721F80575200C3B95B /* meals2UITests.xctest */,
+				C6BEC44E1F80575200C3B95B /* meals.app */,
+				C6BEC4671F80575200C3B95B /* mealsTests.xctest */,
+				C6BEC4721F80575200C3B95B /* mealsUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -418,9 +418,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C6BEC44D1F80575200C3B95B /* meals2 */ = {
+		C6BEC44D1F80575200C3B95B /* meals */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C6BEC47B1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2" */;
+			buildConfigurationList = C6BEC47B1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals" */;
 			buildPhases = (
 				C6BEC44A1F80575200C3B95B /* Sources */,
 				C6BEC44B1F80575200C3B95B /* Frameworks */,
@@ -430,14 +430,14 @@
 			);
 			dependencies = (
 			);
-			name = meals2;
+			name = meals;
 			productName = meals2;
-			productReference = C6BEC44E1F80575200C3B95B /* meals2.app */;
+			productReference = C6BEC44E1F80575200C3B95B /* meals.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C6BEC4661F80575200C3B95B /* meals2Tests */ = {
+		C6BEC4661F80575200C3B95B /* mealsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C6BEC47E1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2Tests" */;
+			buildConfigurationList = C6BEC47E1F80575200C3B95B /* Build configuration list for PBXNativeTarget "mealsTests" */;
 			buildPhases = (
 				C6BEC4631F80575200C3B95B /* Sources */,
 				C6BEC4641F80575200C3B95B /* Frameworks */,
@@ -448,14 +448,14 @@
 			dependencies = (
 				C6BEC4691F80575200C3B95B /* PBXTargetDependency */,
 			);
-			name = meals2Tests;
+			name = mealsTests;
 			productName = meals2Tests;
-			productReference = C6BEC4671F80575200C3B95B /* meals2Tests.xctest */;
+			productReference = C6BEC4671F80575200C3B95B /* mealsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		C6BEC4711F80575200C3B95B /* meals2UITests */ = {
+		C6BEC4711F80575200C3B95B /* mealsUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C6BEC4811F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2UITests" */;
+			buildConfigurationList = C6BEC4811F80575200C3B95B /* Build configuration list for PBXNativeTarget "mealsUITests" */;
 			buildPhases = (
 				C6BEC46E1F80575200C3B95B /* Sources */,
 				C6BEC46F1F80575200C3B95B /* Frameworks */,
@@ -466,9 +466,9 @@
 			dependencies = (
 				C6BEC4741F80575200C3B95B /* PBXTargetDependency */,
 			);
-			name = meals2UITests;
+			name = mealsUITests;
 			productName = meals2UITests;
-			productReference = C6BEC4721F80575200C3B95B /* meals2UITests.xctest */;
+			productReference = C6BEC4721F80575200C3B95B /* mealsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -503,7 +503,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C6BEC4491F80575200C3B95B /* Build configuration list for PBXProject "meals2" */;
+			buildConfigurationList = C6BEC4491F80575200C3B95B /* Build configuration list for PBXProject "meals" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -516,9 +516,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C6BEC44D1F80575200C3B95B /* meals2 */,
-				C6BEC4661F80575200C3B95B /* meals2Tests */,
-				C6BEC4711F80575200C3B95B /* meals2UITests */,
+				C6BEC44D1F80575200C3B95B /* meals */,
+				C6BEC4661F80575200C3B95B /* mealsTests */,
+				C6BEC4711F80575200C3B95B /* mealsUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -653,12 +653,12 @@
 /* Begin PBXTargetDependency section */
 		C6BEC4691F80575200C3B95B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C6BEC44D1F80575200C3B95B /* meals2 */;
+			target = C6BEC44D1F80575200C3B95B /* meals */;
 			targetProxy = C6BEC4681F80575200C3B95B /* PBXContainerItemProxy */;
 		};
 		C6BEC4741F80575200C3B95B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C6BEC44D1F80575200C3B95B /* meals2 */;
+			target = C6BEC44D1F80575200C3B95B /* meals */;
 			targetProxy = C6BEC4731F80575200C3B95B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -838,7 +838,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/meals2.app/meals2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/meals.app/meals";
 			};
 			name = Debug;
 		};
@@ -855,7 +855,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/meals2.app/meals2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/meals.app/meals";
 			};
 			name = Release;
 		};
@@ -894,7 +894,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C6BEC4491F80575200C3B95B /* Build configuration list for PBXProject "meals2" */ = {
+		C6BEC4491F80575200C3B95B /* Build configuration list for PBXProject "meals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6BEC4791F80575200C3B95B /* Debug */,
@@ -903,7 +903,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C6BEC47B1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2" */ = {
+		C6BEC47B1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6BEC47C1F80575200C3B95B /* Debug */,
@@ -912,7 +912,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C6BEC47E1F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2Tests" */ = {
+		C6BEC47E1F80575200C3B95B /* Build configuration list for PBXNativeTarget "mealsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6BEC47F1F80575200C3B95B /* Debug */,
@@ -921,7 +921,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C6BEC4811F80575200C3B95B /* Build configuration list for PBXNativeTarget "meals2UITests" */ = {
+		C6BEC4811F80575200C3B95B /* Build configuration list for PBXNativeTarget "mealsUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6BEC4821F80575200C3B95B /* Debug */,

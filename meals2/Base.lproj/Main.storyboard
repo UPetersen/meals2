@@ -109,7 +109,7 @@
         <!--Mahlzeiteigenschaften ändern-->
         <scene sceneID="awr-yH-9Hw">
             <objects>
-                <tableViewController title="Mahlzeiteigenschaften ändern" id="1Cn-1g-dka" customClass="MealEditTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Mahlzeiteigenschaften ändern" id="1Cn-1g-dka" customClass="MealEditTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="8G3-Le-G0T">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -187,7 +187,7 @@
         <!--Favoriten-->
         <scene sceneID="vcA-A8-gAr">
             <objects>
-                <tableViewController id="som-hD-iFe" customClass="FavoriteSearchCDTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="som-hD-iFe" customClass="FavoriteSearchCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hNy-pi-eCj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -276,7 +276,7 @@
         <!--Alle-->
         <scene sceneID="PPv-gA-4aA">
             <objects>
-                <tableViewController id="V9N-M6-VOa" customClass="GeneralSearchCDTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="V9N-M6-VOa" customClass="GeneralSearchCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="p95-gd-nSn">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -350,7 +350,7 @@
         <!--Knäckebrot oder so-->
         <scene sceneID="BQd-7X-X8f">
             <objects>
-                <tableViewController id="jIp-Qo-6YO" customClass="FoodDetailCDTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="jIp-Qo-6YO" customClass="FoodDetailCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="6mW-6r-puC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -417,7 +417,7 @@
         <!--Lebensmittel hinzufügen-->
         <scene sceneID="QU4-dQ-sSD">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="639-C9-Mfo" customClass="AddFoodTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController hidesBottomBarWhenPushed="YES" id="639-C9-Mfo" customClass="AddFoodTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Jqw-8y-7rU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -440,7 +440,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="Amount Cell" rowHeight="125" id="wT3-4A-fxB" customClass="AmountSettingTableViewCell" customModule="meals2" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="Amount Cell" rowHeight="125" id="wT3-4A-fxB" customClass="AmountSettingTableViewCell" customModule="meals" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="66" width="375" height="125"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wT3-4A-fxB" id="9el-Ja-YHT" customClass="AmountSettingTableViewCell">
@@ -520,7 +520,7 @@
         <!--Neu/ändern-->
         <scene sceneID="8Kl-eW-tcC">
             <objects>
-                <tableViewController title="Neu/ändern" hidesBottomBarWhenPushed="YES" id="95B-dz-0v2" customClass="FoodEditTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Neu/ändern" hidesBottomBarWhenPushed="YES" id="95B-dz-0v2" customClass="FoodEditTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="GQF-RC-KZw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -550,7 +550,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FoodEditTableViewCellIdentifier" id="nZr-AN-Sfl" customClass="FoodEditTableViewCell" customModule="meals2" customModuleProvider="target">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FoodEditTableViewCellIdentifier" id="nZr-AN-Sfl" customClass="FoodEditTableViewCell" customModule="meals" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="66" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nZr-AN-Sfl" id="ejs-fq-nrW">
@@ -655,7 +655,7 @@
         <!--Rezepteigenschaften ändern-->
         <scene sceneID="XgP-kb-Wid">
             <objects>
-                <tableViewController title="Rezepteigenschaften ändern" id="KFM-aA-87T" customClass="RecipeEditTVC" customModule="meals2" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Rezepteigenschaften ändern" id="KFM-aA-87T" customClass="RecipeEditTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="3E3-6x-Dcw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -761,7 +761,7 @@
         <!--Meal DetailTVC-->
         <scene sceneID="uhf-5z-aZJ">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="ylA-Iz-vDS" customClass="MealDetailTVC" customModule="meals2" sceneMemberID="viewController">
+                <tableViewController hidesBottomBarWhenPushed="YES" id="ylA-Iz-vDS" customClass="MealDetailTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LbV-cZ-YyA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

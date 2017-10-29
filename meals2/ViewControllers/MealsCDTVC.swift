@@ -12,7 +12,7 @@ import CoreData
 import HealthKit
 
 
-@objc final class MealsCDTVC : BaseCDTVC {
+@objc (MealsCDTVC) final class MealsCDTVC: BaseCDTVC {
     
     enum SegueIdentifier: String {
         case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
@@ -346,7 +346,7 @@ import HealthKit
         }
     }
     
-    //MARK: - toolbar (items not handled by direct segues)
+    // MARK: - toolbar (items not handled by direct segues)
     
     
     @IBAction func addButtonSelected(_ sender: UIBarButtonItem) {
@@ -397,8 +397,43 @@ import HealthKit
         }
     }
 
+    // MARK: - Meal options (swipe actions, longpress actions)
     
-    //MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = contextualMealOptionsAction(forRowAtIndexPath: indexPath)
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    func contextualMealOptionsAction(forRowAtIndexPath indexPath: IndexPath) -> UIContextualAction {
+        let action = UIContextualAction(style: .normal, title: "Mahlzeit-Optionen") { (contextaction: UIContextualAction, sourceView: UIView, completionHandler: (Bool) -> Void) in
+            print("Starting up Meal menu")
+            if let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient, let meal = mealIngredient.meal {
+                self.displayMenu(forMeal: meal)
+                completionHandler(true)
+            } else {
+                completionHandler(false)
+            }
+        }
+        return action
+    }
+    
+    func displayMenu(forMeal meal: Meal) {
+        let alertController = UIAlertController(title: "Mahlzeit", message: "Optionen für die ausgewählte Mahlzeit.", preferredStyle: .actionSheet)
+        
+        alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
+        alertController.addAction( UIAlertAction(title: "Nährwerte anzeigen", style: .default) {[unowned self] action in self.mealDetail(meal) })
+        alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyMeal(meal)} )
+        alertController.addAction( UIAlertAction(title: "Ändern (Datum/Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
+        alertController.addAction( UIAlertAction(title: "Health autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
+        //                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
+        alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
+        alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
+        
+        present(alertController, animated: true) {print("Presented Alert View Controller in \(#file)")}
+    }
+
+    
+    // MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
     
     func mealSelectedByLongPressGestureRecognizer(_ longPressGestureRecognizer: UIGestureRecognizer) -> Meal? {
         let touchPoint = longPressGestureRecognizer.location(in: self.view)
@@ -450,7 +485,7 @@ import HealthKit
     }
     
     
-    /// MARK: - HealthKit
+    // MARK: - HealthKit
     
     func authorizeHealthKit() {
         healthManager.authorizeHealthKit { (authorized,  error) -> Void in
@@ -466,9 +501,8 @@ import HealthKit
         }
     }
     
-    
 
-    //MARK: - fetched results controller
+    // MARK: - fetched results controller
     
     func fetchMealIngredients() {
 
