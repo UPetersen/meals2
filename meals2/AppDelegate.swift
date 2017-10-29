@@ -18,6 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Override point for customization after application launch.
+        
+        window?.layer.speed = 2.0 // Speed up all animations (view transitions) in general by this factor
+        
         let navigationController = self.window!.rootViewController as! UINavigationController
         if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
 //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
