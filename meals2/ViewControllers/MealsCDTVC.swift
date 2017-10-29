@@ -308,20 +308,20 @@ import HealthKit
                     viewController.item = .isMealIngredient(mealIngredient)
                 }
             case .ShowFavoriteSearchCDTVC:
-                if let viewController = segue.destination as? FavoriteSearchCDTVC {
+                if let viewController = segue.destination as? FavoriteSearchCDTVC, let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext)  {
                     viewController.foodListType = FoodListType.Favorites
-                    viewController.meal = currentMeal
+                    viewController.meal = meal
                     viewController.managedObjectContext = managedObjectContext
                 }
             case .ShowGeneralSearchCDTVC:
-                if let viewController = segue.destination as? GeneralSearchCDTVC {
+                if let viewController = segue.destination as? GeneralSearchCDTVC, let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
 //                    // Speed up animations just for this transition, because showing search bar and keyboard is still slow otherwhise)
 //                    let app = UIApplication.shared.delegate
 //                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
 //                    app?.window??.layer.speed = 10.0
                     
-                    viewController.foodListType = FoodListType.Favorites
-                    viewController.meal = currentMeal
+                    viewController.foodListType = FoodListType.All
+                    viewController.meal = meal
                     viewController.managedObjectContext = managedObjectContext
                 }
             case .ShowMealEditTVC:

@@ -48,6 +48,7 @@ import CoreData
         
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
+        searchController.delegate = self
         searchController.searchBar.delegate = self
         searchController.dimsBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = NSLocalizedString("Lebensmittel suchen", comment: "")

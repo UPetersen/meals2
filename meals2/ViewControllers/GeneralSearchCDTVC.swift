@@ -14,6 +14,7 @@ import CoreData
 @objc class GeneralSearchCDTVC: BaseSearchCDTVC {
 
     var meal: Meal!
+    var isFirstCall = true
     
     lazy var oneMaxDigitsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
         let numberFormatter = NumberFormatter()
@@ -30,25 +31,43 @@ import CoreData
         super.viewDidLoad()
         foodListType = FoodListType.All // start with all foods as list to search in
         foodListTypeButton.title = foodListType.rawValue + " ▾"
-
         title = foodListType.rawValue
         
         // FIXME: fetchFoods called twice by doing this here.
         fetchFoods()
+
     }
+//    func didPresentSearchController(_ searchController: UISearchController) {
+//        if searchController.isActive {
+//            searchController.searchBar.becomeFirstResponder()
+//        }
+//    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+//        if isFirstCall {
+//            isFirstCall = false
+////            searchController.isActive = true
+//            DispatchQueue.main.async { [weak self] in
+//                self?.searchController.isActive = true
+//                //                self?.searchController.searchBar.becomeFirstResponder()
+//            }
+//        }
+        super.viewWillAppear(animated)
+    }
+    
+//    func presentSearchController(_ searchController: UISearchController) {
+//        searchController.searchBar.becomeFirstResponder()
+//    }
 
     override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(true)
-        // Trick for raising up the keyboard, see https://stackoverflow.com/questions/27951965/cannot-set-searchbar-as-firstresponder#28527114
-        DispatchQueue.main.async { [weak self] in
-            self?.searchController.searchBar.becomeFirstResponder()
+        super.viewDidAppear(animated)
 //            // To speed up display of search bar and raising of keyboard, the transition speed was changed in the presenting view controller.
 //            // Reset general view transition speed (animations) to original value used in this app
 //            if let speed = self?.originalWindowLayerSpeed {
 //                let app = UIApplication.shared.delegate
 //                app?.window??.layer.speed = speed
 //            }
-        }
+//        }
     }
 
     
