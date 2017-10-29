@@ -21,6 +21,8 @@ import CoreData
         return numberFormatter
     }()
     
+//    var originalWindowLayerSpeed: Float?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         foodListType = FoodListType.All // start with all foods as list to search in
@@ -37,6 +39,12 @@ import CoreData
         // Trick for raising up the keyboard, see https://stackoverflow.com/questions/27951965/cannot-set-searchbar-as-firstresponder#28527114
         DispatchQueue.main.async { [weak self] in
             self?.searchController.searchBar.becomeFirstResponder()
+//            // To speed up display of search bar and raising of keyboard, the transition speed was changed in the presenting view controller.
+//            // Reset general view transition speed (animations) to original value used in this app
+//            if let speed = self?.originalWindowLayerSpeed {
+//                let app = UIApplication.shared.delegate
+//                app?.window??.layer.speed = speed
+//            }
         }
     }
 

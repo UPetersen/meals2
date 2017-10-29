@@ -204,11 +204,11 @@ import HealthKit
     }
     
     
-    // MARK: - UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
+//     // MARK: - UITableViewDataSource
+//
+//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+//        return true
+//    }
     
     /// Move a mealIngredient from one meal (i.e. section) to another meal (section)
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
@@ -310,7 +310,7 @@ import HealthKit
                     let indexPath = self.tableView.indexPath(for: cell),
                     let currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
                     let food = currentMealIngredient.food {
-                        viewController.item = .isFood(food, currentMeal)
+                    viewController.item = .isFood(food, currentMeal)
                 }
             case .ShowAddFoodTVC: // Accessory button selected, i. e. a Meal ingredient: change amount of the meal ingredient
                 if let viewController = segue.destination  as? AddFoodTVC,
@@ -327,6 +327,11 @@ import HealthKit
                 }
             case .ShowGeneralSearchCDTVC:
                 if let viewController = segue.destination as? GeneralSearchCDTVC {
+//                    // Speed up animations just for this transition, because showing search bar and keyboard is still slow otherwhise)
+//                    let app = UIApplication.shared.delegate
+//                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
+//                    app?.window??.layer.speed = 10.0
+                    
                     viewController.foodListType = FoodListType.Favorites
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
@@ -447,11 +452,6 @@ import HealthKit
         return nil
     }
     
-    func createRecipe(_ meal: Meal) {
-        _ = Recipe.fromMeal(meal, inManagedObjectContext: managedObjectContext)
-    }
-    
-    
     func deleteMeal(_ meal: Meal) {
         // aks user if he really wants to delete the meal using an alert controller
         let alert = UIAlertController(title: "Mahlzeit löschen?", message: nil, preferredStyle: UIAlertControllerStyle.alert)
@@ -475,7 +475,7 @@ import HealthKit
             currentMeal = newMeal
             healthManager.syncMealToHealth(newMeal)
             self.tableView.reloadData()
-            self.tableView.scrollToRow(at:  IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }
     
@@ -483,9 +483,6 @@ import HealthKit
         currentMeal = meal
         performSegue(withIdentifier: SegueIdentifier.ShowMealEditTVC.rawValue, sender: self)
     }
-    
-    
-    // MARK: - HealthKit
     
     func authorizeHealthKit() {
         healthManager.authorizeHealthKit { (authorized,  error) -> Void in
@@ -500,6 +497,11 @@ import HealthKit
             }
         }
     }
+    
+    func createRecipe(_ meal: Meal) {
+        _ = Recipe.fromMeal(meal, inManagedObjectContext: managedObjectContext)
+    }
+    
     
 
     // MARK: - fetched results controller
