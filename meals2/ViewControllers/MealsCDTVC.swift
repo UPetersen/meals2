@@ -320,7 +320,7 @@ import HealthKit
 //                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
 //                    app?.window??.layer.speed = 10.0
                     
-                    viewController.foodListType = FoodListType.All
+                    viewController.foodListType = FoodListType.Favorites // must be favorites, I don't understand why, yet.
                     viewController.meal = meal
                     viewController.managedObjectContext = managedObjectContext
                 }

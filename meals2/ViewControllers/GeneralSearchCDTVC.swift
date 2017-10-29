@@ -13,7 +13,7 @@ import CoreData
 //@objc class GeneralSearchCDTVC: FavoriteSearchCDTVC {
 @objc class GeneralSearchCDTVC: BaseSearchCDTVC {
 
-    var meal: Meal!
+    weak var meal: Meal!
     var isFirstCall = true
     
     lazy var oneMaxDigitsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
@@ -35,7 +35,6 @@ import CoreData
         
         // FIXME: fetchFoods called twice by doing this here.
         fetchFoods()
-
     }
 //    func didPresentSearchController(_ searchController: UISearchController) {
 //        if searchController.isActive {

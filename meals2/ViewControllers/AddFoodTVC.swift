@@ -30,6 +30,7 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     lazy var numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.maximumFractionDigits = 1
+        formatter.groupingSeparator = "" // no thousands separator
         formatter.numberStyle = NumberFormatter.Style.decimal
         formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
         return formatter
@@ -210,16 +211,12 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     
     @objc func amountTextFieldEditingChanged(sender: UITextField) {
         
-        // There is a problem when the user backspaces a number like "1.234" to "1.23" which ist not interpreted correctly as either 1.230 or nil, depending on the method used to convert the string to a float (assuming "." beeing the grouping separator of the locale). To overcame this the "." must be replaced by "" to obtain "123" which will then be interpreted correctly as a floatvalue of 123.0
-        if let textWOGroupingSeparator = sender.text?.replacingOccurrences(of: self.numberFormatter.groupingSeparator, with: " ") { // Must exist and have a value
-            let aDouble : Double? = (textWOGroupingSeparator as NSString).doubleValue
-            if aDouble != nil {
-                self.amountInGrams = aDouble!
-            } else {
-                self.amountInGrams = 0.0
-            }
-            updateAmountSettingTableViewCell()
+        guard let aNumber = numberFormatter.number(from: sender.text!) else {
+//            displayAlertForTextField(textField)
+            return
         }
+        self.amountInGrams = Double(truncating: aNumber)
+//        updateAmountSettingTableViewCell()
     }
     
     @objc func sliderValueChanged(sender:UISlider) {
@@ -283,7 +280,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     func configureCell(theCell: AmountSettingTableViewCell) {
         
         theCell.amountTextField.text = self.numberFormatter.string(from: NSNumber(value: self.amountInGrams))
-        //            theCell.amountTextField.text = self.numberFormatter.stringFromNumber(NSNumber(double: self.amountInGrams))
         
         theCell.slider.minimumValue = 0.0
         theCell.slider.value = CFloat(self.amountInGrams)
