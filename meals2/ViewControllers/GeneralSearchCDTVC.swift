@@ -30,12 +30,14 @@ import CoreData
         
         // FIXME: fetchFoods called twice by doing this here.
         fetchFoods()
-        
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        self.searchController.searchBar.becomeFirstResponder()
+        // Trick for raising up the keyboard, see https://stackoverflow.com/questions/27951965/cannot-set-searchbar-as-firstresponder#28527114
+        DispatchQueue.main.async { [weak self] in
+            self?.searchController.searchBar.becomeFirstResponder()
+        }
     }
 
     
