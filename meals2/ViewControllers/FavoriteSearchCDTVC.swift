@@ -13,7 +13,6 @@ import CoreData
 @objc class FavoriteSearchCDTVC: BaseSearchCDTVC {
     
     weak var meal: Meal!
-    //    var currentFood: Food!
     
     override func viewDidLoad() {
         super.viewDidLoad()

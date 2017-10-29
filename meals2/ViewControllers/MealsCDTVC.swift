@@ -14,15 +14,7 @@ import HealthKit
 
 @objc (MealsCDTVC) final class MealsCDTVC: BaseCDTVC {
     
-    enum SegueIdentifier: String {
-        case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
-        case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
-        case ShowMealDetailTVC       = "Segue MealsCDTVC to MealDetailTVC"
-        case ShowMealEditTVC         = "Segue MealsCDTVC to MealEditTVC"
-        case ShowFavoriteSearchCDTVC = "Segue MealsCDTVC to FavoriteSearchCDTVC"
-        case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
-    }
-    
+    // Core Data
     var persistentContainer: NSPersistentContainer!
     var managedObjectContext: NSManagedObjectContext!
     
@@ -32,6 +24,7 @@ import HealthKit
     var defaultFetchLimitIncrement = 50            // the number of objects additionally fetched when more data is requested
     let loadMoreDataText = "Alle Daten laden ..."   // text displayed in the last cell instead of meal ingredient data
     
+    // meal variable needed for actions on a meal.
     weak var currentMeal: Meal!
     
     // HealthKit
@@ -71,6 +64,15 @@ import HealthKit
         return dateFormatter
     }()
     
+    enum SegueIdentifier: String {
+        case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
+        case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
+        case ShowMealDetailTVC       = "Segue MealsCDTVC to MealDetailTVC"
+        case ShowMealEditTVC         = "Segue MealsCDTVC to MealEditTVC"
+        case ShowFavoriteSearchCDTVC = "Segue MealsCDTVC to FavoriteSearchCDTVC"
+        case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
+    }
+
 
     // MARK: - View Controller
     
@@ -119,8 +121,6 @@ import HealthKit
         
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
-        
-        setFirstMealAsCurrentMeal()
     }
 
     
@@ -192,7 +192,6 @@ import HealthKit
             if let amount = meal.amount {
                 totalAmount = zeroMaxDigitsNumberFormatter.string(from: amount) ?? ""
             }
-//            let totalAmount = zeroMaxDigitsNumberFormatter.string(from: NSNumber(value: meal.amount as Double)) ?? ""
 
             return totalEnergyCals + ", " + totalCarb + " KH, " + totalProtein + " Prot., " + totalFat + " Fett, " + carbFructose + " F, " + carbGlucose + " G, " + totalAmount + " g insg."
         }
@@ -204,13 +203,9 @@ import HealthKit
     }
     
     
-//     // MARK: - UITableViewDataSource
-//
-//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
+     // MARK: - UITableViewDataSource
     
-    /// Move a mealIngredient from one meal (i.e. section) to another meal (section)
+    // Move a mealIngredient from one meal (i.e. section) to another meal (section)
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if let mealIngredient = self.fetchedResultsController.object(at: sourceIndexPath) as? MealIngredient, let oldMeal = mealIngredient.meal {
 
@@ -222,18 +217,11 @@ import HealthKit
                 if oldMeal.ingredients != nil && oldMeal.ingredients!.count == 0 {
                     healthManager.deleteMeal(oldMeal)
                     managedObjectContext.delete(oldMeal) // delete the old meal, if it has no more meal ingredients
-                    // Set new current meal, since the deleted meal might have been the current meal (easyest way ist just to set it, even if current meal was not deleted)
-                    setFirstMealAsCurrentMeal()
                 } else {
                     healthManager.syncMealToHealth(oldMeal)
                 }
             }
         }
-    }
-    
-    func setFirstMealAsCurrentMeal() {
-        // Set the newest meal as current meal
-        currentMeal =  Meal.fetchNewestMeal(managedObjectContext: managedObjectContext)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -244,7 +232,6 @@ import HealthKit
                     // The meal ingredient's meal has just this last meal ingredient, thus delete the whole meal, the meal ingredient is automatically deleted via the cascade functionality of core data
                     healthManager.deleteMeal(meal)
                     managedObjectContext.delete(meal)
-                    currentMeal =  Meal.fetchNewestMeal(managedObjectContext: managedObjectContext)
                 } else {
                     // The meal ingredient's meal has more than just this meal ingredient, so just delete this meal ingredient and let the meal and the other meal ingredients persist
                     managedObjectContext.delete(mealIngredient)
@@ -268,7 +255,6 @@ import HealthKit
             if let fetchedObjects = self.fetchedResultsController.fetchedObjects, fetchedObjects.count >= defaultFetchLimit-1 {
                 return true
             }
-//            return true
         }
         return false
     }
@@ -303,21 +289,23 @@ import HealthKit
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let identifier = segue.identifier, let segueIdentifier = SegueIdentifier(rawValue: identifier) {
             switch segueIdentifier {
-            case .ShowFoodDetailCDTVC: // Cell selected, i.e. a meal ingredient: show details of the corresponding food
-                debugPrint(segue.destination)
+            case .ShowFoodDetailCDTVC:
+                // Cell selected, i.e. a meal ingredient: show details of the corresponding food,
+                // possibly add this food later to newest meal
                 if let viewController = segue.destination as? FoodDetailCDTVC,
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
-                    let currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
-                    let food = currentMealIngredient.food {
-                    viewController.item = .isFood(food, currentMeal)
+                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
+                    let food = mealIngredient.food,
+                    let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
+                        viewController.item = .isFood(food, meal)
                 }
             case .ShowAddFoodTVC: // Accessory button selected, i. e. a Meal ingredient: change amount of the meal ingredient
                 if let viewController = segue.destination  as? AddFoodTVC,
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
-                    let currentMealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
-                    viewController.item = .isMealIngredient(currentMealIngredient)
+                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
+                    viewController.item = .isMealIngredient(mealIngredient)
                 }
             case .ShowFavoriteSearchCDTVC:
                 if let viewController = segue.destination as? FavoriteSearchCDTVC {
@@ -367,7 +355,6 @@ import HealthKit
             mealIngredient.amount = 0
             mealIngredient.meal = meal
         }
-        currentMeal = meal
         fetchMealIngredients()
         saveContext()
         healthManager.saveMeal(meal)
@@ -472,7 +459,6 @@ import HealthKit
     func copyMeal(_ meal: Meal) {
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
-            currentMeal = newMeal
             healthManager.syncMealToHealth(newMeal)
             self.tableView.reloadData()
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
@@ -527,16 +513,6 @@ import HealthKit
         
         self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
         self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: nil)
-        
-        // Make the newest meal the currentMeal (the one and only, to which foods are added)
-        if let mealIngredient = self.fetchedResultsController.fetchedObjects?.first as? MealIngredient {
-            currentMeal = mealIngredient.meal
-            print("Did set current meal.")
-        } else {
-            currentMeal = nil
-            print("Fetched zero objects and result is zero or nil.")
-            print("Did set current meal to nil.")
-        }
     }
     
     

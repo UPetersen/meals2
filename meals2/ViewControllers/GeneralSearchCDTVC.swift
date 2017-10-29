@@ -10,7 +10,10 @@ import Foundation
 import UIKit
 import CoreData
 
-@objc class GeneralSearchCDTVC: FavoriteSearchCDTVC {
+//@objc class GeneralSearchCDTVC: FavoriteSearchCDTVC {
+@objc class GeneralSearchCDTVC: BaseSearchCDTVC {
+
+    var meal: Meal!
     
     lazy var oneMaxDigitsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
         let numberFormatter = NumberFormatter()

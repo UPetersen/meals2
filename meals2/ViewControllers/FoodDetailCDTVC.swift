@@ -110,7 +110,6 @@ import CoreData
                     fatalError("target view controller is not of desired class")
                 }
             case .ShowFoodEditTVC:
-                //                if let viewController = segue.destinationViewController.contentViewController as? NewOrChangeFood { // uses CS195P extension by Paul Hegarty
                 if let viewController = segue.destination as? FoodEditTVC { // uses CS195P extension by Paul Hegarty
                     managedObjectContext.undoManager = UndoManager()
                     managedObjectContext.undoManager?.beginUndoGrouping()
