@@ -17,8 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        // Override point for customization after application launch.
-        
         // Speed up all animations (view transitions) by this factor
         window?.layer.speed = 2.0
         
@@ -30,29 +28,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             
             // Check dictionary for 3D touch short cut items and perform corresponding actions
             if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
-                switch shortcutItem.type {
-                case "UPP.meals2.NewMeal": // create new meal
-                    let dummyBarButtonItem = UIBarButtonItem()
-                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
-                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
-                case "UPP.meals2.NewMealAndShowFavoriteSearch": // create new meal an show favorites
-                    let dummyBarButtonItem = UIBarButtonItem()
-                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
-                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
-                    mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowFavoriteSearchCDTVC.rawValue, sender: mealsCDTVC)
-                case "UPP.meals2.NewMealAndShowGeneralSearch": // create new meal and show general search
-                    let dummyBarButtonItem = UIBarButtonItem()
-                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
-                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
-                    mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowGeneralSearchCDTVC.rawValue, sender: mealsCDTVC)
-                default:
-                    break
-                }
+                handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
+                return false // prevents call of application:performActionFor... (see below)
             }
         }
         return true
-        
     }
+    
+    // Uwe: This function is called, when user launches app (app not yet running) or relaunches
+    // app (app being in the background and not terminated) from home screen using quick actions.
+    // Normally this function is called each time user uses Quick actions. But when in
+    // application:didFinishWithOptions returns false, this function is only called when
+    // user uses quick actions in the case, the app is still running in the background.
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        let navigationController = self.window!.rootViewController as! UINavigationController
+        navigationController.popToRootViewController(animated: false)
+        if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
+            //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
+            mealsCDTVC.persistentContainer = persistentContainer
+            handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
+        }
+    }
+
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -77,18 +74,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
     }
+    
 
-    // MARK: - Split view
+    // MARK: - shortcutItems i.e. 3D touch quick actions
+    
+    // Handle quick action shortcutItems appropriately, i.e. create a new meal and in some cases push
+    // a view controller by performing the corresponding segue
+    func handleShortcutItem(_ shortcutItem: UIApplicationShortcutItem, forMealsCDTVC mealsCDTVC: MealsCDTVC) {
+        // Check dictionary for 3D touch short cut items and perform corresponding actions
+        switch shortcutItem.type {
+        case "UPP.meals2.NewMeal": // create new meal
+            let dummyBarButtonItem = UIBarButtonItem()
+            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+            mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+        case "UPP.meals2.NewMealAndShowFavoriteSearch": // create new meal an show favorites
+            let dummyBarButtonItem = UIBarButtonItem()
+            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+            mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+            mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowFavoriteSearchCDTVC.rawValue, sender: mealsCDTVC)
+        case "UPP.meals2.NewMealAndShowGeneralSearch": // create new meal and show general search
+            let dummyBarButtonItem = UIBarButtonItem()
+            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+            mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+            mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowGeneralSearchCDTVC.rawValue, sender: mealsCDTVC)
+        default:
+            break
+        }
+    }
+    
 
-//    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-//        guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
-//        guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-//        if topAsDetailController.detailItem == nil {
-//            // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-//            return true
-//        }
-//        return false
-//    }
     // MARK: - Core Data stack
 
     lazy var persistentContainer: NSPersistentContainer = {

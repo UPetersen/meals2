@@ -22,6 +22,8 @@
 			<string>UIApplicationShortcutIconTypeBookmark</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Neue Mahlzeit und Favoriten</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string></string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).NewMealAndShowFavoriteSearch</string>
 			<key>UIApplicationShortcutItemUserInfo</key>
