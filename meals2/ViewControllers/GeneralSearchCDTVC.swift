@@ -14,7 +14,7 @@ import CoreData
 @objc class GeneralSearchCDTVC: BaseSearchCDTVC {
 
     weak var meal: Meal!
-    var isFirstCall = true
+//    var isFirstCall = true
     
     lazy var oneMaxDigitsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
         let numberFormatter = NumberFormatter()

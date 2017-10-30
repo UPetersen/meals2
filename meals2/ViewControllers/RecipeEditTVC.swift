@@ -14,7 +14,7 @@ import CoreData
 class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDelegate {
     
     var managedObjectContext: NSManagedObjectContext!
-    var recipe: Recipe!
+    weak var recipe: Recipe!
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var commentTextView: UITextView!

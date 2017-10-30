@@ -15,17 +15,10 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     let MAX_AMOUNT_IN_GRAMS = 9999.0
     
     var managedObjectContext: NSManagedObjectContext!
-    var food: Food!
+    weak var food: Food!
     var item: Item?
     
-    var amountInGrams: Double = Double(10) {
-        didSet {
-            print("Did set the amountInGrams to \(amountInGrams)")
-        }
-    }
-    
-    // Cell with slider, stepper and textField for setting amount using siftBond
-    var amountCell: AmountSettingTableViewCell!
+    var amountInGrams: Double = Double(10)
     
     lazy var numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -212,7 +205,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     @objc func amountTextFieldEditingChanged(sender: UITextField) {
         
         guard let aNumber = numberFormatter.number(from: sender.text!) else {
-//            displayAlertForTextField(textField)
             return
         }
         self.amountInGrams = Double(truncating: aNumber)
@@ -258,7 +250,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     
     
     //MARK: - cell configuration
-    
     
     func updateAmountSettingTableViewCell() {
         let indexPath = IndexPath(row: 0, section: 1) // IndexPath to where the amount was entered
@@ -329,12 +320,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
                 slider.isContinuous = false
             }
         }
-        //        // TODO: understand and/or fix this. Currently the slider value is set here explicitly from dynValue.
-        //        // Doing so ensures that the slider maximum value is set correctly when the textField is edited. This does not work properly
-        //        // otherwhise (To check this, just type in "6" and then "6" again (to receive 66)
-        ////        self.amountCell.slider.value = self.amountCell.slider.dynValue.value
-        //        self.amountCell.slider.value = self.amountCell.slider.bnd_value.value
-        ////        println("adjust slider maximum if necessary to: (\(slider.minimumValue), \(slider.value), \(slider.dynValue.value), \(slider.maximumValue))")
     }
     
     func calculateAndSetSliderMaximumValue(slider theSlider: UISlider) {

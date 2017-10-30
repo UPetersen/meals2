@@ -11,9 +11,7 @@ import UIKit
 import CoreData
 
 @objc class BaseSearchCDTVC : BaseCDTVCWithTableIndex, UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
-    //    @objc (FoodListBaseSearchCDTVC)  class FoodListBaseSearchCDTVC : FoodListBaseCDTVC, UISearchBarDelegate, UISearchResultsUpdating, UISearchControllerDelegate {
     
-    //    var meal: Meal!
     var managedObjectContext: NSManagedObjectContext!
     
     // Search controller to help us with filtering.

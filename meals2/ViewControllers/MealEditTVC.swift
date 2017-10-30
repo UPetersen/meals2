@@ -14,7 +14,7 @@ import CoreData
 class MealEditTVC: UITableViewController, UITextViewDelegate {
 
     var managedObjectContext: NSManagedObjectContext!
-    var meal: Meal!
+    weak var meal: Meal!
     var healthManager: HealthManager!
     
     @IBOutlet weak var textView: UITextView!

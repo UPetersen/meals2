@@ -15,8 +15,8 @@ import CoreData
     var theTable: FoodDetails!
     
     var managedObjectContext: NSManagedObjectContext!
-    var meal: Meal!
-    var food: Food!
+    weak var meal: Meal!
+    weak var food: Food!
     var item: Item?
     
     lazy var numberFormatter: NumberFormatter = {

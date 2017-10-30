@@ -19,26 +19,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         
         // Override point for customization after application launch.
         
-        window?.layer.speed = 2.0 // Speed up all animations (view transitions) in general by this factor
+        // Speed up all animations (view transitions) by this factor
+        window?.layer.speed = 2.0
         
+        // Set up and show view controller (i.e. MealsCDTVC)
         let navigationController = self.window!.rootViewController as! UINavigationController
         if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
-//            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
+            //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
             mealsCDTVC.persistentContainer = persistentContainer
+            
+            // Check dictionary for 3D touch short cut items and perform corresponding actions
+            if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
+                switch shortcutItem.type {
+                case "UPP.meals2.NewMeal": // create new meal
+                    let dummyBarButtonItem = UIBarButtonItem()
+                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+                case "UPP.meals2.NewMealAndShowFavoriteSearch": // create new meal an show favorites
+                    let dummyBarButtonItem = UIBarButtonItem()
+                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+                    mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowFavoriteSearchCDTVC.rawValue, sender: mealsCDTVC)
+                case "UPP.meals2.NewMealAndShowGeneralSearch": // create new meal and show general search
+                    let dummyBarButtonItem = UIBarButtonItem()
+                    mealsCDTVC.managedObjectContext = persistentContainer.viewContext
+                    mealsCDTVC.addButtonSelected(dummyBarButtonItem)
+                    mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowGeneralSearchCDTVC.rawValue, sender: mealsCDTVC)
+                default:
+                    break
+                }
+            }
         }
         return true
         
-        
-        // Override point for customization after application launch.
-//        let splitViewController = self.window!.rootViewController as! UISplitViewController
-//        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-//        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-//        splitViewController.delegate = self
-//
-//        let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
-//        let controller = masterNavigationController.topViewController as! MasterViewController
-//        controller.managedObjectContext = self.persistentContainer.viewContext
-//        return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

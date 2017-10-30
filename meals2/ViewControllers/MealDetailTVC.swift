@@ -16,7 +16,7 @@ import CoreData
     var theTable: FoodDetails!
     
     var managedObjectContext: NSManagedObjectContext!
-    var meal: Meal!
+    weak var meal: Meal!
     
     override func viewWillAppear(_ animated: Bool) {
         

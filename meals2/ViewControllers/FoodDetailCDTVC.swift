@@ -22,9 +22,9 @@ import CoreData
     
     var managedObjectContext: NSManagedObjectContext!
     @objc var meal: Meal!
-    var food: Food!
+    weak var food: Food!
     var item: Item?
-    var newFood: Food!
+    weak var newFood: Food!
     
     override func viewWillAppear(_ animated: Bool) {
         if let item = item {
