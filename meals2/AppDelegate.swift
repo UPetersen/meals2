@@ -14,21 +14,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     var window: UIWindow?
 
-    // MARK: properties for import of bls-Files and corresponding state
+    // properties for import of bls-Files and corresponding state
     let userDefaultsBlsImportedKey = "blsImported"
     let userDefaultsBlsImportDateKey = "blsImportDate"
     let userDefaultsBlsVersionKey = "blsVersion"
     let blsVersion = "BLS_3.02"
     
+    
+    // MARK: - AppDelegate
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        // Speed up all animations (view transitions) by this factor
+        // Speed up all animations (view transitions)
         window?.layer.speed = 2.0
         
-        // import bls data if app is launched for the first time ever
+        // Import bls data if app is launched for the first time ever
         importBlsDataIfNotYetImported()
-        
         
         // Set up and show view controller (i.e. MealsCDTVC)
         let navigationController = self.window!.rootViewController as! UINavigationController
@@ -36,10 +37,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
             mealsCDTVC.persistentContainer = persistentContainer
             
-            // Check dictionary for 3D touch short cut items and perform corresponding actions
+            // Check dictionary for 3D touch quick actions (short cut items) and perform corresponding actions
             if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
                 handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
-                return false // prevents call of application:performActionFor... (see below)
+                // prevents call of application:performActionFor... (see below), since shortCutItems are already handled here for launch from terminated state
+                return false
             }
         }
         return true
@@ -47,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // Uwe: This function is called, when user launches app (app not yet running) or relaunches
     // app (app being in the background and not terminated) from home screen using quick actions.
-    // Normally this function is called each time user uses Quick actions. But when in
+    // Normally this function is called each time user uses Quick actions. But if
     // application:didFinishWithOptions returns false, this function is only called when
     // user uses quick actions in the case, the app is still running in the background.
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -59,7 +61,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
         }
     }
-
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -86,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
 
-    // MARK: - shortcutItems i.e. 3D touch quick actions
+    // MARK: - 3D touch quick actions (handle shortCutItems)
     
     // Handle quick action shortcutItems appropriately, i.e. create a new meal and in some cases push
     // a view controller by performing the corresponding segue
@@ -113,12 +114,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
     
-    // MARK: - BLS data handling
+    // MARK: - BLS import
     
     func importBlsDataIfNotYetImported() {
         
-        let documentsDirectory = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        // Uwe: a new app does not have user defaults yet. Copying the database file from another app does not create them either. Thus, with the move to the new and fully  overhauled meals app, the user defaults are not created although the old database was copied and shall be used and no BLS data import shall occur. To prevent this, the user defaults are created below as if a import had already occured. Run this code once and then uncomment it.
+//        UserDefaults.standard.set(Date(), forKey: userDefaultsBlsImportDateKey)
+//        UserDefaults.standard.set(blsVersion, forKey: userDefaultsBlsVersionKey)
+//        UserDefaults.standard.set(true, forKey: userDefaultsBlsImportedKey)
         
+        let documentsDirectory = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         print("applicationDocumentsDirectory: \(documentsDirectory)")
         
         // Check if BLS data was already imported successfully
@@ -126,18 +131,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let blsImported = userDefaults.bool(forKey: userDefaultsBlsImportedKey)
         
         if blsImported {
-            
             print("BlS Version '\(String(describing: userDefaults.object(forKey: userDefaultsBlsVersionKey)))', imported on \(String(describing: userDefaults.object(forKey: userDefaultsBlsImportDateKey))).")
             print("No need to import BLS data. Skipping import section.")
-            
         } else {
-            
             // Import BLS data
             print("BLS data not yet imported. Importing data ...")
             
             let blsImporter = BlsToCoreDataImporter(documentsDirectory: documentsDirectory, managedObjectContext: persistentContainer.viewContext)
-            
-            //            let importSuccess = true
             let importSuccess = blsImporter.importBLS()
             
             userDefaults.set(importSuccess, forKey: userDefaultsBlsImportedKey)
@@ -149,12 +149,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             } else {
                 print("... could not import BLS data successfully due to some error.")
             }
+            self.saveContext()
         }
         userDefaults.synchronize()
-        
-        self.saveContext()
     }
 
+    
     // MARK: - Core Data stack
 
     lazy var persistentContainer: NSPersistentContainer = {
