@@ -14,11 +14,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     var window: UIWindow?
 
+    // MARK: properties for import of bls-Files and corresponding state
+    let userDefaultsBlsImportedKey = "blsImported"
+    let userDefaultsBlsImportDateKey = "blsImportDate"
+    let userDefaultsBlsVersionKey = "blsVersion"
+    let blsVersion = "BLS_3.02"
+    
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Speed up all animations (view transitions) by this factor
         window?.layer.speed = 2.0
+        
+        // import bls data if app is launched for the first time ever
+        importBlsDataIfNotYetImported()
+        
         
         // Set up and show view controller (i.e. MealsCDTVC)
         let navigationController = self.window!.rootViewController as! UINavigationController
@@ -102,6 +112,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
     }
     
+    
+    // MARK: - BLS data handling
+    
+    func importBlsDataIfNotYetImported() {
+        
+        let documentsDirectory = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        
+        print("applicationDocumentsDirectory: \(documentsDirectory)")
+        
+        // Check if BLS data was already imported successfully
+        let userDefaults = UserDefaults.standard
+        let blsImported = userDefaults.bool(forKey: userDefaultsBlsImportedKey)
+        
+        if blsImported {
+            
+            print("BlS Version '\(String(describing: userDefaults.object(forKey: userDefaultsBlsVersionKey)))', imported on \(String(describing: userDefaults.object(forKey: userDefaultsBlsImportDateKey))).")
+            print("No need to import BLS data. Skipping import section.")
+            
+        } else {
+            
+            // Import BLS data
+            print("BLS data not yet imported. Importing data ...")
+            
+            let blsImporter = BlsToCoreDataImporter(documentsDirectory: documentsDirectory, managedObjectContext: persistentContainer.viewContext)
+            
+            //            let importSuccess = true
+            let importSuccess = blsImporter.importBLS()
+            
+            userDefaults.set(importSuccess, forKey: userDefaultsBlsImportedKey)
+            if importSuccess {
+                userDefaults.set(Date(), forKey: userDefaultsBlsImportDateKey)
+                userDefaults.set(blsVersion, forKey: userDefaultsBlsVersionKey)
+                self.saveContext()
+                print("... successfully imported data for BLS Version '\(blsVersion)'.")
+            } else {
+                print("... could not import BLS data successfully due to some error.")
+            }
+        }
+        userDefaults.synchronize()
+        
+        self.saveContext()
+    }
 
     // MARK: - Core Data stack
 

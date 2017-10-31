@@ -308,21 +308,25 @@ import HealthKit
                     viewController.item = .isMealIngredient(mealIngredient)
                 }
             case .ShowFavoriteSearchCDTVC:
-                if let viewController = segue.destination as? FavoriteSearchCDTVC, let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext)  {
+                if let viewController = segue.destination as? FavoriteSearchCDTVC  {
                     viewController.foodListType = FoodListType.Favorites
-                    viewController.meal = meal
                     viewController.managedObjectContext = managedObjectContext
+                    if let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
+                        viewController.meal = meal
+                    }
                 }
             case .ShowGeneralSearchCDTVC:
-                if let viewController = segue.destination as? GeneralSearchCDTVC, let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
+                if let viewController = segue.destination as? GeneralSearchCDTVC {
 //                    // Speed up animations just for this transition, because showing search bar and keyboard is still slow otherwhise)
 //                    let app = UIApplication.shared.delegate
 //                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
 //                    app?.window??.layer.speed = 10.0
                     
                     viewController.foodListType = FoodListType.Favorites // must be favorites, I don't understand why, yet.
-                    viewController.meal = meal
                     viewController.managedObjectContext = managedObjectContext
+                    if let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
+                        viewController.meal = meal
+                    }
                 }
             case .ShowMealEditTVC:
                 if let viewController = segue.destination as? MealEditTVC {
@@ -348,7 +352,7 @@ import HealthKit
         
         // Create one dummy food as a MealIngreident and add it to the meal
         let mealIngredient = MealIngredient(context: managedObjectContext)
-        let dummyFood:Food? = Food.foodForNameContainingString("Knäckebrot", inMangedObjectContext: managedObjectContext)
+        let dummyFood: Food? = Food.foodForNameContainingString("Knäckebrot", inMangedObjectContext: managedObjectContext)
         
         if dummyFood != nil {
             mealIngredient.food = dummyFood!
@@ -356,7 +360,7 @@ import HealthKit
             mealIngredient.meal = meal
         }
         fetchMealIngredients()
-        saveContext()
+        saveContext() // Needed for synchronisation with health with URI of managed object
         healthManager.saveMeal(meal)
     }
     
@@ -459,6 +463,7 @@ import HealthKit
     func copyMeal(_ meal: Meal) {
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
+            saveContext() // Needed for synchronisation with health with URI of managed object
             healthManager.syncMealToHealth(newMeal)
             self.tableView.reloadData()
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top

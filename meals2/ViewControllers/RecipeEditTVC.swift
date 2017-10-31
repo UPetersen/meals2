@@ -41,11 +41,11 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if section == 1 {
+        if section == 2 {
             let number = NSNumber(value: recipe.amountOfAllIngredients)
-            return "Das Gewicht aller Rohzutaten beträgt \(numberFormatter.string(from: number) ?? "??")."
+            return "Das Gewicht aller Rohzutaten beträgt \(numberFormatter.string(from: number) ?? "??") g."
             // Unfortunately I don't manage to change the height of the section footer of this static table view and thus cannot add this text to the footer:
-            // "Beim Zubereiten eines Rezeptes kann sich das Gewicht durch erhitzen verringern und dadurch der Nährwertanteil pro 100g erhöhen. Geben sie hier das Gewicht des fertig zubereiteten Gerichts an, damit dies bei der Nährwertberechnung entsprechend berücksichtigt wird."
+            // return "Beim Zubereiten eines Rezeptes kann sich das Gewicht durch erhitzen verringern und dadurch der Nährwertanteil pro 100g erhöhen. Geben sie hier das Gewicht des fertig zubereiteten Gerichts an, damit dies bei der Nährwertberechnung entsprechend berücksichtigt wird."
         }
         return " "
     }
