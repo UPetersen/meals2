@@ -9,6 +9,7 @@
 import Foundation
 import HealthKit
 import CoreData
+import AVFoundation
 
 class HealthManager {
     
@@ -62,6 +63,7 @@ class HealthManager {
     }
     
     func saveMeal(_ meal: Meal) {
+//        AudioServicesPlaySystemSound (1103)
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKit is not available in this Device")
 //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
@@ -109,12 +111,13 @@ class HealthManager {
                 print("Saved food correlation successfully!")
             }
             print("Executed health save meal query")
+            AudioServicesPlaySystemSound (1105)
         })
     }
     
     
     func deleteMeal(_ meal: Meal) {
-        
+//        AudioServicesPlaySystemSound (1113)
         if !HKHealthStore.isHealthDataAvailable(){
 //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
             print("HealthKit is not available in this Device")
@@ -159,6 +162,7 @@ class HealthManager {
                         }
                     }
                     print("Executed health delete query")
+                    AudioServicesPlaySystemSound (1114)
             })
             // 5. Execute the Query
             self.healthKitStore.execute(sampleQuery)

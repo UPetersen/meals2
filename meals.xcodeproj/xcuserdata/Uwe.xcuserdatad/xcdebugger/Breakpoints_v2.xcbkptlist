@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "meals2/Model/HealthManager.swift"
-            timestampString = "531060681.329711"
+            timestampString = "531159961.783002"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
             landmarkName = "deleteMeal(_:)"
             landmarkType = "7">
             <Actions>
@@ -98,11 +98,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "Yes"
             filePath = "meals2/Model/HealthManager.swift"
-            timestampString = "531060681.330118"
+            timestampString = "531159961.78365"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "saveMeal(_:)"
             landmarkType = "7">
             <Actions>
@@ -122,7 +122,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/MealsCDTVC.swift"
-            timestampString = "531150105.249418"
+            timestampString = "531159961.78392"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "502"
@@ -154,7 +154,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/Extensions/StringExtension.swift"
-            timestampString = "531150105.249761"
+            timestampString = "531159961.78418"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "39"
@@ -164,17 +164,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "meals2/AppDelegate.swift"
-            timestampString = "531150105.250022"
+            filePath = "meals2/Model/HealthManager.swift"
+            timestampString = "531159961.784386"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "saveMeal(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
