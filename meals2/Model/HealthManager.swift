@@ -139,16 +139,11 @@ class HealthManager {
                         // for each food correlation delete its objects
                         for foodCorrelation in foodCorrelations {
                             for object in foodCorrelation.objects {
-//                                if let object = object as? HKSample {
                                 self.healthKitStore.delete(object, withCompletion:{(success, error) -> Void in
                                     if success {
-                                        //                                    println("Deleted an object of a food correlation.")
                                         return
                                     }
-                                    print("Error. Could not delete an object of food correlation.")
                                 })
-                                    //                            println("Object should have been deleted")
-//                                }
                             }
                             
                             // delete the food correlation object itself

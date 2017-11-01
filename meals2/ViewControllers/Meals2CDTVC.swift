@@ -1,18 +1,19 @@
 //
-//  MealsCDTVC.swift
-//  meals2
+//  Meals2CDTVC.swift
+//  meals
 //
-//  Created by Uwe Petersen on 08.10.17.
+//  Created by Uwe Petersen on 31.10.17.
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
 
 import Foundation
+
 import UIKit
 import CoreData
 import HealthKit
 
 
-@objc (MealsCDTVC) final class MealsCDTVC: BaseCDTVC {
+@objc (Meals2CDTVC) final class Meals2CDTVC: BaseCDTVC {
     
     // Core Data
     var persistentContainer: NSPersistentContainer!
@@ -33,7 +34,7 @@ import HealthKit
     // Search controller to help us with filtering.
     var searchController = UISearchController(searchResultsController: nil) // Searchresults are displayed in this tableview
     var searchFilter = SearchFilter.BeginsWith
-
+    
     // Formatters
     lazy var calsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
         let numberFormatter = NumberFormatter()
@@ -71,10 +72,9 @@ import HealthKit
         case ShowMealEditTVC         = "Segue MealsCDTVC to MealEditTVC"
         case ShowFavoriteSearchCDTVC = "Segue MealsCDTVC to FavoriteSearchCDTVC"
         case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
-        case testSegue               = "testSegue"
     }
-
-
+    
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
@@ -97,7 +97,7 @@ import HealthKit
         searchController.searchBar.scopeButtonTitles = [SearchFilter.BeginsWith.rawValue, SearchFilter.Contains.rawValue]
         definesPresentationContext = true
         navigationItem.searchController = searchController // iOS 11: searchController tied to navigationItem
-//        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any more
+        //        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any more
         
         // long pressure recognizer, to display a menu for the meal seleted by a long press
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MealsCDTVC.longPress(_:)))
@@ -123,7 +123,7 @@ import HealthKit
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
     
     // MARK: - Notifications
     
@@ -133,7 +133,7 @@ import HealthKit
     }
     
     @objc func updateThisTableView(_ notification: Notification) {
-//        tableView.reloadData()
+        //        tableView.reloadData()
         fetchMealIngredients()
     }
     
@@ -169,17 +169,22 @@ import HealthKit
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if let sectionInfo: NSFetchedResultsSectionInfo = self.fetchedResultsController.sections?[section] {
-            if let mealIngredient: MealIngredient = sectionInfo.objects?.first as? MealIngredient,
-                let date = mealIngredient.meal?.dateOfCreation as Date? {
-                return dateFormatter.string(from: date)
-            }
+        
+        if let meals = fetchedResultsController.fetchedObjects as? [Meal], let date = meals[section].dateOfCreation as Date? {
+            return dateFormatter.string(from: date)
         }
-        return super.tableView(tableView, titleForHeaderInSection: section) // For all other cases (including nil cases)
+        return nil
+//        if let sectionInfo: NSFetchedResultsSectionInfo = self.fetchedResultsController.sections?[section] {
+//            if let mealIngredient: MealIngredient = sectionInfo.objects?.first as? MealIngredient,
+//                let date = mealIngredient.meal?.dateOfCreation as Date? {
+//                return dateFormatter.string(from: date)
+//            }
+//        }
+//        return super.tableView(tableView, titleForHeaderInSection: section) // For all other cases (including nil cases)
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        
+        return nil
         // Get the meal from the first mealIngredient (i.e. the first object in the section)
         if let mealIngredient: MealIngredient = self.fetchedResultsController.sections?[section].objects?.first as? MealIngredient, let meal: Meal = mealIngredient.meal {
             
@@ -193,7 +198,7 @@ import HealthKit
             if let amount = meal.amount {
                 totalAmount = zeroMaxDigitsNumberFormatter.string(from: amount) ?? ""
             }
-
+            
             return totalEnergyCals + ", " + totalCarb + " KH, " + totalProtein + " Prot., " + totalFat + " Fett, " + carbFructose + " F, " + carbGlucose + " G, " + totalAmount + " g insg."
         }
         return nil
@@ -204,50 +209,89 @@ import HealthKit
     }
     
     
-     // MARK: - UITableViewDataSource
+    // MARK: - UITableViewDataSource
     
     // Move a mealIngredient from one meal (i.e. section) to another meal (section)
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if let mealIngredient = self.fetchedResultsController.object(at: sourceIndexPath) as? MealIngredient, let oldMeal = mealIngredient.meal {
-
-            if let destinationSectionInfo = self.fetchedResultsController.sections?[destinationIndexPath.section], let newMeal = (destinationSectionInfo.objects?.first as? MealIngredient)?.meal {
-                
-                mealIngredient.meal = newMeal
-                healthManager.syncMealToHealth(newMeal)
-                
-                if oldMeal.ingredients != nil && oldMeal.ingredients!.count == 0 {
-                    healthManager.deleteMeal(oldMeal)
-                    managedObjectContext.delete(oldMeal) // delete the old meal, if it has no more meal ingredients
-                } else {
-                    healthManager.syncMealToHealth(oldMeal)
-                }
-            }
-        }
+//        if let mealIngredient = self.fetchedResultsController.object(at: sourceIndexPath) as? MealIngredient, let oldMeal = mealIngredient.meal {
+//            
+//            if let destinationSectionInfo = self.fetchedResultsController.sections?[destinationIndexPath.section], let newMeal = (destinationSectionInfo.objects?.first as? MealIngredient)?.meal {
+//                
+//                mealIngredient.meal = newMeal
+//                healthManager.syncMealToHealth(newMeal)
+//                
+//                if oldMeal.ingredients != nil && oldMeal.ingredients!.count == 0 {
+//                    healthManager.deleteMeal(oldMeal)
+//                    managedObjectContext.delete(oldMeal) // delete the old meal, if it has no more meal ingredients
+//                } else {
+//                    healthManager.syncMealToHealth(oldMeal)
+//                }
+//            }
+//        }
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
-            
-            if let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient, let meal = mealIngredient.meal {
-                if meal.ingredients!.count <= 1 {
-                    // The meal ingredient's meal has just this last meal ingredient, thus delete the whole meal, the meal ingredient is automatically deleted via the cascade functionality of core data
-                    healthManager.deleteMeal(meal)
-                    managedObjectContext.delete(meal)
-                } else {
-                    // The meal ingredient's meal has more than just this meal ingredient, so just delete this meal ingredient and let the meal and the other meal ingredients persist
-                    managedObjectContext.delete(mealIngredient)
-                    healthManager.syncMealToHealth(meal)
-                }
-            }
+//        if editingStyle == UITableViewCellEditingStyle.delete {
+//
+//            if let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient, let meal = mealIngredient.meal {
+//                if meal.ingredients!.count <= 1 {
+//                    // The meal ingredient's meal has just this last meal ingredient, thus delete the whole meal, the meal ingredient is automatically deleted via the cascade functionality of core data
+//                    healthManager.deleteMeal(meal)
+//                    managedObjectContext.delete(meal)
+//                } else {
+//                    // The meal ingredient's meal has more than just this meal ingredient, so just delete this meal ingredient and let the meal and the other meal ingredients persist
+//                    managedObjectContext.delete(mealIngredient)
+//                    healthManager.syncMealToHealth(meal)
+//                }
+//            }
+//        }
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal {
+         return meal.ingredients?.count ?? 0
         }
+        return 0
+    }
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if needToFetchMoreData(for: tableView, withIndexPath: indexPath) {
-            defaultFetchLimit += defaultFetchLimitIncrement
-            fetchMealIngredients() 
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MealIngredient Cell", for: indexPath)
+        let section = indexPath.section
+        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
+        if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal,
+            let mealIngredients = meal.ingredients,
+            let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
+            cell.textLabel?.text = sortedMealIngredients[indexPath.row].food?.name
         }
-        return mealIngredientCellForTableView(tableView, atIndexPath: indexPath)
+
+        // Fetch another batch of data if user scrolled to end of table (i.e. title for header for last section requested).
+        if section >= defaultFetchLimit - 1 {
+            defaultFetchLimit += defaultFetchLimitIncrement
+            fetchMealIngredients()
+        }
+        
+
+//        let section = indexPath.section
+//        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
+//        if let meals = fetchedResultsController.fetchedObjects as? [Meal],
+//            let mealIngredients = meals[section].ingredients,
+//            let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
+//            cell.textLabel?.text = sortedMealIngredients[indexPath.row].food?.name
+//        }
+        return cell
+//        NSSortDescriptor *nameDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+//        NSArray *sorted = [yourSet sortedArrayUsingDescriptors:[NSArray arrayWithObject:nameDescriptor]];
+//        if needToFetchMoreData(for: tableView, withIndexPath: indexPath) {
+//            defaultFetchLimit += defaultFetchLimitIncrement
+//            fetchMealIngredients()
+//        }
+//        return mealIngredientCellForTableView(tableView, atIndexPath: indexPath)
+
     }
     
     // Check if last cell in table view is displayed on screen and if number of fetched objects exceeds the fetch limit. If so, fetch more data
@@ -290,11 +334,6 @@ import HealthKit
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let identifier = segue.identifier, let segueIdentifier = SegueIdentifier(rawValue: identifier) {
             switch segueIdentifier {
-            case .testSegue:
-                if let viewController = segue.destination as? meals.Meals2CDTVC {
-                    viewController.persistentContainer = persistentContainer
-                    viewController.managedObjectContext = managedObjectContext
-                }
             case .ShowFoodDetailCDTVC:
                 // Cell selected, i.e. a meal ingredient: show details of the corresponding food,
                 // possibly add this food later to newest meal
@@ -304,7 +343,7 @@ import HealthKit
                     let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
                     let food = mealIngredient.food,
                     let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
-                        viewController.item = .isFood(food, meal)
+                    viewController.item = .isFood(food, meal)
                 }
             case .ShowAddFoodTVC: // Accessory button selected, i. e. a Meal ingredient: change amount of the meal ingredient
                 if let viewController = segue.destination  as? AddFoodTVC,
@@ -323,10 +362,10 @@ import HealthKit
                 }
             case .ShowGeneralSearchCDTVC:
                 if let viewController = segue.destination as? GeneralSearchCDTVC {
-//                    // Speed up animations just for this transition, because showing search bar and keyboard is still slow otherwhise)
-//                    let app = UIApplication.shared.delegate
-//                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
-//                    app?.window??.layer.speed = 10.0
+                    //                    // Speed up animations just for this transition, because showing search bar and keyboard is still slow otherwhise)
+                    //                    let app = UIApplication.shared.delegate
+                    //                    viewController.originalWindowLayerSpeed = app?.window??.layer.speed
+                    //                    app?.window??.layer.speed = 10.0
                     
                     viewController.foodListType = FoodListType.Favorites // must be favorites, I don't understand why, yet.
                     viewController.managedObjectContext = managedObjectContext
@@ -345,11 +384,12 @@ import HealthKit
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
                 }
-           }
+            }
         }
     }
     
     // MARK: - toolbar (items not handled by direct segues)
+    
     
     @IBAction func addButtonSelected(_ sender: UIBarButtonItem) {
         // Create a new Meal
@@ -371,11 +411,11 @@ import HealthKit
     
     
     // MARK: - gesture recognizers
-
+    
     @objc func tap(_ tapGestureRecognizer: UITapGestureRecognizer) {
         self.searchController.searchBar.resignFirstResponder()
     }
-
+    
     @objc func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
         
         if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
@@ -388,16 +428,16 @@ import HealthKit
                 alertController.addAction( UIAlertAction(title: "Kopieren", style: .default) {[unowned self] action in self.copyMeal(meal)} )
                 alertController.addAction( UIAlertAction(title: "Ändern (Datum/Kommentar)", style: .default) {[unowned self] (action) in self.editMeal(meal) })
                 alertController.addAction( UIAlertAction(title: "Health autorisieren", style: .default) {[unowned self] (action) in self.authorizeHealthKit() })
-//                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
+                //                alertController.addAction( UIAlertAction(title: "Zu Health übertragen", style: .default) {[unowned self] (action) in self.healthManager.syncMealToHealth(meal) })
                 alertController.addAction( UIAlertAction(title: "Rezept hieraus erstellen", style: .default) {[unowned self] (action) in self.createRecipe(meal) })
                 alertController.addAction( UIAlertAction(title: "Zurück", style: .cancel) {action in print("Cancel Action")})
-                                
+                
+                
                 present(alertController, animated: true) {print("Presented Alert View Controller in \(#file)")}
             }
         }
     }
     
-
     // MARK: - Meal options (swipe actions, longpress actions)
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -432,7 +472,7 @@ import HealthKit
         
         present(alertController, animated: true) {print("Presented Alert View Controller in \(#file)")}
     }
-
+    
     
     // MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
     
@@ -499,31 +539,32 @@ import HealthKit
     }
     
     
-
+    
     // MARK: - fetched results controller
     
     func fetchMealIngredients() {
-
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient") // old style needes for fetched results controller
-        request.predicate = searchFilter.predicateForMealOrRecipeIngredientsWithSearchText(self.searchController.searchBar.text)
+        
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Meal")
+        request.predicate = searchFilter.predicateForMealsWithIngredientsWithSearchText(self.searchController.searchBar.text)
+        request.returnsDistinctResults = true
+        request.relationshipKeyPathsForPrefetching = ["ingredients", "ingredients.food.name"]
         
         // Performance optimation for reading and saving of data
         request.fetchBatchSize = 20
         request.fetchLimit = defaultFetchLimit  // Speeds up a lot, especially inital loading of this view controller, but needs care
-//        request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
-//        request.includesPropertyValues = false  // Load property values only when used/needed -> faster but more frequent disk reads
-        request.returnsObjectsAsFaults = false
-        request.includesPropertyValues = true   // usefull only, when only relevant properties are read
-        request.propertiesToFetch = ["amount"] // read only certain properties (others are fetched automatically on demand)
-        request.relationshipKeyPathsForPrefetching = ["meal.dateOfCreation", "food.name", "food.totalEnergyCals", "food.totalCarb", "food.totalProtein", "food.totalFat", "food.carbFructose", "food.carbGlucose"]
-
+        request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
+        //        request.includesPropertyValues = false  // Load property values only when used/needed -> faster but more frequent disk reads
+        //        request.includesPropertyValues = true   // usefull only, when only relevant properties are read
+//        let thePropertiesToFetch = ["ingredients", "dateOfCreation"]   // read only certain properties (others are fetched automatically on demand)
+//        request.propertiesToFetch = thePropertiesToFetch
+        
         request.sortDescriptors = [
-            NSSortDescriptor(key: "meal.dateOfCreation", ascending: false),
-            NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
+            NSSortDescriptor(key: "dateOfCreation", ascending: false) //,
+//            NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
         ]
         
         self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
-        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: nil)
+        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
     }
     
     
@@ -544,6 +585,33 @@ import HealthKit
                 }
             }
         }
+    }
+    
+}
+
+
+// MARK: - Search extension
+
+extension Meals2CDTVC: UISearchResultsUpdating, UISearchBarDelegate {
+    
+    // MARK: - Search results updating protocol
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        self.fetchMealIngredients()
+    }
+    
+    // MARK: - search bar delegate protocol
+    
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        switch selectedScope {
+        case 0:
+            searchFilter = SearchFilter.BeginsWith
+        case 1:
+            searchFilter = SearchFilter.Contains
+        default:
+            searchFilter = SearchFilter.BeginsWith
+        }
+        self.fetchMealIngredients()
     }
     
 }

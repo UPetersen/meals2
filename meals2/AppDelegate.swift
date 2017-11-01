@@ -56,8 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let navigationController = self.window!.rootViewController as! UINavigationController
         navigationController.popToRootViewController(animated: false)
         if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
-            //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
             mealsCDTVC.persistentContainer = persistentContainer
+            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
         }
     }
@@ -96,16 +96,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         switch shortcutItem.type {
         case "UPP.meals2.NewMeal": // create new meal
             let dummyBarButtonItem = UIBarButtonItem()
-            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             mealsCDTVC.addButtonSelected(dummyBarButtonItem)
         case "UPP.meals2.NewMealAndShowFavoriteSearch": // create new meal an show favorites
             let dummyBarButtonItem = UIBarButtonItem()
-            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             mealsCDTVC.addButtonSelected(dummyBarButtonItem)
             mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowFavoriteSearchCDTVC.rawValue, sender: mealsCDTVC)
         case "UPP.meals2.NewMealAndShowGeneralSearch": // create new meal and show general search
             let dummyBarButtonItem = UIBarButtonItem()
-            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             mealsCDTVC.addButtonSelected(dummyBarButtonItem)
             mealsCDTVC.performSegue(withIdentifier: MealsCDTVC.SegueIdentifier.ShowGeneralSearchCDTVC.rawValue, sender: mealsCDTVC)
         default:
