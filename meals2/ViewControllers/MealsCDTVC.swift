@@ -15,7 +15,7 @@ import HealthKit
 @objc (MealsCDTVC) final class MealsCDTVC: BaseCDTVC {
     
     // Core Data
-    var persistentContainer: NSPersistentContainer!
+    var psContainer: NSPersistentContainer!
     var managedObjectContext: NSManagedObjectContext!
     
     // For speed reasons, only defaultFetchLimit meal ingredient objects are fetched
@@ -81,7 +81,7 @@ import HealthKit
         super.viewDidLoad()
         
         // Initializes the fetched results controller. The tableView will display a list of mealIngredients.
-        managedObjectContext = persistentContainer.viewContext
+        managedObjectContext = psContainer.viewContext
         fetchMealIngredients()
         
         // set automatic row heights (could also be handled via tableView delegate
@@ -292,7 +292,7 @@ import HealthKit
             switch segueIdentifier {
             case .testSegue:
                 if let viewController = segue.destination as? meals.Meals2CDTVC {
-                    viewController.persistentContainer = persistentContainer
+                    viewController.persistentContainer = psContainer
                     viewController.managedObjectContext = managedObjectContext
                 }
             case .ShowFoodDetailCDTVC:
@@ -498,7 +498,6 @@ import HealthKit
         _ = Recipe.fromMeal(meal, inManagedObjectContext: managedObjectContext)
     }
     
-    
 
     // MARK: - fetched results controller
     
@@ -507,23 +506,25 @@ import HealthKit
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "MealIngredient") // old style needes for fetched results controller
         request.predicate = searchFilter.predicateForMealOrRecipeIngredientsWithSearchText(self.searchController.searchBar.text)
         
-        // Performance optimation for reading and saving of data
+        // Fetches data only in batches. Automatically refetches more data if needed. Does not have much influence.
         request.fetchBatchSize = 20
-        request.fetchLimit = defaultFetchLimit  // Speeds up a lot, especially inital loading of this view controller, but needs care
-//        request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
-//        request.includesPropertyValues = false  // Load property values only when used/needed -> faster but more frequent disk reads
-        request.returnsObjectsAsFaults = false
-        request.includesPropertyValues = true   // usefull only, when only relevant properties are read
-        request.propertiesToFetch = ["amount"] // read only certain properties (others are fetched automatically on demand)
+        // Maximum number of objects a request returns when a fetch is executed. If more data is needed, a new request needs to be executed (manually). Has big influence.
+        request.fetchLimit = defaultFetchLimit
+        // Fetches only the object IDs. The real data is fetched on demand.
+        request.returnsObjectsAsFaults = true
+        // Fetches (only) certain data when a fetch is executed. If further data is needed that will be handled automatically
+        request.includesPropertyValues = true
+        // fetch only certin property. Properties in relationships are not handled here. Other properties are then handled on demand
+        request.propertiesToFetch = ["amount"]
+        // Fetches certain relationship properties directly with the fetch of the entity.
         request.relationshipKeyPathsForPrefetching = ["meal.dateOfCreation", "food.name", "food.totalEnergyCals", "food.totalCarb", "food.totalProtein", "food.totalFat", "food.carbFructose", "food.carbGlucose"]
-
         request.sortDescriptors = [
             NSSortDescriptor(key: "meal.dateOfCreation", ascending: false),
             NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
         ]
-        
+        NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: "FetchedResultsControllerCache")
         self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
-        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: nil)
+        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: "meal.dateOfCreationAsString", cacheName: "FetchedResultsControllerCache")
     }
     
     

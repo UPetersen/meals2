@@ -93,5 +93,35 @@ enum SearchFilter: String {
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
     }
+
+    func shortPredicateForMealsWithIngredientsWithSearchText(_ searchText: String?) -> NSPredicate? {
+        guard let searchText = searchText, !searchText.isEmpty else {
+            return nil
+        }
+        switch self {
+        case .BeginsWith:
+            // Search foods where the name begins with the exact term given in the search bar text field
+            return NSPredicate(format: "food.name BEGINSWITH[c] %@", searchText as CVarArg)
+//            return NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name BEGINSWITH[c] %@).@count != 0", searchText as CVarArg)
+            //            return NSPredicate(format: "SUBQUERY(mealIngredients, $x, $x.meal.dateOfCreation >= %@).@count != 0", lastWeek as CVarArg)
+            
+        //            return NSPredicate(format: "ingredients.food.name BEGINSWITH[c] %@", searchText)
+        case .Contains:
+            // Search for foods where the name contains the words given in the search bar text field
+            let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
+            let predicate = NSPredicate(format: "length > 0")
+            
+            let words = wordsAndEmptyStrings.filter {predicate.evaluate(with: $0)}  // Now real text components only w/o the spaces
+            print("The words in the search text: \(words)")
+            
+            // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
+            //            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "ALL ingredients.food.name contains[c] %@", word)})
+            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name CONTAINS[c] %@", word)})
+//            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name CONTAINS[c] %@).@count != 0", word)})
+            
+            return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
+        }
+    }
+
     
 }

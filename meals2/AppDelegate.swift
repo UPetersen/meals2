@@ -34,9 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         // Set up and show view controller (i.e. MealsCDTVC)
         let navigationController = self.window!.rootViewController as! UINavigationController
         if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
-            //            mealsCDTVC.managedObjectContext = self.persistentContainer.viewContext
-            mealsCDTVC.persistentContainer = persistentContainer
-            
+            mealsCDTVC.psContainer = persistentContainer
+            mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             // Check dictionary for 3D touch quick actions (short cut items) and perform corresponding actions
             if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
                 handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
@@ -56,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let navigationController = self.window!.rootViewController as! UINavigationController
         navigationController.popToRootViewController(animated: false)
         if let mealsCDTVC = navigationController.topViewController as? MealsCDTVC {
-            mealsCDTVC.persistentContainer = persistentContainer
+            mealsCDTVC.psContainer = persistentContainer
             mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
         }
