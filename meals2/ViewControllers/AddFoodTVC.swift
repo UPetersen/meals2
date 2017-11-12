@@ -199,9 +199,7 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     }
     
     
-    
     //MARK: - target action stuff for amountSettingTableViewCell with textField, slider and stepper
-    
     
     @objc func amountTextFieldEditingChanged(sender: UITextField) {
         if let aNumber = numberFormatter.number(from: sender.text!) {
