@@ -204,12 +204,11 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     
     
     @objc func amountTextFieldEditingChanged(sender: UITextField) {
-        
-        guard let aNumber = numberFormatter.number(from: sender.text!) else {
-            return
+        if let aNumber = numberFormatter.number(from: sender.text!) {
+            amountInGrams = Double(truncating: aNumber)
+        } else {
+            amountInGrams = 0.0 // case of empty text
         }
-        self.amountInGrams = Double(truncating: aNumber)
-//        updateAmountSettingTableViewCell()
     }
     
     @objc func sliderValueChanged(sender:UISlider) {
