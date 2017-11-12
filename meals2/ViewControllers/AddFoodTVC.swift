@@ -185,9 +185,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
                         // Save and sync to HealthKit
                         saveContextAndsyncToHealthKit(meal)
                     }
-//                    theMealIngredient.meal?.dateOfLastModification = NSDate()
-//                    // Save and sync to HealthKit
-//                    saveContextAndsyncToHealthKit(theMealIngredient.meal!)
                     
                     // Jump back (i.e. pop) two view controllers (that's kind of the grand parent view controller)
                     if let viewControllers = self.navigationController?.viewControllers {
@@ -199,9 +196,6 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
             default: break
             }
         }
-        
-        // Notify observer used to update the parent (or grand parent view) to which will be popped back
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
     }
     
     

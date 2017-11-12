@@ -112,7 +112,7 @@ import HealthKit
         self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
         
         // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
-        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(Meals2CDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.contextUpdated(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
     }

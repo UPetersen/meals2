@@ -155,10 +155,7 @@ import HealthKit
         self.view.addGestureRecognizer(tapRecognizer)
         
         // dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
-        
-        // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
-        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -166,14 +163,6 @@ import HealthKit
         
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
-    }
-    
-    
-    // MARK: - Notifications
-    
-    @objc func updateThisTableView(_ notification: Notification) {
-        //        tableView.reloadData()
-        fetchMeals()
     }
     
     
@@ -255,7 +244,6 @@ import HealthKit
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         var cell: UITableViewCell
         if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
             // meal with meal ingredients
@@ -269,13 +257,11 @@ import HealthKit
             cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
         }
         
-        
         // Fetch another batch of data if user scrolled to end of table (i.e. title for header for last section requested).
         if indexPath.section >= defaultFetchLimit - 1 {
             defaultFetchLimit += defaultFetchLimitIncrement
             fetchMeals()
         }
-        
         return cell
     }
     
@@ -308,18 +294,11 @@ import HealthKit
             healthManager.syncMealToHealth(newMeal)
             healthManager.syncMealToHealth(oldMeal) // old meal may have no ingredients
 
-//            if let count = oldMeal.ingredients?.count, count > 0 {
-//                healthManager.syncMealToHealth(oldMeal) // old meal still has ingredients
-//            } else {
-//                healthManager.deleteMeal(oldMeal)       // od meal without ingredients any more -> delete old meal
-//                managedObjectContext.delete(oldMeal)
-//            }
             print("AFTER MOVE")
             print("Source meal:")
             print(oldMeal.description)
             print("Destiantion meal: ")
             print(newMeal.description)
-            
         }
     }
     
@@ -388,7 +367,6 @@ import HealthKit
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
                     let mealIngredient = mealIngredientFor(indexPath: indexPath),
-//                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
                     let food = mealIngredient.food,
                     let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
                     viewController.item = .isFood(food, meal)
@@ -398,7 +376,6 @@ import HealthKit
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
                     let mealIngredient = mealIngredientFor(indexPath: indexPath) {
-//                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
                     viewController.item = .isMealIngredient(mealIngredient)
                 }
             case .ShowFavoriteSearchCDTVC:
@@ -524,7 +501,6 @@ import HealthKit
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
             healthManager.syncMealToHealth(newMeal)
-//            self.tableView.reloadData()
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }

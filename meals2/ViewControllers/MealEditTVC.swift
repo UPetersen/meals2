@@ -34,10 +34,6 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
         meal.dateOfLastModification = NSDate()
         healthManager.syncMealToHealth(meal)
         saveContext(managedObjectContext: managedObjectContext)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
-//        if let viewController = self.navigationController?.viewControllers.first as? MealsCDTVC {
-//            viewController.tableView.reloadData()
-//        }
     }
     
     // TextView delegate (delegate itself set in storyboards)
