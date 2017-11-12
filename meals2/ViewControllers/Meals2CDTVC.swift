@@ -561,7 +561,7 @@ import HealthKit
     /// - Warning:
     /// The objects of the fetchedResultsController is an array of meals (i.e. the rows). There are no sections.
     /// In the tableView constructed thereof, there will be one section for each meal and the rows of these sections will contain the meal ingredients.
-    /// So BEWARE when construction the tableView and using data from the fetchedResultsController:
+    /// So BEWARE when construction the tableView and using data from the fetchedResultsController, since the index paths have different meanings:
     /// ````
     /// +--------------------------+----------------------------------+
     /// | fetchedResultsController |             tableView            |
@@ -635,14 +635,10 @@ import HealthKit
         return nil
     }
     
+    
     // MARK: - fetchedResultsController delegate
     
-    
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        print(controller.debugDescription)
-//    }
-    
-    // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
+        // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
     // BEWARE: the fetched results controller returns zero sections and n rows for n meals. From this the tableView is generated with
     // these meal rows as sections.
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
@@ -674,13 +670,19 @@ import HealthKit
     // When all changes of fetchedResultsController are done and the view model (sections) are changed respectively: reload the tableView.
     // Thus, meal (section) headers and footers are recalculated and displayed
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        updateSections()
         tableView.reloadData()
     }
 
     
     // MARK: - Helpers
     
+    /// Meal from fetchedResultsController.
+    /// - Warning
+    ///   IndexPath is the index path for the fetched results controller (zero sections, n rows that represent the meals),
+    ///   not for the table view (n sections for the meals and therein rows for the respective meal ingredients).
+    ///
+    /// - Parameter indexPath: IndexPath of the fetchedResultsController (zero sections, n rows that represent the meals).
+    /// - Returns: The meal if one exists or nil.
     func  mealFor(indexPath: IndexPath) -> Meal? {
         if let count = fetchedResultsController.fetchedObjects?.count,
             let meal = fetchedResultsController.fetchedObjects?[indexPath.section] as? Meal,
@@ -690,13 +692,30 @@ import HealthKit
         return nil
     }
     
+    /// Meal from fetchedResultsController for a section of the table view.
+    /// - Warning
+    ///   Section is the section of the tableview (n sections for the meals and therein rows for their meal ingredients)
+    ///  which actually corresponds to a row of the fetched results controller (zero sections, n rows that represent the meals).
+    ///
+    /// - Parameter section: Section of the table view (n sections for the meals and therein rows for the respective meal ingredients).
+    /// - Returns: The meal if one exists or nil.
     func mealFor(section: Int) -> Meal? {
-        if let sections = sections {
-            return sections[section].meal
+        if let count = fetchedResultsController.fetchedObjects?.count,
+            let meal = fetchedResultsController.fetchedObjects?[section] as? Meal,
+            section < count {
+            return meal
         }
         return nil
+//        if let sections = sections {
+//            return sections[section].meal
+//        }
+//        return nil
     }
     
+    /// Meal ingredient for index path of table view.
+    ///
+    /// - Parameter indexPath: Index path of table view (n sections for the meals and therein rows for the respective meal ingredients).
+    /// - Returns: The meal ingredient if one exists or nil.
     func mealIngredientFor(indexPath: IndexPath) -> MealIngredient? {
         if let sections = sections {
             if let mealIngredients = sections[indexPath.section].rows {
@@ -739,11 +758,13 @@ import HealthKit
 
 extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
     
+    
     // MARK: - Search results updating protocol
     
     func updateSearchResults(for searchController: UISearchController) {
         self.fetchMeals()
     }
+    
     
     // MARK: - search bar delegate protocol
     
