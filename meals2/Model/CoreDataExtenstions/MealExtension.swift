@@ -151,4 +151,17 @@ extension Meal: HasNutrients {
         }
         return newMeal
     }
+    
+    
+    public override var description: String {
+        var string = String("Meal from \(String(describing: self.dateOfCreation)), last change: \(String(describing: self.dateOfLastModification))\n")
+        string.append(String("   with comment: \(String(describing: comment)))\n"))
+        string.append(String("   and \(String(describing: ingredients?.count ?? 0)) ingredients.\n"))
+        if let ingredients = self.ingredients, let mealIngredients = ingredients.allObjects as? [MealIngredient] {
+            for mealIngredient in mealIngredients {
+                string.append("\(mealIngredient.description)\n")
+            }
+        }
+        return string
+    }
 }

@@ -12,7 +12,7 @@ import CoreData
 import HealthKit
 
 
-@objc (MealsCDTVC) final class MealsCDTVC: BaseCDTVC {
+@objc (Meals2CDTVC) final class Meals2CDTVC: BaseCDTVC, UISearchResultsUpdating, UISearchBarDelegate {
     
     // Core Data
     var psContainer: NSPersistentContainer!
@@ -114,7 +114,7 @@ import HealthKit
         // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
         NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.contextUpdated(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.contextUpdated(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -127,10 +127,10 @@ import HealthKit
     
     // MARK: - Notifications
     
-    // Trial to handle updates in relevant meals via observing changes in the context that are related to meals or mealingredients or just the very meal or meal ingredient. If so, one would refetch the data and reload the table view. But this can also be handled more simply without observing the context, but with the updatedThisTableView-Notificaton
-    @objc func contextUpdated(_ notification: Notification) {
-        print(notification)
-    }
+//    // Trial to handle updates in relevant meals via observing changes in the context that are related to meals or mealingredients or just the very meal or meal ingredient. If so, one would refetch the data and reload the table view. But this can also be handled more simply without observing the context, but with the updatedThisTableView-Notificaton
+//    @objc func contextUpdated(_ notification: Notification) {
+//        print(notification)
+//    }
     
     @objc func updateThisTableView(_ notification: Notification) {
 //        tableView.reloadData()
@@ -292,7 +292,7 @@ import HealthKit
             switch segueIdentifier {
             case .testSegue:
                 if let viewController = segue.destination as? meals.Meals2CDTVC {
-                    viewController.persistentContainer = psContainer
+                    viewController.psContainer = psContainer
                     viewController.managedObjectContext = managedObjectContext
                 }
             case .ShowFoodDetailCDTVC:
@@ -510,7 +510,7 @@ import HealthKit
         request.fetchBatchSize = 20
         // Maximum number of objects a request returns when a fetch is executed. If more data is needed, a new request needs to be executed (manually). Has big influence.
         request.fetchLimit = defaultFetchLimit
-        // Fetches only the object IDs. The real data is fetched on demand.
+        // Fetches only faulted objects (i.e. the object IDs). The real data is fetched on demand. 
         request.returnsObjectsAsFaults = true
         // Fetches (only) certain data when a fetch is executed. If further data is needed that will be handled automatically
         request.includesPropertyValues = true
@@ -546,5 +546,32 @@ import HealthKit
             }
         }
     }
+    
+    
+    
+    // MARK: - Search results updating protocol
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        self.fetchMealIngredients()
+    }
+    
+    // MARK: - search bar delegate protocol
+    
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        switch selectedScope {
+        case 0:
+            searchFilter = SearchFilter.BeginsWith
+        case 1:
+            searchFilter = SearchFilter.Contains
+        default:
+            searchFilter = SearchFilter.BeginsWith
+        }
+        self.fetchMealIngredients()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+    }
+
     
 }

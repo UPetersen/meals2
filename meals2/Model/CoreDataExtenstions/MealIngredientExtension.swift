@@ -17,6 +17,10 @@ extension MealIngredient {
             return foodValue * (self.amount?.doubleValue)! / 100.0 // per 100 g
         }
         return nil
-    }    
+    }
+    
+    override public var description: String {
+        return String("Mealingredient: \(String(describing: self.amount)) g of \(String(describing: self.food?.name))")
+    }
 }
 

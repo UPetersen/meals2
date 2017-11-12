@@ -162,6 +162,7 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
                 // This is the case where the amount of a meal ingredient was changed by the user and has now to be stored properly
                 // convert to milligrams and store
                 theMealIngredient.amount = NSNumber(value: self.amountInGrams as Double)
+                theMealIngredient.meal?.dateOfLastModification = NSDate()
                 
                 // Save and sync to HealthKit
                 saveContextAndsyncToHealthKit(theMealIngredient.meal!)
@@ -179,8 +180,14 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
                     } else { // create new meal if there are no meals existent, yet, and tie this food to it as meal ingredient
                         theMealIngredient.meal = Meal(context: managedObjectContext)
                     }
-                    // Save and sync to HealthKit
-                    saveContextAndsyncToHealthKit(theMealIngredient.meal!)
+                    if let meal = theMealIngredient.meal {
+                        meal.dateOfLastModification = NSDate()
+                        // Save and sync to HealthKit
+                        saveContextAndsyncToHealthKit(meal)
+                    }
+//                    theMealIngredient.meal?.dateOfLastModification = NSDate()
+//                    // Save and sync to HealthKit
+//                    saveContextAndsyncToHealthKit(theMealIngredient.meal!)
                     
                     // Jump back (i.e. pop) two view controllers (that's kind of the grand parent view controller)
                     if let viewControllers = self.navigationController?.viewControllers {

@@ -6,29 +6,34 @@
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
 
-import Foundation
-import UIKit
+//import Foundation
+//import UIKit
+//
+//extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
+//
+//    // MARK: - Search results updating protocol
+//    
+//    func updateSearchResults(for searchController: UISearchController) {
+//        self.fetchMealIngredients()
+//    }
+//    
+//    // MARK: - search bar delegate protocol
+//    
+//    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+//        switch selectedScope {
+//        case 0:
+//            searchFilter = SearchFilter.BeginsWith
+//        case 1:
+//            searchFilter = SearchFilter.Contains
+//        default:
+//            searchFilter = SearchFilter.BeginsWith
+//        }
+//        self.fetchMealIngredients()
+//    }
+//    
+//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+//    }
+//
+//}
 
-extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
-    
-    // MARK: - Search results updating protocol
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        self.fetchMealIngredients()
-    }
-    
-    // MARK: - search bar delegate protocol
-    
-    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        switch selectedScope {
-        case 0:
-            searchFilter = SearchFilter.BeginsWith
-        case 1:
-            searchFilter = SearchFilter.Contains
-        default:
-            searchFilter = SearchFilter.BeginsWith
-        }
-        self.fetchMealIngredients()
-    }
-    
-}

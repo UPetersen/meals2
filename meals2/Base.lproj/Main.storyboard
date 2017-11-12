@@ -48,7 +48,7 @@
                                     <segue destination="jIp-Qo-6YO" kind="show" identifier="Segue MealsCDTVC to FoodDetailCDTVC" id="Xdh-4v-I9O"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="zCv-H8-FMu" style="IBUITableViewCellStyleDefault" id="T7J-lO-C4D">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Empty Meal Cell" textLabel="zCv-H8-FMu" style="IBUITableViewCellStyleDefault" id="T7J-lO-C4D">
                                 <rect key="frame" x="0.0" y="66" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="T7J-lO-C4D" id="Cll-Y8-kyc">

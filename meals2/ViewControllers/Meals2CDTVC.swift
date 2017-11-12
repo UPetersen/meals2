@@ -13,30 +13,27 @@ import CoreData
 import HealthKit
 
 
-@objc (Meals2CDTVC) final class Meals2CDTVC: UITableViewController, NSFetchedResultsControllerDelegate {
-//    @objc (Meals2CDTVC) final class Meals2CDTVC: BaseCDTVC {
-
+@objc (MealsCDTVC) final class MealsCDTVC: UITableViewController, NSFetchedResultsControllerDelegate {
     
     // Core Data
-    var persistentContainer: NSPersistentContainer!
+    var psContainer: NSPersistentContainer!
     var managedObjectContext: NSManagedObjectContext!
-    
     // For speed reasons, only defaultFetchLimit meal ingredient objects are fetched
     // More data will be fetched automatically each time when the user scrolls to the end of the table view
     var defaultFetchLimit = 50                     // the number of objects normally fetched
-    var defaultFetchLimitIncrement = 50            // the number of objects additionally fetched when more data is requested
-    let loadMoreDataText = "Alle Daten laden ..."   // text displayed in the last cell instead of meal ingredient data
+    var defaultFetchLimitIncrement = 50            // the number of objects additionally fetched when more data is requested (user scrolls to end of table)
     
     // meal variable needed for actions on a meal.
-    weak var currentMeal: Meal!
+    weak var currentMeal: Meal! // ingredients are added to this meal
     
     // HealthKit
     let healthManager: HealthManager = HealthManager()
     
-    // Search controller to help us with filtering.
+    // Search controller to help us with filtering
     var searchController = UISearchController(searchResultsController: nil) // Searchresults are displayed in this tableview
     var searchFilter = SearchFilter.BeginsWith
     var shortPredicate: NSPredicate?
+    let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort ingredients by their food name
     
     // Formatters
     lazy var calsNumberFormatter: NumberFormatter =  {() -> NumberFormatter in
@@ -68,6 +65,7 @@ import HealthKit
         return dateFormatter
     }()
     
+    // Segues
     enum SegueIdentifier: String {
         case ShowFoodDetailCDTVC     = "Segue MealsCDTVC to FoodDetailCDTVC"
         case ShowAddFoodTVC          = "Segue MealsCDTVC to AddFoodTVC"
@@ -77,11 +75,11 @@ import HealthKit
         case ShowGeneralSearchCDTVC  = "Segue MealsCDTVC to GeneralSearchCDTVC"
     }
     
+    // View model
     struct NutrionText {
         var text: String?
         var detailText: String?
     }
-    
     struct Section {
         let rows: [MealIngredient]?
         let meal: Meal?
@@ -89,9 +87,7 @@ import HealthKit
     var sections: [Section]?
     
     // MARK: - Fetched results controller
-    
     var _fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
-    
     var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> {
         set {
             
@@ -114,7 +110,6 @@ import HealthKit
                     abort()
                 }
             }
-//            self.tableView.reloadData()
         }
         get {
             if _fetchedResultsController == nil {
@@ -126,14 +121,14 @@ import HealthKit
     }
     
     
-    // MARK: - View Controller
+    // MARK: - view controller initialization
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Initializes the fetched results controller. The tableView will display a list of mealIngredients.
-        managedObjectContext = persistentContainer.viewContext
-        fetchMealIngredients()
+        managedObjectContext = psContainer.viewContext
+        fetchMeals()
         
         // set automatic row heights (could also be handled via tableView delegate
         tableView.estimatedRowHeight = CGFloat(44)
@@ -164,8 +159,6 @@ import HealthKit
         
         // Notification, to enable update of this table view from a child table view (i.e. when a food is added to a meal, this tableview changes it's content)
         NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.updateThisTableView(_:)), name: NSNotification.Name(rawValue: "updateMealsCDTVCNotification"), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(MealsCDTVC.contextUpdated(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -178,14 +171,9 @@ import HealthKit
     
     // MARK: - Notifications
     
-    // Trial to handle updates in relevant meals via observing changes in the context that are related to meals or mealingredients or just the very meal or meal ingredient. If so, one would refetch the data and reload the table view. But this can also be handled more simply without observing the context, but with the updatedThisTableView-Notificaton
-    @objc func contextUpdated(_ notification: Notification) {
-        print(notification)
-    }
-    
     @objc func updateThisTableView(_ notification: Notification) {
         //        tableView.reloadData()
-        fetchMealIngredients()
+        fetchMeals()
     }
     
     
@@ -219,14 +207,11 @@ import HealthKit
         }
     }
     
-    // MARK: - tableView data source
     
-    // The (one and only one empty) cell of an empty meal shall not show a reorder control
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        if mealIngredientFor(indexPath: indexPath) == nil {
-            return false // empty meal: has only placeholder cell which shall not be moved
-        }
-        return true // all other cells are meal ingredients and are okay to move
+    // MARK: - UITableView data source
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return sections?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -248,56 +233,9 @@ import HealthKit
             if let amount = meal.amount {
                 totalAmount = zeroMaxDigitsNumberFormatter.string(from: amount) ?? ""
             }
-            
             return totalEnergyCals + ", " + totalCarb + " KH, " + totalProtein + " Prot., " + totalFat + " Fett, " + carbFructose + " F, " + carbGlucose + " G, " + totalAmount + " g insg."
         }
         return nil
-    }
-    
-    func stringForNumber (_ number: NSNumber, formatter: NumberFormatter, divisor: Double) -> String {
-        return (formatter.string(from: NSNumber(value: number.doubleValue / divisor)) ?? "nan")
-    }
-    
-    
-    // MARK: - UITableViewDataSource
-    
-    // Move a mealIngredient from one meal (i.e. section) to another meal (section)
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if let mealIngredient = mealIngredientFor(indexPath: sourceIndexPath),
-            let oldMeal = mealIngredient.meal,
-            let newMeal = mealFor(section: destinationIndexPath.section) {
-            mealIngredient.meal = newMeal
-            
-            healthManager.syncMealToHealth(newMeal)
-            
-            if let count = oldMeal.ingredients?.count, count > 0 {
-                healthManager.syncMealToHealth(oldMeal) // old meal still has ingredients
-            } else {
-                healthManager.deleteMeal(oldMeal)       // od meal without ingredients any more -> delete old meal
-                managedObjectContext.delete(oldMeal)
-            }
-        }
-    }
-    
-
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
-            if let meal = mealFor(section: indexPath.section) {
-//                if let meal = mealFor(indexPath: indexPath) {
-                if let count = meal.ingredients?.count, count > 1 {
-                    // The meal has more than just the meal ingredient that shall be deleted, so delete the meal ingredient and let the meal and the other meal ingredients persist
-                    if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
-                        managedObjectContext.delete(mealIngredient)
-                        healthManager.syncMealToHealth(meal)
-                    }
-                } else {
-                    // The meal has non ingredient at all or only the one ingredient that shall be deleted, thus delete the whole meal.
-                    healthManager.deleteMeal(meal)
-                    managedObjectContext.delete(meal)
-                }
-            }
-        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -315,88 +253,99 @@ import HealthKit
         }
         return 0
     }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections?.count ?? 0
-        return fetchedResultsController.fetchedObjects?.count ?? 0
-    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         var cell: UITableViewCell
         if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
+            // meal with meal ingredients
             let nutrionText = contentFor(mealIngredient: mealIngredient)
             cell = tableView.dequeueReusableCell(withIdentifier: "MealIngredient Cell", for: indexPath)
             cell.textLabel?.text = nutrionText.text
             cell.detailTextLabel?.text = nutrionText.detailText
-
+            
         } else {
+            // Empty meal without meal ingredients. Display placeholder cell
             cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
-//            cell.showsReorderControl = false
         }
         
-//        let section = indexPath.section
-//        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
-//        if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal,
-//            let mealIngredients = meal.ingredients,
-//            let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//
-//            if let predicate = shortPredicate {
-//                let filteredeMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
-//                if let sortedFilteredMealIngredients = filteredeMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//                    let mealIngredient = sortedFilteredMealIngredients[indexPath.row]
-//                    let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                    cell.textLabel?.text = nutrionText.text
-//                    cell.detailTextLabel?.text = nutrionText.detailText
-//                }
-//            } else {
-//                if mealIngredients.count == 0 {
-//                    cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
-//                    cell.showsReorderControl = false
-//                } else {
-//                    let mealIngredient = sortedMealIngredients[indexPath.row]
-//                    let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                    cell.textLabel?.text = nutrionText.text
-//                    cell.detailTextLabel?.text = nutrionText.detailText
-//                }
-//            }
-//        }
-
-//        var cell = tableView.dequeueReusableCell(withIdentifier: "MealIngredient Cell", for: indexPath)
-//        let section = indexPath.section
-//        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
-//        if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal,
-//            let mealIngredients = meal.ingredients,
-//            let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//
-//            if let predicate = shortPredicate {
-//                let filteredeMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
-//                if let sortedFilteredMealIngredients = filteredeMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//                    let mealIngredient = sortedFilteredMealIngredients[indexPath.row]
-//                    let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                    cell.textLabel?.text = nutrionText.text
-//                    cell.detailTextLabel?.text = nutrionText.detailText
-//                }
-//            } else {
-//                if mealIngredients.count == 0 {
-//                    cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
-//                    cell.showsReorderControl = false
-//                } else {
-//                    let mealIngredient = sortedMealIngredients[indexPath.row]
-//                    let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                    cell.textLabel?.text = nutrionText.text
-//                    cell.detailTextLabel?.text = nutrionText.detailText
-//                }
-//            }
-//        }
-
+        
         // Fetch another batch of data if user scrolled to end of table (i.e. title for header for last section requested).
         if indexPath.section >= defaultFetchLimit - 1 {
             defaultFetchLimit += defaultFetchLimitIncrement
-            fetchMealIngredients()
+            fetchMeals()
         }
         
         return cell
+    }
+    
+    // The (one and only one empty) cell of an empty meal shall not show a reorder control.
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        if mealIngredientFor(indexPath: indexPath) == nil {
+            return false // empty meal: has only placeholder cell which shall not be moved
+        }
+        if searchController.isActive {
+            return false
+        }
+        return true // all other cells are meal ingredients and are okay to move
+    }
+    
+    // Move a mealIngredient from one meal (i.e. section) to another meal (section)
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if let mealIngredient = mealIngredientFor(indexPath: sourceIndexPath),
+            let oldMeal = mealIngredient.meal,
+            let newMeal = mealFor(section: destinationIndexPath.section) {
+            print("BEFORE MOVE")
+            print("Source meal:")
+            print(oldMeal.description)
+            print("Destiantion meal: ")
+            print(newMeal.description)
+
+            mealIngredient.meal = newMeal
+            newMeal.dateOfLastModification = NSDate()
+            oldMeal.dateOfLastModification = NSDate()
+            
+            healthManager.syncMealToHealth(newMeal)
+            healthManager.syncMealToHealth(oldMeal) // old meal may have no ingredients
+
+//            if let count = oldMeal.ingredients?.count, count > 0 {
+//                healthManager.syncMealToHealth(oldMeal) // old meal still has ingredients
+//            } else {
+//                healthManager.deleteMeal(oldMeal)       // od meal without ingredients any more -> delete old meal
+//                managedObjectContext.delete(oldMeal)
+//            }
+            print("AFTER MOVE")
+            print("Source meal:")
+            print(oldMeal.description)
+            print("Destiantion meal: ")
+            print(newMeal.description)
+            
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            if let meal = mealFor(section: indexPath.section) {
+                if let count = meal.ingredients?.count, count > 1 {
+                    // The meal has more than just the meal ingredient that shall be deleted, so delete the meal ingredient and let the meal and the other meal ingredients persist
+                    if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
+                        managedObjectContext.delete(mealIngredient)
+                        healthManager.syncMealToHealth(meal)
+                    }
+                } else {
+                    // The meal has non ingredient at all or only the one ingredient that shall be deleted, thus delete the whole meal.
+                    healthManager.deleteMeal(meal)
+                    managedObjectContext.delete(meal)
+                }
+            }
+        }
+    }
+    
+    
+    // MARK: - Helpers for UITableView data source
+    
+    func stringForNumber (_ number: NSNumber, formatter: NumberFormatter, divisor: Double) -> String {
+        return (formatter.string(from: NSNumber(value: number.doubleValue / divisor)) ?? "nan")
     }
     
     // Check if last cell in table view is displayed on screen and if number of fetched objects exceeds the fetch limit. If so, fetch more data
@@ -427,7 +376,6 @@ import HealthKit
     }
 
     
-    
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -439,7 +387,8 @@ import HealthKit
                 if let viewController = segue.destination as? FoodDetailCDTVC,
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
-                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
+                    let mealIngredient = mealIngredientFor(indexPath: indexPath),
+//                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient,
                     let food = mealIngredient.food,
                     let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
                     viewController.item = .isFood(food, meal)
@@ -448,7 +397,8 @@ import HealthKit
                 if let viewController = segue.destination  as? AddFoodTVC,
                     let cell = sender as? UITableViewCell,
                     let indexPath = self.tableView.indexPath(for: cell),
-                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
+                    let mealIngredient = mealIngredientFor(indexPath: indexPath) {
+//                    let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient {
                     viewController.item = .isMealIngredient(mealIngredient)
                 }
             case .ShowFavoriteSearchCDTVC:
@@ -488,7 +438,7 @@ import HealthKit
     @IBAction func addButtonSelected(_ sender: UIBarButtonItem) {
         // Create a new Meal
         let meal = Meal(context: managedObjectContext)
-        fetchMealIngredients()
+        fetchMeals()
         saveContext() // Needed for synchronisation with health with URI of managed object
         healthManager.saveMeal(meal)
     }
@@ -508,7 +458,8 @@ import HealthKit
         }
     }
     
-    // MARK: - Meal options (swipe actions, longpress actions)
+    
+    // MARK: - meal options menu (alert action sheet) for swipe and long press
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = contextualMealOptionsAction(forRowAtIndexPath: indexPath)
@@ -527,6 +478,7 @@ import HealthKit
         }
         return action
     }
+    
     func alertControllerForMeal(meal: Meal) -> UIAlertController {
         let alertController = UIAlertController(title: "Mahlzeit", message: "Optionen für die ausgewählte Mahlzeit.", preferredStyle: .actionSheet)
         alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteMeal(meal) })
@@ -540,13 +492,11 @@ import HealthKit
     }
     
     
-    
-    // MARK: - Action Sheet: Actions on the meal via long press gesture Recognizer
+    // MARK: - Actions on the meal via long press gesture Recognizer
     
     func mealSelectedByLongPressGestureRecognizer(_ longPressGestureRecognizer: UIGestureRecognizer) -> Meal? {
         let touchPoint = longPressGestureRecognizer.location(in: self.view)
-        if let indexPath = tableView.indexPathForRow(at: touchPoint), let meals = fetchedResultsController.fetchedObjects as? [Meal] {
-//            return meals[indexPath.section]
+        if let indexPath = tableView.indexPathForRow(at: touchPoint) {
             return mealFor(section: indexPath.section)
         }
         return nil
@@ -574,7 +524,7 @@ import HealthKit
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
             healthManager.syncMealToHealth(newMeal)
-            self.tableView.reloadData()
+//            self.tableView.reloadData()
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }
@@ -604,93 +554,130 @@ import HealthKit
     
     
     
-    // MARK: - fetched results controller
+    // MARK: - fetched results controller and helpers
     
-    func fetchMealIngredients() {
+    /// Fetches meals from database using a fetchedResultsController.
+    ///
+    /// - Warning:
+    /// The objects of the fetchedResultsController is an array of meals (i.e. the rows). There are no sections.
+    /// In the tableView constructed thereof, there will be one section for each meal and the rows of these sections will contain the meal ingredients.
+    /// So BEWARE when construction the tableView and using data from the fetchedResultsController:
+    /// ````
+    /// +--------------------------+----------------------------------+
+    /// | fetchedResultsController |             tableView            |
+    /// |--------------------------+----------------------------------+
+    /// |    sections: none        |                                  |
+    /// |    rows:     meals --------> sections: meals                |
+    /// |                          |   rows: ingredients of the meals |
+    /// + -------------------------+----------------------------------+
+    /// ````
+    /// - Important:
+    /// The fetchedResultsController observes changes of meals, that includes adding, deletion and movement of their ingredients, but not changes in the amount of a meal ingredient. To automatically have this handled by the fetchedResultsController the dateOfLastModification of a meal is updated whenever the amount of a mealIngredient is changed. This is an importand convention. The change of properties of a meal ingredient's food is not automatically handled and does not fire the fetchedResultsController.
+    func fetchMeals() {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Meal")
         
+        // Predicates: one for 
+        request.predicate = searchFilter.predicateForMealsWithIngredientsWithSearchText(self.searchController.searchBar.text)
         shortPredicate = searchFilter.shortPredicateForMealsWithIngredientsWithSearchText(searchController.searchBar.text)
 
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Meal")
-        request.predicate = searchFilter.predicateForMealsWithIngredientsWithSearchText(self.searchController.searchBar.text)
-        
         // Performance optimation for reading and saving of data
-        request.fetchBatchSize = 20
+        request.fetchBatchSize = 50
         request.fetchLimit = defaultFetchLimit  // Speeds up a lot, especially inital loading of this view controller, but needs care
         request.returnsObjectsAsFaults = true   // objects are only loaded, when needed/used -> faster but more frequent disk reads
         request.includesPropertyValues = true   // usefull only, when only relevant properties are read
         request.propertiesToFetch = ["dateOfCreation"] // read only certain properties (others are fetched automatically on demand)
         request.relationshipKeyPathsForPrefetching = ["ingredients", "food"]
 //        request.relationshipKeyPathsForPrefetching = ["ingredients.amount", "ingredients.food.name",  "ingredients.food.totalEnergyCals", "ingredients.food.totalCarb", "ingredients.food.totalProtein", "ingredients.food.totalFat", "ingredients.food.carbFructose", "ingredients.food.carbGlucose"]
-        request.sortDescriptors = [
-            NSSortDescriptor(key: "dateOfCreation", ascending: false) //,
-//            NSSortDescriptor(key: "food.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))
-        ]
+        request.sortDescriptors = [NSSortDescriptor(key: "dateOfCreation", ascending: false)]
         
         self.saveContext() // Unfortunately only works with saving before fetching, see https://stackoverflow.com/questions/42071379/core-data-warning-when-saving-child-moc
         self.fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
-        // TODO: hier geht's weiter
         // Populate the view model
-
-        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
-
-        sections = nil // the view model
-        if let meals = fetchedResultsController.fetchedObjects as? [Meal] {
-            sections = [Section]()
-            for meal in meals {
-                if let mealIngredients = meal.ingredients {
-                    // Meal has meal ingredients.
-                    var filteredAndSortedMealIngredients = mealIngredients
-                    // Filter if a predicate is given (text in searchbar), which needs NSSet.
-                    if let predicate = shortPredicate {
-                        filteredAndSortedMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
-                    }
-                    // Sort thereafter and store in view model
-                    if let filteredAndSortedMealIngredients = filteredAndSortedMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient] {
-                        sections?.append(Section(rows: filteredAndSortedMealIngredients, meal: meal))
-                    }
-                } else {
-                    // Meal is empty (i.e. has no meal ingredients). Store in view model
-                    sections?.append(Section(rows: nil, meal: meal))
-                }
-            }
-        }
+        updateSections()
         tableView.reloadData()
     }
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        // In the simplest, most efficient, case, reload the table view.
-        self.tableView.reloadData() // Uwi, 20.12.2014: works better than using the above methods: Now the animations are right, sections are updated instantaneously
+    func updateSections() {
+        sections = nil // reset the view model
+        if let meals = fetchedResultsController.fetchedObjects as? [Meal] {
+            sections = [Section]()
+            for meal in meals {
+                if let section = sectionForMeal(meal: meal, sortDescriptor: sortDescriptor, predicate: shortPredicate) {
+                    sections?.append(section)
+                }
+            }
+        }
+    }
+    
+    func updateSectionAt(section: Int) {
+        if let meal = mealFor(section: section), let theSection = sectionForMeal(meal: meal, sortDescriptor: sortDescriptor, predicate: shortPredicate)  {
+            sections?[section] = theSection
+        }
+    }
+    
+    func sectionForMeal(meal: Meal, sortDescriptor: NSSortDescriptor, predicate: NSPredicate?) -> Section? {
+        if let mealIngredients = meal.ingredients {
+            // Meal has meal ingredients.
+            var filteredAndSortedMealIngredients = mealIngredients
+            // Filter if a predicate is given (text in searchbar), which needs NSSet.
+            if let predicate = shortPredicate {
+                filteredAndSortedMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
+            }
+            // Sort thereafter and store in view model
+            if let filteredAndSortedMealIngredients = filteredAndSortedMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient] {
+                return Section(rows: filteredAndSortedMealIngredients, meal: meal)
+            }
+        } else {
+            // Meal is empty (i.e. has no meal ingredients). Store in view model
+            return Section(rows: nil, meal: meal)
+        }
+        return nil
+    }
+    
+    // MARK: - fetchedResultsController delegate
+    
+    
+//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//        print(controller.debugDescription)
+//    }
+    
+    // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
+    // BEWARE: the fetched results controller returns zero sections and n rows for n meals. From this the tableView is generated with
+    // these meal rows as sections.
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
+        switch type {
+        case .delete: // meal deleted
+            if let indexPath = indexPath, let _ = mealFor(section: indexPath.row) {
+                sections?.remove(at: indexPath.row)
+            }
+        case .insert: // new meal created, called once for this new meal
+            if let indexPath = newIndexPath, let meal = mealFor(section: indexPath.row),
+                let section = sectionForMeal(meal: meal, sortDescriptor: sortDescriptor, predicate: shortPredicate) {
+                sections?.insert(section, at: indexPath.row)
+            }
+        case .move: // meal moved due to change of dateOfCreation
+            if let indexPath = indexPath, let _ = mealFor(section: indexPath.row) {
+                updateSectionAt(section: indexPath.row)
+            }
+            if let indexPath = newIndexPath, let _ = mealFor(section: indexPath.row) {
+                updateSectionAt(section: indexPath.row)
+            }
+        case .update: // meal changed, i.e. new, moved or removed ingredient or changed comment or changed dateOfLastModification (called twice in case of a move of a meal ingredients, since two meals are affected by this operation)
+            if let indexPath = indexPath {
+                updateSectionAt(section: indexPath.row)
+            }
+        }
     }
 
-    
-//    let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
-//    if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal,
-//    let mealIngredients = meal.ingredients,
-//    let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//
-//        if let predicate = shortPredicate {
-//            let filteredeMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
-//            if let sortedFilteredMealIngredients = filteredeMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//                let mealIngredient = sortedFilteredMealIngredients[indexPath.row]
-//                let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                cell.textLabel?.text = nutrionText.text
-//                cell.detailTextLabel?.text = nutrionText.detailText
-//            }
-//        } else {
-//            if mealIngredients.count == 0 {
-//                cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
-//                cell.showsReorderControl = false
-//            } else {
-//                let mealIngredient = sortedMealIngredients[indexPath.row]
-//                let nutrionText = contentFor(mealIngredient: mealIngredient)
-//                cell.textLabel?.text = nutrionText.text
-//                cell.detailTextLabel?.text = nutrionText.detailText
-//            }
-//        }
-//    }
+    // When all changes of fetchedResultsController are done and the view model (sections) are changed respectively: reload the tableView.
+    // Thus, meal (section) headers and footers are recalculated and displayed
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//        updateSections()
+        tableView.reloadData()
+    }
 
-    
     
     // MARK: - Helpers
     
@@ -708,11 +695,6 @@ import HealthKit
             return sections[section].meal
         }
         return nil
-//        if let meals = fetchedResultsController.fetchedObjects as? [Meal] {
-//            return meals[section]
-//        }
-//        return nil
-
     }
     
     func mealIngredientFor(indexPath: IndexPath) -> MealIngredient? {
@@ -721,32 +703,14 @@ import HealthKit
                 if mealIngredients.count == 0 {
                     return nil
                 } else {
+                    if let meal = mealIngredients.first?.meal {
+                        print(meal.description)
+                    }
                     return mealIngredients[indexPath.row]
                 }
             }
         }
         return nil
-        
-//        let section = indexPath.section
-//        let sortDescriptor = NSSortDescriptor(key: "food.name", ascending: true) // sort by the food name of the ingredients
-//        if let meal = fetchedResultsController.object(at: IndexPath(row: section, section: 0)) as? Meal,
-//            let mealIngredients = meal.ingredients,
-//            let sortedMealIngredients = mealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//
-//            if let predicate = shortPredicate {
-//                let filteredeMealIngredients = mealIngredients.filtered(using: predicate) as NSSet
-//                if let sortedFilteredMealIngredients = filteredeMealIngredients.sortedArray(using: [sortDescriptor]) as? [MealIngredient]  {
-//                    return sortedFilteredMealIngredients[indexPath.row]
-//                }
-//            } else {
-//                if mealIngredients.count == 0 {
-//                    return nil
-//                } else {
-//                    return sortedMealIngredients[indexPath.row]
-//                }
-//            }
-//        }
-//        return nil
     }
     
     
@@ -768,21 +732,26 @@ import HealthKit
             }
         }
     }
-    
 }
 
 
 // MARK: - Search extension
 
-extension Meals2CDTVC: UISearchResultsUpdating, UISearchBarDelegate {
+extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
     
     // MARK: - Search results updating protocol
     
     func updateSearchResults(for searchController: UISearchController) {
-        self.fetchMealIngredients()
+        self.fetchMeals()
     }
     
     // MARK: - search bar delegate protocol
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        if tableView.isEditing {
+            tableView.setEditing(false, animated: true) // no editing in search mode 
+        }
+    }
     
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         switch selectedScope {
@@ -793,7 +762,11 @@ extension Meals2CDTVC: UISearchResultsUpdating, UISearchBarDelegate {
         default:
             searchFilter = SearchFilter.BeginsWith
         }
-        self.fetchMealIngredients()
+        self.fetchMeals()
     }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+    }
+
 }

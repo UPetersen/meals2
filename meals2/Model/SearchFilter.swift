@@ -67,6 +67,14 @@ enum SearchFilter: String {
         }
     }
     
+    
+    /// Predicate for alphabetical search on meals.
+    ///
+    /// Returns the predicate to do an alphabetical text search on meals that have ingredients whose food names satisfiy the search text filter.
+    /// Example predicate: NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name CONTAINS[c] %@).@count != 0", word)
+    ///
+    /// - Parameter searchText: the search text
+    /// - Returns: predicate for filtering data using a fetched results controller on Meal entity.
     func predicateForMealsWithIngredientsWithSearchText(_ searchText: String?) -> NSPredicate? {
         guard let searchText = searchText, !searchText.isEmpty else {
             return nil
@@ -74,10 +82,7 @@ enum SearchFilter: String {
         switch self {
         case .BeginsWith:
             // Search foods where the name begins with the exact term given in the search bar text field
-            return NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name BEGINSWITH[c] %@).@count != 0", searchText as CVarArg)
-//            return NSPredicate(format: "SUBQUERY(mealIngredients, $x, $x.meal.dateOfCreation >= %@).@count != 0", lastWeek as CVarArg)
-
-//            return NSPredicate(format: "ingredients.food.name BEGINSWITH[c] %@", searchText)
+            return NSPredicate(format: "SUBQUERY(ingredients, $x, $x.food.name BEGINSWITH[c] %@).@count != 0", searchText as CVarArg)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
             let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
@@ -87,13 +92,19 @@ enum SearchFilter: String {
             print("The words in the search text: \(words)")
             
             // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-//            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "ALL ingredients.food.name contains[c] %@", word)})
-            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name CONTAINS[c] %@).@count != 0", word)})
-            
+            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "SUBQUERY(ingredients, $x, $x.food.name CONTAINS[c] %@).@count != 0", word)})
+
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
     }
 
+    /// Predicate for alphabetical search on meal ingredients.
+    ///
+    /// Returns the predicate to do an alphabetical text search on meal ingredients whose food names satisfiy the search text filter.
+    /// Example predicate: NSPredicate(format: "food.name CONTAINS[c] %@", word).
+    ///
+    /// - Parameter searchText: the search text
+    /// - Returns: predicate for filtering data of an NSSet of mealIngredients
     func shortPredicateForMealsWithIngredientsWithSearchText(_ searchText: String?) -> NSPredicate? {
         guard let searchText = searchText, !searchText.isEmpty else {
             return nil
@@ -102,10 +113,6 @@ enum SearchFilter: String {
         case .BeginsWith:
             // Search foods where the name begins with the exact term given in the search bar text field
             return NSPredicate(format: "food.name BEGINSWITH[c] %@", searchText as CVarArg)
-//            return NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name BEGINSWITH[c] %@).@count != 0", searchText as CVarArg)
-            //            return NSPredicate(format: "SUBQUERY(mealIngredients, $x, $x.meal.dateOfCreation >= %@).@count != 0", lastWeek as CVarArg)
-            
-        //            return NSPredicate(format: "ingredients.food.name BEGINSWITH[c] %@", searchText)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
             let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
@@ -115,9 +122,7 @@ enum SearchFilter: String {
             print("The words in the search text: \(words)")
             
             // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-            //            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "ALL ingredients.food.name contains[c] %@", word)})
             let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name CONTAINS[c] %@", word)})
-//            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "SUBQUERY(ingredients, $x, ANY $x.food.name CONTAINS[c] %@).@count != 0", word)})
             
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
