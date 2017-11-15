@@ -243,7 +243,8 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     func saveContextAndsyncToHealthKit(_ meal: Meal) {
         saveContext()
         let healthManager = HealthManager()
-        healthManager.syncMealToHealth(meal)
+//        healthManager.syncMealToHealth(meal)
+        healthManager.synchronize(meal, withSynchronisationMode: .update)
     }
     
     

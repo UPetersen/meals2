@@ -5,7 +5,7 @@
 //  Created by Uwe Petersen on 08.10.17.
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
-
+/*
 import Foundation
 import UIKit
 import CoreData
@@ -213,13 +213,16 @@ import HealthKit
             if let destinationSectionInfo = self.fetchedResultsController.sections?[destinationIndexPath.section], let newMeal = (destinationSectionInfo.objects?.first as? MealIngredient)?.meal {
                 
                 mealIngredient.meal = newMeal
-                healthManager.syncMealToHealth(newMeal)
+//                healthManager.syncMealToHealth(newMeal)
+                healthManager.synchronize(newMeal, withSynchronisationMode: .update)
                 
                 if oldMeal.ingredients != nil && oldMeal.ingredients!.count == 0 {
-                    healthManager.deleteMeal(oldMeal)
+//                    healthManager.deleteMeal(oldMeal)
+                    healthManager.synchronize(oldMeal, withSynchronisationMode: .delete)
                     managedObjectContext.delete(oldMeal) // delete the old meal, if it has no more meal ingredients
                 } else {
-                    healthManager.syncMealToHealth(oldMeal)
+//                    healthManager.syncMealToHealth(oldMeal)
+                    healthManager.synchronize(oldMeal, withSynchronisationMode: .update)
                 }
             }
         }
@@ -231,12 +234,14 @@ import HealthKit
             if let mealIngredient = self.fetchedResultsController.object(at: indexPath) as? MealIngredient, let meal = mealIngredient.meal {
                 if meal.ingredients!.count <= 1 {
                     // The meal ingredient's meal has just this last meal ingredient, thus delete the whole meal, the meal ingredient is automatically deleted via the cascade functionality of core data
-                    healthManager.deleteMeal(meal)
+//                    healthManager.deleteMeal(meal)
+                    healthManager.synchronize(meal, withSynchronisationMode: .delete)
                     managedObjectContext.delete(meal)
                 } else {
                     // The meal ingredient's meal has more than just this meal ingredient, so just delete this meal ingredient and let the meal and the other meal ingredients persist
                     managedObjectContext.delete(mealIngredient)
-                    healthManager.syncMealToHealth(meal)
+//                    healthManager.syncMealToHealth(meal)
+                    healthManager.synchronize(meal, withSynchronisationMode: .update)
                 }
             }
         }
@@ -366,7 +371,8 @@ import HealthKit
         }
         fetchMealIngredients()
         saveContext() // Needed for synchronisation with health with URI of managed object
-        healthManager.saveMeal(meal)
+//        healthManager.saveMeal(meal)
+        healthManager.synchronize(meal, withSynchronisationMode: .save)
     }
     
     
@@ -455,7 +461,8 @@ import HealthKit
         alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in
             print("Will delete the meal \(meal)")
             self.managedObjectContext.delete(meal)
-            self.healthManager.deleteMeal(meal)
+//            self.healthManager.deleteMeal(meal)
+            self.healthManager.synchronize(meal, withSynchronisationMode: .delete)
         })
         present(alert, animated: true, completion: nil)
     }
@@ -469,7 +476,8 @@ import HealthKit
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
-            healthManager.syncMealToHealth(newMeal)
+//            healthManager.syncMealToHealth(newMeal)
+            healthManager.synchronize(newMeal, withSynchronisationMode: .save)
             self.tableView.reloadData()
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
@@ -575,3 +583,4 @@ import HealthKit
 
     
 }
+*/

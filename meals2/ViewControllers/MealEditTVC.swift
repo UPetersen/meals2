@@ -32,7 +32,8 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         // Update the MealsCDTVC, i.e. reload the data
         meal.dateOfLastModification = NSDate()
-        healthManager.syncMealToHealth(meal)
+//        healthManager.syncMealToHealth(meal)
+        healthManager.synchronize(meal, withSynchronisationMode: .update)
         saveContext(managedObjectContext: managedObjectContext)
     }
     

@@ -5,7 +5,6 @@
 //  Created by Uwe Petersen on 31.10.17.
 //  Copyright © 2017 Uwe Petersen. All rights reserved.
 //
-
 import Foundation
 
 import UIKit
@@ -290,9 +289,8 @@ import HealthKit
             mealIngredient.meal = newMeal
             newMeal.dateOfLastModification = NSDate()
             oldMeal.dateOfLastModification = NSDate()
-            
-            healthManager.syncMealToHealth(newMeal)
-            healthManager.syncMealToHealth(oldMeal) // old meal may have no ingredients
+            healthManager.synchronize(newMeal, withSynchronisationMode: .update)
+            healthManager.synchronize(oldMeal, withSynchronisationMode: .update) // old meal may have no ingredients and will be an empty meal then
 
             print("AFTER MOVE")
             print("Source meal:")
@@ -309,11 +307,11 @@ import HealthKit
                     // The meal has more than just the meal ingredient that shall be deleted, so delete the meal ingredient and let the meal and the other meal ingredients persist
                     if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
                         managedObjectContext.delete(mealIngredient)
-                        healthManager.syncMealToHealth(meal)
+                        healthManager.synchronize(meal, withSynchronisationMode: .update)
                     }
                 } else {
                     // The meal has non ingredient at all or only the one ingredient that shall be deleted, thus delete the whole meal.
-                    healthManager.deleteMeal(meal)
+                    healthManager.synchronize(meal, withSynchronisationMode: .delete)
                     managedObjectContext.delete(meal)
                 }
             }
@@ -417,7 +415,7 @@ import HealthKit
         let meal = Meal(context: managedObjectContext)
         fetchMeals()
         saveContext() // Needed for synchronisation with health with URI of managed object
-        healthManager.saveMeal(meal)
+        healthManager.synchronize(meal, withSynchronisationMode: .save)
     }
     
     
@@ -486,7 +484,7 @@ import HealthKit
         alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in
             print("Will delete the meal \(meal)")
             self.managedObjectContext.delete(meal)
-            self.healthManager.deleteMeal(meal)
+            self.healthManager.synchronize(meal, withSynchronisationMode: .delete)
         })
         present(alert, animated: true, completion: nil)
     }
@@ -500,7 +498,7 @@ import HealthKit
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
-            healthManager.syncMealToHealth(newMeal)
+            healthManager.synchronize(newMeal, withSynchronisationMode: .save)
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }
@@ -767,3 +765,4 @@ extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
     }
 
 }
+
