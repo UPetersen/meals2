@@ -173,12 +173,14 @@ import HealthKit
             cell.backgroundColor = UIColor.clear
         } else {
             cell.backgroundColor = UIColor(white: 0.96, alpha: 1)
+//            cell.backgroundColor = UIColor(red: 204.0/255.0, green: 31.0/255.0, blue: 26.0/255.0, alpha: 1) // #cc1f1a
         }
     }
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         // Headerview color and font
         view.tintColor = UIColor.gray
+//        view.tintColor = UIColor(red: 97.0/255.0, green: 8.0/255.0, blue: 8.0/255.0, alpha: 1) // #610808
         if let headerView = view as? UITableViewHeaderFooterView {
             headerView.textLabel?.textColor = UIColor.white
             headerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(14))
@@ -189,6 +191,9 @@ import HealthKit
     override func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
         // Footerview color and font
         view.tintColor = UIColor.gray
+//        view.tintColor = UIColor(red: 0.23, green: 0.03, blue: 0.03, alpha: 1)
+//        view.tintColor = UIColor(red: 0.38, green: 0.03, blue: 0.03, alpha: 1) //
+//        view.tintColor = UIColor(red: 345.0/255.0, green: 145.0/255.0, blue: 73.0/255.0, alpha: 1) // #F59149
         if let footerView = view as? UITableViewHeaderFooterView {
             footerView.textLabel?.textColor = UIColor.white
             footerView.textLabel?.font = UIFont.systemFont(ofSize: CGFloat(17))

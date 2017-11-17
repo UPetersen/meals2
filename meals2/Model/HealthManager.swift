@@ -94,7 +94,6 @@ final class HealthManager {
                 print("Saved food correlation successfully!")
             }
             print("Executed health save meal query")
-            AudioServicesPlaySystemSound (1105)
         })
     }
     
@@ -136,7 +135,6 @@ final class HealthManager {
     
     
     private func deleteOrUpdateMeal(_ meal: Meal, sychronisationMode: HealthManagerSynchronisationMode) {
-        //        AudioServicesPlaySystemSound (1113)
         if !HKHealthStore.isHealthDataAvailable() {
             //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
             print("HealthKit is not available in this Device")
@@ -174,7 +172,6 @@ final class HealthManager {
                     //                    self.saveMeal(meal)
                     print("This is where I want to create the food data")
                 }
-                AudioServicesPlaySystemSound (1114)
                 if sychronisationMode == .update {
                     self.saveMeal(meal)
                 }
@@ -227,7 +224,6 @@ final class HealthManager {
                     print("This is where I want to create the food data")
                 }
                 print("Executed health delete query")
-                AudioServicesPlaySystemSound (1114)
             })
             // 5. Execute the Query
             self.healthKitStore.execute(sampleQuery)
@@ -237,10 +233,4 @@ final class HealthManager {
         }
     }
 
-
-    
-    
-//    func sampleQueryForMeal(_ meal: Meal) -> HKSampleQuery? {
-//        return nil
-//    }
 }
