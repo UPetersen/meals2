@@ -19,9 +19,9 @@ enum HealthManagerSynchronisationMode {
 
 final class HealthManager {
     
-    let healthKitStore:HKHealthStore = HKHealthStore()
+    static let healthKitStore:HKHealthStore = HKHealthStore()
     
-    func authorizeHealthKit(_ completion: ((_ success: Bool, _ error: NSError?) -> Void)!) {
+    class func authorizeHealthKit(_ completion: ((_ success: Bool, _ error: NSError?) -> Void)!) {
         
         // 1. and 2. Set the types you want to share and read from HK Store
         let healthKitSampleTypesToShare = [
@@ -64,7 +64,7 @@ final class HealthManager {
     }
     
     
-    private func syncMealToHealth(_ meal: Meal) {
+    private class func syncMealToHealth(_ meal: Meal) {
         deleteMeal(meal) // delete the (old) meal data currently stored from health store
         
         // Deletion and saving is handled asynchronosly. Meanwhile with a lot of date in health deletion takes some time and often performed after storing the new data. Thus new data ist deleted just after having been stored. Not what we want. Temporary solution: delay saving.
@@ -73,7 +73,7 @@ final class HealthManager {
         }
     }
     
-    func synchronize(_ meal: Meal, withSynchronisationMode synchronisationMode: HealthManagerSynchronisationMode) {
+    class func synchronize(_ meal: Meal, withSynchronisationMode synchronisationMode: HealthManagerSynchronisationMode) {
         switch synchronisationMode {
         case .save:
             saveMeal(meal)
@@ -82,7 +82,7 @@ final class HealthManager {
         }
     }
     
-    private func saveMeal(_ meal: Meal) {
+    private class func saveMeal(_ meal: Meal) {
         guard let mealCorrelation = correlationForMeal(meal) else {
             return
         }
@@ -98,7 +98,7 @@ final class HealthManager {
     }
     
     
-    private func correlationForMeal(_ meal: Meal) -> HKCorrelation? {
+    private class func correlationForMeal(_ meal: Meal) -> HKCorrelation? {
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKit is not available in this Device")
             // let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
@@ -134,7 +134,7 @@ final class HealthManager {
 
     
     
-    private func deleteOrUpdateMeal(_ meal: Meal, sychronisationMode: HealthManagerSynchronisationMode) {
+    private class func deleteOrUpdateMeal(_ meal: Meal, sychronisationMode: HealthManagerSynchronisationMode) {
         if !HKHealthStore.isHealthDataAvailable() {
             //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
             print("HealthKit is not available in this Device")
@@ -186,7 +186,7 @@ final class HealthManager {
         }
     }
     
-    private func deleteMeal(_ meal: Meal) {
+    private class func deleteMeal(_ meal: Meal) {
         if !HKHealthStore.isHealthDataAvailable() {
 //            let error = NSError(domain: "UPP.healthkit", code: 2, userInfo: [NSLocalizedDescriptionKey:"HealthKit is not available in this Device"])
             print("HealthKit is not available in this Device")

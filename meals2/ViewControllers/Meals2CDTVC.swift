@@ -25,9 +25,6 @@ import HealthKit
     // meal variable needed for actions on a meal.
     weak var currentMeal: Meal! // ingredients are added to this meal
     
-    // HealthKit
-    let healthManager: HealthManager = HealthManager()
-    
     // Search controller to help us with filtering
     var searchController = UISearchController(searchResultsController: nil) // Searchresults are displayed in this tableview
     var searchFilter = SearchFilter.BeginsWith
@@ -294,8 +291,8 @@ import HealthKit
             mealIngredient.meal = newMeal
             newMeal.dateOfLastModification = NSDate()
             oldMeal.dateOfLastModification = NSDate()
-            healthManager.synchronize(newMeal, withSynchronisationMode: .update)
-            healthManager.synchronize(oldMeal, withSynchronisationMode: .update) // old meal may have no ingredients and will be an empty meal then
+            HealthManager.synchronize(newMeal, withSynchronisationMode: .update)
+            HealthManager.synchronize(oldMeal, withSynchronisationMode: .update) // old meal may have no ingredients and will be an empty meal then
 
             print("AFTER MOVE")
             print("Source meal:")
@@ -312,11 +309,11 @@ import HealthKit
                     // The meal has more than just the meal ingredient that shall be deleted, so delete the meal ingredient and let the meal and the other meal ingredients persist
                     if let mealIngredient = mealIngredientFor(indexPath: indexPath) {
                         managedObjectContext.delete(mealIngredient)
-                        healthManager.synchronize(meal, withSynchronisationMode: .update)
+                        HealthManager.synchronize(meal, withSynchronisationMode: .update)
                     }
                 } else {
                     // The meal has non ingredient at all or only the one ingredient that shall be deleted, thus delete the whole meal.
-                    healthManager.synchronize(meal, withSynchronisationMode: .delete)
+                    HealthManager.synchronize(meal, withSynchronisationMode: .delete)
                     managedObjectContext.delete(meal)
                 }
             }
@@ -401,7 +398,6 @@ import HealthKit
                 if let viewController = segue.destination as? MealEditTVC {
                     viewController.meal = currentMeal
                     viewController.managedObjectContext = managedObjectContext
-                    viewController.healthManager = healthManager
                 }
             case .ShowMealDetailTVC:
                 if let viewController = segue.destination as? MealDetailTVC {
@@ -420,7 +416,7 @@ import HealthKit
         let meal = Meal(context: managedObjectContext)
         fetchMeals()
         saveContext() // Needed for synchronisation with health with URI of managed object
-        healthManager.synchronize(meal, withSynchronisationMode: .save)
+        HealthManager.synchronize(meal, withSynchronisationMode: .save)
     }
     
     
@@ -489,7 +485,7 @@ import HealthKit
         alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in
             print("Will delete the meal \(meal)")
             self.managedObjectContext.delete(meal)
-            self.healthManager.synchronize(meal, withSynchronisationMode: .delete)
+            HealthManager.synchronize(meal, withSynchronisationMode: .delete)
         })
         present(alert, animated: true, completion: nil)
     }
@@ -503,7 +499,7 @@ import HealthKit
         print("Will copy the meal \(meal) and make it the current meal")
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
-            healthManager.synchronize(newMeal, withSynchronisationMode: .save)
+            HealthManager.synchronize(newMeal, withSynchronisationMode: .save)
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
         }
     }
@@ -514,7 +510,7 @@ import HealthKit
     }
     
     func authorizeHealthKit() {
-        healthManager.authorizeHealthKit { (authorized,  error) -> Void in
+        HealthManager.authorizeHealthKit { (authorized,  error) -> Void in
             if authorized {
                 print("HealthKit authorization received.")
             }

@@ -15,7 +15,6 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
 
     var managedObjectContext: NSManagedObjectContext!
     weak var meal: Meal!
-    var healthManager: HealthManager!
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
@@ -32,8 +31,7 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         // Update the MealsCDTVC, i.e. reload the data
         meal.dateOfLastModification = NSDate()
-//        healthManager.syncMealToHealth(meal)
-        healthManager.synchronize(meal, withSynchronisationMode: .update)
+        HealthManager.synchronize(meal, withSynchronisationMode: .update)
         saveContext(managedObjectContext: managedObjectContext)
     }
     
