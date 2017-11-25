@@ -113,8 +113,8 @@ import CoreData
                 if let viewController = segue.destination as? FoodEditTVC { // uses CS195P extension by Paul Hegarty
                     managedObjectContext.undoManager = UndoManager()
                     managedObjectContext.undoManager?.beginUndoGrouping()
-                    //                    viewController.item = .IsFood(food, meal)
-                    viewController.item = .isFood(newFood, meal)
+                    viewController.item = .isFood(food, meal)
+//                    viewController.item = .isFood(self.newFood, meal)
                 } else {
                     fatalError("target view controller is not of desired class")
                 }
@@ -174,8 +174,8 @@ import CoreData
     }
     
     func newFoodAction() {
-        //        food = Food.newFood(inManagedObjectContext: managedObjectContext)
-        newFood = Food.newFood(inManagedObjectContext: managedObjectContext)
+        food = Food.newFood(inManagedObjectContext: managedObjectContext)
+//        newFood = Food.newFood(inManagedObjectContext: managedObjectContext)
         loadData()
         saveContext()
         performSegue(withIdentifier: SegueIdentifier.ShowFoodEditTVC.rawValue, sender: self)
