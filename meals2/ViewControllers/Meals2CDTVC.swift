@@ -159,6 +159,15 @@ import HealthKit
         
         // Set the toolbar and navigation bar. Does not work properly in viewDidLoad
         navigationItem.rightBarButtonItem = self.editButtonItem
+
+//        // Colors
+//        navigationController?.navigationBar.isTranslucent = false
+//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+//        navigationController?.navigationBar.barTintColor = UIColor(hue: 47.0/360.0, saturation: 100.0/100.0, brightness: 37.0/100.0, alpha: 1.0)
+//        navigationController?.navigationBar.tintColor = UIColor(hue: 47.0/360.0, saturation: 43.0/100.0, brightness: 94.0/100.0, alpha: 1.0)
+//        searchController.searchBar.backgroundColor = UIColor(hue: 47.0/360.0, saturation: 93.0/100.0, brightness: 47.0/100.0, alpha: 1.0)
+//        searchController.searchBar.tintColor = UIColor(hue: 47.0/360.0, saturation: 43.0/100.0, brightness: 94.0/100.0, alpha: 1.0)
+//        searchController.searchBar.barTintColor = UIColor.blue
     }
     
     

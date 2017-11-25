@@ -404,8 +404,8 @@ final class BlsToCoreDataImporter {
             switch key {
             case "X", "Y":
                 
-                let range = NSRange(location: 0, length: foodName.characters.count)
-                
+                let range = NSRange(location: 0, length: foodName.count)
+
                 // Search for e.g. "(1)" or "(4)" at the end of a line ("$" is for end of line)
                 do {
                     let regex = try NSRegularExpression(pattern: "\\([1-6]{1}\\)$", options: [])

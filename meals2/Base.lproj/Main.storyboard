@@ -346,7 +346,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b8e-gg-UHd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1976.8" y="-529.38530734632684"/>
+            <point key="canvasLocation" x="1638" y="-522"/>
         </scene>
         <!--Knäckebrot oder so-->
         <scene sceneID="BQd-7X-X8f">
@@ -516,7 +516,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rey-aK-MuH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4136.8000000000002" y="-569.86506746626696"/>
+            <point key="canvasLocation" x="3798" y="-163"/>
         </scene>
         <!--Neu/ändern-->
         <scene sceneID="8Kl-eW-tcC">
@@ -782,6 +782,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="iu5-bJ-d3j"/>
-        <segue reference="Xdh-4v-I9O"/>
+        <segue reference="T0Z-L9-uaL"/>
     </inferredMetricsTieBreakers>
 </document>
