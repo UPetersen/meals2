@@ -594,6 +594,22 @@ import HealthKit
         }
     }
     
+    /// Reorders the sections table (i.e. meals) in descending order with respect to the dateOfCreation of the meal.
+    ///
+    /// This is helpfull, if an attribute of a meals has changed (like dateOfCreation) and thus it has to be placed in a new position.
+    func reorderSections() {
+        sections?.sort(by: { (section0, section1) -> Bool in
+            if let date0 = section0.meal?.dateOfCreation as Date?, let date1 = section1.meal?.dateOfCreation as Date? {
+                if date0 > date1 {
+                    return true
+                } else {
+                    return false
+                }
+            }
+            return true 
+        })
+    }
+    
     func updateSectionAt(section: Int) {
         if let meal = mealFor(section: section), let theSection = sectionForMeal(meal: meal, sortDescriptor: sortDescriptor, predicate: shortPredicate)  {
             sections?[section] = theSection
@@ -620,7 +636,11 @@ import HealthKit
     }
     
     
-    // MARK: - fetchedResultsController delegate
+//    // MARK: - fetchedResultsController delegate
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//        self.tableView.beginUpdates()
+    }
+
     
         // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
     // BEWARE: the fetched results controller returns zero sections and n rows for n meals. From this the tableView is generated with
@@ -637,14 +657,32 @@ import HealthKit
                 let section = sectionForMeal(meal: meal, sortDescriptor: sortDescriptor, predicate: shortPredicate) {
                 sections?.insert(section, at: indexPath.row)
             }
-        case .move: // meal moved due to change of dateOfCreation
-            if let indexPath = indexPath, let _ = mealFor(section: indexPath.row) {
-                updateSectionAt(section: indexPath.row)
+        case .move: // meal moved due to a change of the dateOfCreation of the meal
+            if let indexPath = indexPath, let newIndexPath = newIndexPath, let _ = mealFor(section: indexPath.row)  {
+                let dummySection = sections?.remove(at: indexPath.row)
+                sections?.insert(dummySection!, at: newIndexPath.row)
             }
-            if let indexPath = newIndexPath, let _ = mealFor(section: indexPath.row) {
-                updateSectionAt(section: indexPath.row)
-            }
-        case .update: // meal changed, i.e. new, moved or removed ingredient or changed comment or changed dateOfLastModification (called twice in case of a move of a meal ingredients, since two meals are affected by this operation)
+            
+// 1.) Bring the sections table in the same order as the rows of the fetched results controller
+//     (remember: the rows of the fetched results controller correspond to the sections of the table view)
+//            reorderSections()
+//            // 2.) Now update the affected section of the sections table
+//            if let indexPath = newIndexPath, let _ = mealFor(section: indexPath.row) {
+//                updateSectionAt(section: indexPath.row)
+//            }
+////            if let indexPath = indexPath, let _ = mealFor(section: indexPath.row) {
+////                updateSectionAt(section: indexPath.row)
+////            }
+////            if let indexPath = newIndexPath, let _ = mealFor(section: indexPath.row) {
+////                updateSectionAt(section: indexPath.row)
+////            }
+        case .update: // meal updated, i.e. if there is a change for ingredients (new or removed ingredient), comment, dateOfLastModification, or (maybe) dateOfCreation.
+            // Note 1: If the user moved a meal ingredient from one meal to another meal, both corresponding meals are updated and this code is called twice: once for the meal where the ingredient was removed from and once for the meal where the ingredient was added to.
+            // Note 2: If the user changes properties of a meal ingredient (e.g. the amount of a meal ingredient of a meal), the fetched results controller does not recognize this since oberservation does not follow relationships. To handle this, the convention within this application is that whenever the user changes properties of a meal ingredients, the meal.dateOfLastModification property is updated and thus also a meal property changes which is recognized by the fetched results controller.
+            // Note 3: if the dateOfCreation of a meal is changed this may result in two cases:
+            //         a) the meals are not reordered (because its postion did not change with respect to the other meals)
+            //         b) the meals are reordered (because the new dateOfCreation makes it newer or older than other meals compared to before)
+            //        Case a) results in a ".update" in the fetched results and is handled in this .update case of the switch command.  Case b) results in a ".move and is handled in the .move case of this switch command (-> see .move).
             if let indexPath = indexPath {
                 updateSectionAt(section: indexPath.row)
             }
