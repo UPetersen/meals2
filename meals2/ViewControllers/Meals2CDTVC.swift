@@ -291,11 +291,11 @@ import HealthKit
         if let mealIngredient = mealIngredientFor(indexPath: sourceIndexPath),
             let oldMeal = mealIngredient.meal,
             let newMeal = mealFor(section: destinationIndexPath.section) {
-            print("BEFORE MOVE")
-            print("Source meal:")
-            print(oldMeal.description)
-            print("Destiantion meal: ")
-            print(newMeal.description)
+//            print("BEFORE MOVE")
+//            print("Source meal:")
+//            print(oldMeal.description)
+//            print("Destiantion meal: ")
+//            print(newMeal.description)
 
             mealIngredient.meal = newMeal
             newMeal.dateOfLastModification = NSDate()
@@ -303,11 +303,11 @@ import HealthKit
             HealthManager.synchronize(newMeal, withSynchronisationMode: .update)
             HealthManager.synchronize(oldMeal, withSynchronisationMode: .update) // old meal may have no ingredients and will be an empty meal then
 
-            print("AFTER MOVE")
-            print("Source meal:")
-            print(oldMeal.description)
-            print("Destiantion meal: ")
-            print(newMeal.description)
+//            print("AFTER MOVE")
+//            print("Source meal:")
+//            print(oldMeal.description)
+//            print("Destiantion meal: ")
+//            print(newMeal.description)
         }
     }
     
@@ -637,12 +637,11 @@ import HealthKit
     
     
 //    // MARK: - fetchedResultsController delegate
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        self.tableView.beginUpdates()
-    }
+//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//    }
 
     
-        // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
+    // Changes in the model (i.e. the fetchedResultsController) are reported here. Use this information to change the view model respectively.
     // BEWARE: the fetched results controller returns zero sections and n rows for n meals. From this the tableView is generated with
     // these meal rows as sections.
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
@@ -728,10 +727,6 @@ import HealthKit
             return meal
         }
         return nil
-//        if let sections = sections {
-//            return sections[section].meal
-//        }
-//        return nil
     }
     
     /// Meal ingredient for index path of table view.
@@ -773,6 +768,7 @@ import HealthKit
             }
         }
     }
+    
 }
 
 

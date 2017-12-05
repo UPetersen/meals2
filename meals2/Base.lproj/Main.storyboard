@@ -222,7 +222,7 @@
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
-                        <barButtonItem title="〈" id="sZH-1k-bBY">
+                        <barButtonItem systemItem="done" id="sZH-1k-bBY">
                             <connections>
                                 <action selector="doneButtonSelected:" destination="som-hD-iFe" id="2kZ-IZ-w21"/>
                             </connections>
@@ -318,7 +318,7 @@
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
-                        <barButtonItem title="〈" id="G8v-Wb-afl">
+                        <barButtonItem systemItem="done" id="G8v-Wb-afl">
                             <connections>
                                 <action selector="doneButtonSelected:" destination="V9N-M6-VOa" id="NBA-je-zIs"/>
                             </connections>
@@ -782,6 +782,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="iu5-bJ-d3j"/>
-        <segue reference="20J-RW-VRf"/>
+        <segue reference="T0Z-L9-uaL"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -31,14 +31,11 @@ enum SearchFilter: String {
             return NSPredicate(format: "name BEGINSWITH[c] %@", searchText)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
-            let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
-            let predicate = NSPredicate(format: "length > 0")
-            
-            let words = wordsAndEmptyStrings.filter {predicate.evaluate(with: $0)}  // Now real text components only w/o the spaces
+            let words = searchText.split(separator: " ")
             print("The words in the search text: \(words)")
             
             // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "name contains[c] %@", word)})
+            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "name contains[c] %@", word as CVarArg)})
             
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
@@ -54,14 +51,11 @@ enum SearchFilter: String {
             return NSPredicate(format: "food.name BEGINSWITH[c] %@", searchText)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
-            let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
-            let predicate = NSPredicate(format: "length > 0")
-            
-            let words = wordsAndEmptyStrings.filter {predicate.evaluate(with: $0)}  // Now real text components only w/o the spaces
+            let words = searchText.split(separator: " ")
             print("The words in the search text: \(words)")
             
             // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name contains[c] %@", word)})
+            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name contains[c] %@", word as CVarArg)})
             
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
@@ -85,16 +79,16 @@ enum SearchFilter: String {
             return NSPredicate(format: "SUBQUERY(ingredients, $x, $x.food.name BEGINSWITH[c] %@).@count != 0", searchText as CVarArg)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
-            let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
-            let predicate = NSPredicate(format: "length > 0")
+            // see https://stackoverflow.com/questions/18051948/core-data-subquery-predicate
+            let words = searchText.split(separator: " ")
+            guard words.count >= 1 else {
+                return nil
+            }
+            var predicateString = "SUBQUERY(ingredients, $x, $x.food.name CONTAINS[c] \"" + words.first! + "\" "
+            predicateString += words.dropFirst().reduce("", {$0 + " AND $x.food.name CONTAINS[c] \"" + $1 + "\""})
+            predicateString += ").@count != 0"
             
-            let words = wordsAndEmptyStrings.filter {predicate.evaluate(with: $0)}  // Now real text components only w/o the spaces
-            print("The words in the search text: \(words)")
-            
-            // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "SUBQUERY(ingredients, $x, $x.food.name CONTAINS[c] %@).@count != 0", word)})
-
-            return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
+            return NSPredicate(format: predicateString, argumentArray: nil)
         }
     }
 
@@ -115,18 +109,14 @@ enum SearchFilter: String {
             return NSPredicate(format: "food.name BEGINSWITH[c] %@", searchText as CVarArg)
         case .Contains:
             // Search for foods where the name contains the words given in the search bar text field
-            let wordsAndEmptyStrings: [String] = searchText.components(separatedBy: CharacterSet.whitespaces) // White space are components, too
-            let predicate = NSPredicate(format: "length > 0")
-            
-            let words = wordsAndEmptyStrings.filter {predicate.evaluate(with: $0)}  // Now real text components only w/o the spaces
+            let words = searchText.split(separator: " ")
             print("The words in the search text: \(words)")
             
             // Loop over the components, build predicate for each one (word), functional way of creating an arry of predicates
-            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name CONTAINS[c] %@", word)})
+            let subPredicates = words.map({word -> NSPredicate in NSPredicate(format: "food.name CONTAINS[c] %@", word as CVarArg)})
             
             return NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: subPredicates)
         }
     }
-
     
 }
