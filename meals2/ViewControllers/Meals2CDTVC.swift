@@ -137,9 +137,15 @@ import HealthKit
         searchController.searchBar.placeholder = NSLocalizedString("Lebensmittel suchen", comment: "")
         searchController.searchBar.showsScopeBar = true
         searchController.searchBar.scopeButtonTitles = [SearchFilter.BeginsWith.rawValue, SearchFilter.Contains.rawValue]
+//        searchController.hidesNavigationBarDuringPresentation = false
         definesPresentationContext = true
         navigationItem.searchController = searchController // iOS 11: searchController tied to navigationItem
-        //        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any more
+        //        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any
+  
+//        automaticallyAdjustsScrollViewInsets = false
+
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationItem.largeTitleDisplayMode = .always
         
         // long pressure recognizer, to display a menu for the meal seleted by a long press
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MealsCDTVC.longPress(_:)))
@@ -152,6 +158,34 @@ import HealthKit
         
         // dismiss keyboard on drag
         self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag        
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        
+//        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY
+//        
+//        print("navigationBar.frame \(navigationController?.navigationBar.frame.debugDescription)")
+//        print ("contentOffset: \(scrollView.contentOffset)")
+//        print ("contentInset: \(scrollView.contentInset)")
+////        if scrollView.contentInset.top > navigationBarMaxY! {
+//            if scrollView.contentInset.top > -scrollView.contentOffset.y {
+//                var insets = scrollView.contentInset
+//                insets.top = max(-scrollView.contentOffset.y, -72)
+//                scrollView.contentInset = insets
+//            }
+////
+//        print ("contentInset: \(scrollView.contentInset)")
+
+
+        
+        
+        //        if scrollView.contentOffset.y >= 0 {
+//            scrollView.contentInset = UIEdgeInsets.zero
+//        } else {
+//            scrollView.contentInset = UIEdgeInsets(top: min(-scrollView.contentOffset.y, 0), left: 0, bottom: 0, right: 0)
+//        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -170,6 +204,12 @@ import HealthKit
 //        searchController.searchBar.barTintColor = UIColor.blue
     }
     
+    override func viewWillLayoutSubviews() {
+//        self.navigationItem.searchController?.searchBar.sizeToFit()
+//        self.tableView.sizeToFit()
+//        self.navigationController?.view.sizeToFit()
+    }
+  
     
     // MARK: - UITableView delegate
     
@@ -181,6 +221,11 @@ import HealthKit
             cell.backgroundColor = UIColor(white: 0.96, alpha: 1)
 //            cell.backgroundColor = UIColor(red: 204.0/255.0, green: 31.0/255.0, blue: 26.0/255.0, alpha: 1) // #cc1f1a
         }
+        
+        print("Frame:")
+        print(self.tableView.frame.debugDescription)
+        print("Bounds:")
+        print(self.tableView.bounds.debugDescription)
     }
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -774,8 +819,11 @@ import HealthKit
 
 // MARK: - Search extension
 
-extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
+extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
     
+//    func willPresentSearchController(_ searchController: UISearchController) {
+//        searchController.searchBar.sizeToFit()
+//    }
     
     // MARK: - Search results updating protocol
     
@@ -790,6 +838,9 @@ extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate {
         if tableView.isEditing {
             tableView.setEditing(false, animated: true) // no editing in search mode 
         }
+//        tableView.setContentOffset(CGPoint.init(x: 0, y: -200), animated: true)
+//        tableView.setContentOffset(CGPoint.init(x: 0, y: -10), animated: true)
+
     }
     
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
