@@ -16,7 +16,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="MealsCDTVC" title="Lebensmitteltabelle" id="gLi-Et-HTD" userLabel="Meals" customClass="MealsCDTVC" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="tLj-2m-BaS">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -74,7 +74,6 @@
                             <outlet property="delegate" destination="gLi-Et-HTD" id="Zw9-Xu-dJP"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="4Fi-N4-4ny"/>
                         <barButtonItem systemItem="bookmarks" id="Yg2-j1-NQP">
@@ -191,7 +190,7 @@
             <objects>
                 <tableViewController id="som-hD-iFe" customClass="FavoriteSearchCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hNy-pi-eCj">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -221,7 +220,6 @@
                             <outlet property="delegate" destination="som-hD-iFe" id="crd-Go-3io"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem systemItem="done" id="sZH-1k-bBY">
                             <connections>
@@ -280,7 +278,7 @@
             <objects>
                 <tableViewController id="V9N-M6-VOa" customClass="GeneralSearchCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="p95-gd-nSn">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -317,7 +315,6 @@
                             <outlet property="delegate" destination="V9N-M6-VOa" id="VFn-iF-Ex7"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem systemItem="done" id="G8v-Wb-afl">
                             <connections>
@@ -347,14 +344,14 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b8e-gg-UHd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1638" y="-522"/>
+            <point key="canvasLocation" x="1644" y="-532"/>
         </scene>
         <!--Knäckebrot oder so-->
         <scene sceneID="BQd-7X-X8f">
             <objects>
                 <tableViewController id="jIp-Qo-6YO" customClass="FoodDetailCDTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="6mW-6r-puC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -388,7 +385,6 @@
                             <outlet property="delegate" destination="jIp-Qo-6YO" id="OlY-lN-v4q"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="eBc-bw-eC2"/>
                         <barButtonItem systemItem="action" id="TSd-MK-voK">
@@ -414,7 +410,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yfq-L6-03m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2881" y="-1057"/>
+            <point key="canvasLocation" x="2548" y="-1052"/>
         </scene>
         <!--Lebensmittel hinzufügen-->
         <scene sceneID="QU4-dQ-sSD">
@@ -517,7 +513,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rey-aK-MuH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3798" y="-163"/>
+            <point key="canvasLocation" x="4136.8000000000002" y="-163.26836581709148"/>
         </scene>
         <!--Neu/ändern-->
         <scene sceneID="8Kl-eW-tcC">
@@ -740,7 +736,7 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="ylA-Iz-vDS" customClass="MealDetailTVC" customModule="meals" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="LbV-cZ-YyA">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -774,7 +770,6 @@
                             <outlet property="delegate" destination="ylA-Iz-vDS" id="DaQ-Me-dYT"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fs9-5w-1EN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -782,7 +777,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="iu5-bJ-d3j"/>
-        <segue reference="Xdh-4v-I9O"/>
+        <segue reference="NSX-n7-UP4"/>
+        <segue reference="20J-RW-VRf"/>
     </inferredMetricsTieBreakers>
 </document>
