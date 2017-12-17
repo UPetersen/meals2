@@ -13,8 +13,8 @@ import Foundation
 /// - BeginsWith: Searches for foods/ingredients whose name begin with the search text, e.g. "Ei" will list "Eier" but not "Speiseeis"
 /// - Contains: Searchs for foods/ingredients whose name contains the search text, e.g. "Ei" will list both, "Eier" and "Speiseis".
 enum SearchFilter: String {
-    case BeginsWith = "Beginnt mit ..."
-    case Contains = "Enthält ..."
+    case BeginsWith = "Name beginnt mit ..."
+    case Contains = "Name enthält ..."
     
     //    return NSPredicate(format: "name BEGINSWITH[c] %@", searchText)
     /// returns predicate for search text and corresponding selected scope bar item.

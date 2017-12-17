@@ -41,7 +41,7 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
                 food = theFood
                 managedObjectContext = food.managedObjectContext
                 amountInGrams = 0
-                title = "Lebensmittel hinzufügen"
+                title = "Menge hinzufügen"
             default: break
             }
         }

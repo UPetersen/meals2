@@ -333,7 +333,6 @@
                                 <action selector="foodListSortRuleButtonSelected:" destination="V9N-M6-VOa" id="dGx-7W-xTk"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="y5f-3G-W6O"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Alle" id="roy-9A-A8v"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -778,6 +777,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="NSX-n7-UP4"/>
-        <segue reference="20J-RW-VRf"/>
+        <segue reference="T0Z-L9-uaL"/>
     </inferredMetricsTieBreakers>
 </document>

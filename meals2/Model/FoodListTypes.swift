@@ -13,11 +13,11 @@ import Foundation
 enum FoodListType: String {
     case Favorites = "Favoriten"
     case Recipes = "Rezepte"
-    case LastWeek = "Letzte Woche"
+    case LastWeek = "Letzte Woche gegessen"
     case MealIngredients = "Selbst gegessen"
     case OwnEntries = "Selbst eingetragen"
     case BLS = "Bundeslebensmittelschlüssel"
-    case All = "Alle"
+    case All = "Alle Lebensmittel"
     
     // TODO: correct source completely: opulate user's own entries with a spcific source and use BLS-Source in the following for the following switch statement
     var predicate: NSPredicate? {
@@ -45,7 +45,7 @@ enum FoodListSortRule: String {
     
     case NameAscending = "Name"
     case TotalEnergyCalsDescending = "Kalorien"
-    case TotalCarbDescending = "KH"
+    case TotalCarbDescending = "Kohlehydrate"
     case TotalProteinDescending = "Protein"
     case TotalFatDescending = "Fett"
     case GroupThenSubGroupThenNameAscending = "Gruppe"

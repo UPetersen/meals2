@@ -70,11 +70,9 @@ import CoreData
         }
         
         // title shows food list type and in braces the sort rule, e.g. "Favoriten (Name)"
-        title = titleFor(foodListType: foodListType, foodListSortRule: foodListSortRule)
+        self.title = self.foodListType.rawValue
         
         self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
-        
-//        fetchFoods()
     }
     
 
@@ -132,7 +130,7 @@ import CoreData
             self.foodListType = FoodListType(rawValue: action.title!)!         // set foodList from selected item
             self.foodListTypeButton.title = self.foodListType.rawValue + " ▾"  // set title accordingly
             self.fetchFoods()                                                  // fetch foods
-            self.title = self.titleFor(foodListType: self.foodListType, foodListSortRule: self.foodListSortRule)
+            self.title = self.foodListType.rawValue
             
             // edit button only for favorites
             if self.foodListType == .Favorites {
@@ -156,22 +154,17 @@ import CoreData
             self.foodListSortRule = FoodListSortRule(rawValue: action.title!)!  // set foodList from selected item
             self.foodListSortRuleButton.title = self.foodListSortRule.rawValue + " ▾"   // set title accordingly
             self.fetchFoods()                                           // fetch foods
-            self.title = self.titleFor(foodListType: self.foodListType, foodListSortRule: self.foodListSortRule)
+            self.title = self.foodListType.rawValue
         }
         
         let itemTitles = [FoodListSortRule.NameAscending, FoodListSortRule.TotalEnergyCalsDescending, FoodListSortRule.TotalCarbDescending, FoodListSortRule.TotalProteinDescending, FoodListSortRule.TotalFatDescending, FoodListSortRule.FattyAcidCholesterolDescending, FoodListSortRule.GroupThenSubGroupThenNameAscending]
             .map{$0.rawValue}
-        let alertController = UIAlertController.alertControllerForLists(title: "Sortierung", message: "Wonach soll die Auswahl an Lebensmitteln sortiert werden?",
+        let alertController = UIAlertController.alertControllerForLists(title: "Sortierung", message: "Wonach soll die Auswahl an Lebensmitteln sortiert werden? Größte Werte werden zuerst angezeigt.",
                                                                         itemTitles: itemTitles, fromBarButtonItem: sender, handler: handler)
         
         present(alertController, animated: true, completion: nil)
     }
-    
-    // MARK: - helper stuff
-    func titleFor(foodListType: FoodListType, foodListSortRule: FoodListSortRule) -> String {
-        return self.foodListType.rawValue + " (\(foodListSortRule.rawValue))"
-    }
-    
+        
     
     // MARK: - Fetched results controller
     
