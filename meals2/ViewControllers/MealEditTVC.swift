@@ -25,7 +25,7 @@ class MealEditTVC: UITableViewController, UITextViewDelegate {
         datePicker.date = meal.dateOfCreation! as Date
         
         // dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
 
     override func viewWillDisappear(_ animated: Bool) {

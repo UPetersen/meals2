@@ -48,10 +48,10 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
         self.tableView.backgroundColor = UIColor(red: 239.0, green:239.0, blue:244.0, alpha:1.0)
         
         // Save button
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.save, target: self, action: #selector(AddFoodTVC.saveButtonSelected))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.save, target: self, action: #selector(AddFoodTVC.saveButtonSelected))
         
         // Dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
 
         super.viewDidLoad()
     }
@@ -284,14 +284,14 @@ final class AddFoodTVC: UITableViewController, UITextFieldDelegate {
     func addTargetsToCell(_ theCell: AmountSettingTableViewCell) {
         // needed to adjust maximum value of slider when slider hits the right boundary
         // (I don't know how to do this properly with SwiftBond and think it is too complicated and using ordinary target action is more simple)
-        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpInside), for: UIControlEvents.touchUpInside)
+        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpInside), for: UIControl.Event.touchUpInside)
         
         // Add target-action for textfield, slider and stepper
-        theCell.amountTextField.addTarget(self, action: #selector(AddFoodTVC.amountTextFieldEditingChanged), for: UIControlEvents.editingChanged)
-        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderValueChanged), for: UIControlEvents.valueChanged)
-        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpOutside), for: UIControlEvents.touchUpOutside)
-        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpInside), for: UIControlEvents.touchUpInside)
-        theCell.stepper.addTarget(self, action: #selector(AddFoodTVC.stepperValueChanged), for: UIControlEvents.valueChanged)
+        theCell.amountTextField.addTarget(self, action: #selector(AddFoodTVC.amountTextFieldEditingChanged), for: UIControl.Event.editingChanged)
+        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderValueChanged), for: UIControl.Event.valueChanged)
+        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpOutside), for: UIControl.Event.touchUpOutside)
+        theCell.slider.addTarget(self, action: #selector(AddFoodTVC.sliderTouchUpInside), for: UIControl.Event.touchUpInside)
+        theCell.stepper.addTarget(self, action: #selector(AddFoodTVC.stepperValueChanged), for: UIControl.Event.valueChanged)
     }
     
     //MARK: - slider maximum value adjustment

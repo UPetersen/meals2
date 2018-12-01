@@ -37,7 +37,7 @@ class RecipeEditTVC: UITableViewController, UITextViewDelegate, UITextFieldDeleg
         weightTextField.text = textForRecipe(amount: recipe.amount)
         
         // dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
     
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {

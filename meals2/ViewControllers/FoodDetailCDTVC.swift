@@ -54,7 +54,7 @@ import CoreData
     // MARK: - UITableViewDelegate methods for automatic row heights
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(44.0)
@@ -153,7 +153,7 @@ import CoreData
     // MARK: - Action Sheet for Action Button (left button)
     
     @IBAction func actionButtonSelected(_ sender: UIBarButtonItem) {
-        let alertController = UIAlertController(title: "Lebensmittel", message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: "Lebensmittel", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         
         alertController.addAction( UIAlertAction(title: "Löschen", style: .destructive) {[unowned self] action in self.deleteFoodAction()} )
         alertController.addAction( UIAlertAction(title: "Neu", style: .default) {[unowned self] action in self.newFoodAction()} )
@@ -192,8 +192,8 @@ import CoreData
         if food.recipe != nil {
             performSegue(withIdentifier: SegueIdentifier.ShowRecipeEditTVC.rawValue, sender: self)
         } else {
-            let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            let alert = UIAlertController(title: "Lebensmittel ist kein Rezept", message: "Dieses Lebensmittel ist kein Rezept und es können daher auch keine Rezeptdaten geändert werden", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
             present(alert, animated: true, completion: nil)
         }
     }
@@ -208,11 +208,11 @@ import CoreData
     }
     
     func askUserToDeleteFood() {
-        let uniqueMeals = Set( food.mealIngredients!.flatMap{($0 as AnyObject).meal} )
+        let uniqueMeals = Set( food.mealIngredients!.compactMap{($0 as AnyObject).meal} )
         
-        let alert = UIAlertController(title: "Lebensmittel löschen?", message: "Lebensmittel ist \(food.mealIngredients!.count) mal Bestandteil von \(uniqueMeals.count) Mahlzeit(en) und wird aus diesen gelöscht.", preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "Zurück", style: UIAlertActionStyle.cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in self.deleteFoodAndPopViewController() })
+        let alert = UIAlertController(title: "Lebensmittel löschen?", message: "Lebensmittel ist \(food.mealIngredients!.count) mal Bestandteil von \(uniqueMeals.count) Mahlzeit(en) und wird aus diesen gelöscht.", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Zurück", style: UIAlertAction.Style.cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertAction.Style.destructive) { [unowned self] (action) in self.deleteFoodAndPopViewController() })
         present(alert, animated: true, completion: nil)
     }
     

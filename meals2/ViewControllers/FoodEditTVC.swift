@@ -43,7 +43,7 @@ import CoreData
         self.title = food.name
         
         // dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
         
         super.viewDidLoad()
     }

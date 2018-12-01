@@ -31,7 +31,7 @@ final class HealthManager {
             HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryProtein),
             HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryFatTotal)
             ]
-            .flatMap{$0 as HKSampleType?}
+            .compactMap{$0 as HKSampleType?}
         
         let healthKitObjectTypesToRead = [
             HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodGlucose),
@@ -40,7 +40,7 @@ final class HealthManager {
             HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryProtein),
             HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.dietaryFatTotal)
             ]
-            .flatMap{$0 as HKObjectType?}
+            .compactMap{$0 as HKObjectType?}
         
         let healthKitTypesToShare: Set? = Set<HKSampleType>(healthKitSampleTypesToShare)
         let healthKitTypesToRead: Set?  = Set<HKObjectType>(healthKitObjectTypesToRead)
@@ -148,7 +148,7 @@ final class HealthManager {
         if let sampleType = HKSampleType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food) {
             let sampleQuery = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: 0, sortDescriptors: nil, resultsHandler: { (sampleQuery, results, error ) -> Void in
                 if let results = results {
-                    let foodCorrelations = results.flatMap{ $0 as? HKCorrelation }.filter { $0.correlationType == HKCorrelationType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food)! as HKCorrelationType }
+                    let foodCorrelations = results.compactMap{ $0 as? HKCorrelation }.filter { $0.correlationType == HKCorrelationType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food)! as HKCorrelationType }
                     
                     // for each food correlation delete its objects and the correlation itself
                     for foodCorrelation in foodCorrelations {
@@ -200,7 +200,7 @@ final class HealthManager {
         if let sampleType = HKSampleType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food) {
             let sampleQuery = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: 0, sortDescriptors: nil, resultsHandler: { (sampleQuery, results, error ) -> Void in
                 if let results = results {
-                    let foodCorrelations = results.flatMap{ $0 as? HKCorrelation }.filter { $0.correlationType == HKCorrelationType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food)! as HKCorrelationType }
+                    let foodCorrelations = results.compactMap{ $0 as? HKCorrelation }.filter { $0.correlationType == HKCorrelationType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.food)! as HKCorrelationType }
                     
                     // for each food correlation delete its objects and the correlation itself
                     for foodCorrelation in foodCorrelations {

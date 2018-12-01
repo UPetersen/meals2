@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // MARK: - AppDelegate
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Speed up all animations (view transitions)
         window?.layer.speed = 2.0
@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             mealsCDTVC.psContainer = persistentContainer
             mealsCDTVC.managedObjectContext = persistentContainer.viewContext
             // Check dictionary for 3D touch quick actions (short cut items) and perform corresponding actions
-            if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
+            if let shortcutItem = launchOptions?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
                 handleShortcutItem(shortcutItem, forMealsCDTVC: mealsCDTVC)
                 // prevents call of application:performActionFor... (see below), since shortCutItems are already handled here for launch from terminated state
                 return false

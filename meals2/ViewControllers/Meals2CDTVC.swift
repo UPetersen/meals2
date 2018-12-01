@@ -128,7 +128,7 @@ import HealthKit
         
         // set automatic row heights (could also be handled via tableView delegate
         tableView.estimatedRowHeight = CGFloat(44)
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
@@ -154,7 +154,7 @@ import HealthKit
         self.view.addGestureRecognizer(tapRecognizer)
         
         // dismiss keyboard on drag
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag        
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -319,8 +319,8 @@ import HealthKit
         }
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
             if let meal = mealFor(section: indexPath.section) {
                 if let count = meal.ingredients?.count, count > 1 {
                     // The meal has more than just the meal ingredient that shall be deleted, so delete the meal ingredient and let the meal and the other meal ingredients persist
@@ -444,7 +444,7 @@ import HealthKit
     }
     
     @objc func longPress(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
-        if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
+        if longPressGestureRecognizer.state == UIGestureRecognizer.State.began {
             if let meal = mealSelectedByLongPressGestureRecognizer(longPressGestureRecognizer) {
                 present(alertControllerForMeal(meal: meal), animated: true, completion: nil)
             }
@@ -497,9 +497,9 @@ import HealthKit
     
     func deleteMeal(_ meal: Meal) {
         // aks user if he really wants to delete the meal using an alert controller
-        let alert = UIAlertController(title: "Mahlzeit löschen?", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "Zurück", style: UIAlertActionStyle.cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertActionStyle.destructive) { [unowned self] (action) in
+        let alert = UIAlertController(title: "Mahlzeit löschen?", message: nil, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "Zurück", style: UIAlertAction.Style.cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Löschen", style: UIAlertAction.Style.destructive) { [unowned self] (action) in
             print("Will delete the meal \(meal)")
             self.managedObjectContext.delete(meal)
             HealthManager.synchronize(meal, withSynchronisationMode: .delete)
@@ -517,7 +517,7 @@ import HealthKit
         if let newMeal = Meal.fromMeal(meal, inManagedObjectContext: managedObjectContext) {
             saveContext() // Needed for synchronisation with health with URI of managed object
             HealthManager.synchronize(newMeal, withSynchronisationMode: .save)
-            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableView.ScrollPosition.top, animated: true); // scrolls to top
         }
     }
     
@@ -812,7 +812,7 @@ extension MealsCDTVC: UISearchResultsUpdating, UISearchBarDelegate, UISearchCont
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableViewScrollPosition.top, animated: true); // scrolls to top
+        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: UITableView.ScrollPosition.top, animated: true); // scrolls to top
     }
 
 }

@@ -72,17 +72,17 @@ import CoreData
         // title shows food list type and in braces the sort rule, e.g. "Favoriten (Name)"
         self.title = self.foodListType.rawValue
         
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.onDrag
+        self.tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
     
 
     // MARK: - UITableViewDelegate (for automatic row heights)
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     
@@ -92,8 +92,8 @@ import CoreData
         return self.foodListType == .Favorites ? true : false  // only in for favorites it is possible to edit rows
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
             
             // Delete favorite from list of favorite foods
             if let food = self.fetchedResultsController.object(at: indexPath) as? Food, let favorite = food.favoriteListItem {
@@ -172,7 +172,7 @@ import CoreData
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Food")
         
-        let predicates = [foodListType.predicate, searchFilter.predicateForSearchText(self.searchController.searchBar.text)].flatMap{$0}
+        let predicates = [foodListType.predicate, searchFilter.predicateForSearchText(self.searchController.searchBar.text)].compactMap{$0}
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
         request.sortDescriptors = foodListSortRule.sortDescriptors
@@ -200,7 +200,7 @@ import CoreData
     // MARK: - Fetched results controller
     
     func predicatesForFetchRequest() -> NSPredicate? {
-        let nonNilPredicates = [foodListType.predicate, searchFilter.predicateForSearchText(searchText)].flatMap{$0}
+        let nonNilPredicates = [foodListType.predicate, searchFilter.predicateForSearchText(searchText)].compactMap{$0}
         if !nonNilPredicates.isEmpty {
             return NSCompoundPredicate(andPredicateWithSubpredicates: nonNilPredicates)
         }

@@ -12,7 +12,7 @@ import UIKit
 
 extension UIAlertController {
     class func alertControllerForLists(title: String?, message: String?, itemTitles: [String], fromBarButtonItem barButtonItem: UIBarButtonItem?, handler: ((UIAlertAction) -> Void)?) -> UIAlertController {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.actionSheet)
         
         // items, i.e. actions
         for itemTitle in itemTitles {
