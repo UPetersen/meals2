@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		C63D39531F9E654A002C7DB6 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63D39521F9E651B002C7DB6 /* Result.swift */; };
 		C63D39571F9E7400002C7DB6 /* RecipeEditTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63D39561F9E7400002C7DB6 /* RecipeEditTVC.swift */; };
-		C64121A81F8A88600035D3DE /* MealsCDTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64121A71F8A88600035D3DE /* MealsCDTVC.swift */; };
 		C64121AC1F8A88D90035D3DE /* BaseCDTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64121AB1F8A88D90035D3DE /* BaseCDTVC.swift */; };
 		C64121AE1F8A89880035D3DE /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64121AD1F8A89870035D3DE /* HealthManager.swift */; };
 		C64121B01F8A89CB0035D3DE /* FoodDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64121AF1F8A89CA0035D3DE /* FoodDetails.swift */; };
@@ -112,7 +111,6 @@
 /* Begin PBXFileReference section */
 		C63D39521F9E651B002C7DB6 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		C63D39561F9E7400002C7DB6 /* RecipeEditTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditTVC.swift; sourceTree = "<group>"; };
-		C64121A71F8A88600035D3DE /* MealsCDTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsCDTVC.swift; sourceTree = "<group>"; };
 		C64121AB1F8A88D90035D3DE /* BaseCDTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCDTVC.swift; sourceTree = "<group>"; };
 		C64121AD1F8A89870035D3DE /* HealthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthManager.swift; sourceTree = "<group>"; };
 		C64121AF1F8A89CA0035D3DE /* FoodDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDetails.swift; sourceTree = "<group>"; };
@@ -324,7 +322,6 @@
 				C6FBAB291F9A5CE7009B4D4E /* FoodDetailCDTVC.swift */,
 				C6AD712E1F9E55D500BB527C /* FoodEditTVC.swift */,
 				C6FBAB211F97B932009B4D4E /* GeneralSearchCDTVC.swift */,
-				C64121A71F8A88600035D3DE /* MealsCDTVC.swift */,
 				C64121C11F929DFA0035D3DE /* MealsCDTVCSearchExtension.swift */,
 				C6CFE4E41FA129D700B2FAE4 /* MealDetailTVC.swift */,
 				C6B5DF3C1F9D005C007447B3 /* MealEditTVC.swift */,
@@ -614,7 +611,6 @@
 				C6BEC4D41F806D3800C3B95B /* ReferenceWeight+CoreDataProperties.swift in Sources */,
 				C6CC65A11F9B6BC200BB384A /* AmountSettingTableViewCell.swift in Sources */,
 				C6BEC48E1F8064F900C3B95B /* Event+CoreDataClass.swift in Sources */,
-				C64121A81F8A88600035D3DE /* MealsCDTVC.swift in Sources */,
 				C6BEC4D91F806D3800C3B95B /* Group+CoreDataClass.swift in Sources */,
 				C6BEC4A01F8069D600C3B95B /* MealIngredient+CoreDataProperties.swift in Sources */,
 				C6BEC4CE1F806D3800C3B95B /* Dealer+CoreDataProperties.swift in Sources */,
