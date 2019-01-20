@@ -270,7 +270,7 @@ import HealthKit
             cell = tableView.dequeueReusableCell(withIdentifier: "Empty Meal Cell", for: indexPath)
         }
         
-        // Fetch another batch of data if user scrolled to end of table (i.e. title for header for last section requested).
+        // Fetch another batch of data if user scrolled to end of table.
         if indexPath.section >= defaultFetchLimit - 1 {
             defaultFetchLimit += defaultFetchLimitIncrement
             fetchMeals()
@@ -339,15 +339,6 @@ import HealthKit
         return (formatter.string(from: NSNumber(value: number.doubleValue / divisor)) ?? "nan")
     }
     
-    // Check if last cell in table view is displayed on screen and if number of fetched objects exceeds the fetch limit. If so, fetch more data
-    func needToFetchMoreData(for tableView: UITableView, withIndexPath indexPath: IndexPath) -> Bool {
-        if indexPath.section == tableView.numberOfSections-1 && indexPath.row == tableView.numberOfRows(inSection: indexPath.section)-1 {
-            if let fetchedObjects = self.fetchedResultsController.fetchedObjects, fetchedObjects.count >= defaultFetchLimit-1 {
-                return true
-            }
-        }
-        return false
-    }
     
     func contentFor(mealIngredient: MealIngredient) -> NutrionText {
         
