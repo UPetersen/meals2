@@ -395,6 +395,7 @@ import HealthKit
                     viewController.managedObjectContext = managedObjectContext
                     if let meal = Meal.fetchNewestMeal(managedObjectContext: managedObjectContext) {
                         viewController.meal = meal
+                        viewController.searchText = self.searchController.searchBar.text
                     }
                 }
             case .ShowMealEditTVC:

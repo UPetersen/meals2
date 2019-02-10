@@ -55,6 +55,8 @@ import CoreData
         definesPresentationContext = true
         navigationItem.searchController = searchController // iOS 11: searchController tied to navigationItem
         //        tableView.tableHeaderView = searchController.searchBar // iOS 10 and lower, not adressed any more
+        searchController.searchBar.text = searchText
+        
         
         
         // configure toolbar buttons

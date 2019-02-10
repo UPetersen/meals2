@@ -144,29 +144,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.0832779"
+            timestampString = "571495246.0058939"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "760"
-            endingLineNumber = "760"
-            landmarkName = "saveContext()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "meals2/ViewControllers/MealsCDTVC.swift"
-            timestampString = "532471094.679152"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "752"
+            endingLineNumber = "752"
+            landmarkName = "MealsCDTVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -176,11 +160,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.083764"
+            timestampString = "571495246.005982"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "749"
-            endingLineNumber = "749"
+            startingLineNumber = "741"
+            endingLineNumber = "741"
             landmarkName = "mealIngredientFor(indexPath:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -192,13 +176,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.084075"
+            timestampString = "571495246.00604"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "653"
-            endingLineNumber = "653"
-            landmarkName = "controller(_:didChange:at:for:newIndexPath:)"
-            landmarkType = "7">
+            startingLineNumber = "645"
+            endingLineNumber = "645"
+            landmarkName = "MealsCDTVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -224,11 +208,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.08441"
+            timestampString = "571495246.006112"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "609"
-            endingLineNumber = "609"
+            startingLineNumber = "601"
+            endingLineNumber = "601"
             landmarkName = "reorderSections()"
             landmarkType = "7">
             <Locations>
@@ -272,11 +256,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.0847141"
+            timestampString = "571495246.0061671"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "657"
-            endingLineNumber = "657"
+            startingLineNumber = "649"
+            endingLineNumber = "649"
             landmarkName = "controller(_:didChange:at:for:newIndexPath:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -288,11 +272,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.0850151"
+            timestampString = "571495246.006222"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "564"
-            endingLineNumber = "564"
+            startingLineNumber = "556"
+            endingLineNumber = "556"
             landmarkName = "fetchMeals()"
             landmarkType = "7">
          </BreakpointContent>
@@ -304,7 +288,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.085312"
+            timestampString = "571495246.006277"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "187"
@@ -320,7 +304,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.085608"
+            timestampString = "571495246.00633"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "90"
@@ -336,12 +320,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.085892"
+            timestampString = "571495246.006382"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "585"
-            endingLineNumber = "585"
-            landmarkName = "updateSections()"
+            startingLineNumber = "577"
+            endingLineNumber = "577"
+            landmarkName = "fetchMeals()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -352,13 +336,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.086197"
+            timestampString = "571495246.006434"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "702"
-            endingLineNumber = "702"
-            landmarkName = "MealsCDTVC"
-            landmarkType = "3">
+            startingLineNumber = "694"
+            endingLineNumber = "694"
+            landmarkName = "controllerDidChangeContent(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -368,7 +352,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "meals2/ViewControllers/Meals2CDTVC.swift"
-            timestampString = "569667514.086491"
+            timestampString = "571495246.006485"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "275"
