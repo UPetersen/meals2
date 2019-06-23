@@ -190,7 +190,9 @@ final class FoodDetails {
         rows.append( InformationDataRecord(information: "Datum",       detail: dateOfCreation) )
         rows.append( InformationDataRecord(information: "Letzte Änd.", detail: dateOfLastModification) )
 
-        amountString = " je " + String(stringInterpolationSegment: food.amount) + " g"
+        
+        amountString = " je " + (food.amount?.stringValue ?? "--") + " g"
+//        amountString = " je " + String(stringInterpolationSegment: food.amount) + " g"
 
         return rows
     }
